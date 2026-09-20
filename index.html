@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TechNova AI — Discover, Compare & Master the Best AI & Tech Tools</title>
+  <meta name="description" content="Your go-to source for in-depth reviews, comparisons, and guides on the latest AI tools, software, and digital productivity solutions.">
+  <meta name="keywords" content="AI tools, tech reviews, software comparison, productivity apps, developer tools, AI assistants">
+  <meta name="author" content="TechNova AI">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="TechNova AI — Best AI & Tech Tool Reviews">
+  <meta property="og:description" content="Discover, compare & master the best AI and tech tools with in-depth reviews and guides.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://technova-ai.vercel.app">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="TechNova AI — Best AI & Tech Tool Reviews">
+  <meta name="twitter:description" content="Discover, compare & master the best AI and tech tools.">
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "TechNova AI",
+    "description": "In-depth reviews, comparisons, and guides on the latest AI tools and software.",
+    "url": "https://technova-ai.vercel.app"
+  }
+  </script>
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+
+  <!-- Reading Progress -->
+  <div class="reading-progress" id="readingProgress"></div>
+
+  <!-- Navigation -->
+  <nav class="navbar" id="navbar">
+    <div class="container navbar__inner">
+      <a href="index.html" class="navbar__logo">
+        <div class="navbar__logo-icon">🚀</div>
+        <span>TechNova AI</span>
+      </a>
+
+      <div class="navbar__nav">
+        <a href="index.html" class="navbar__link active">Home</a>
+        <a href="category.html?id=ai-tools" class="navbar__link">AI Tools</a>
+        <a href="category.html?id=dev-tools" class="navbar__link">Dev Tools</a>
+        <a href="category.html?id=productivity" class="navbar__link">Productivity</a>
+        <a href="about.html" class="navbar__link">About</a>
+      </div>
+
+      <div class="navbar__actions">
+        <button class="navbar__search-btn" id="searchBtn" aria-label="Search">🔍</button>
+        <button class="navbar__theme-btn" id="themeBtn" aria-label="Toggle theme">🌙</button>
+        <button class="navbar__mobile-toggle" id="mobileToggle" aria-label="Menu">☰</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-menu__close" id="mobileClose">✕</button>
+    <div class="mobile-menu__inner">
+      <a href="index.html" class="mobile-menu__link">Home</a>
+      <a href="category.html?id=ai-tools" class="mobile-menu__link">AI Tools</a>
+      <a href="category.html?id=dev-tools" class="mobile-menu__link">Dev Tools</a>
+      <a href="category.html?id=productivity" class="mobile-menu__link">Productivity</a>
+      <a href="category.html?id=design" class="mobile-menu__link">Design</a>
+      <a href="category.html?id=security" class="mobile-menu__link">Security</a>
+      <a href="about.html" class="mobile-menu__link">About</a>
+    </div>
+  </div>
+
+  <!-- Search Modal -->
+  <div class="search-modal" id="searchModal">
+    <div class="search-modal__inner">
+      <div class="search-modal__header">
+        <span class="search-modal__icon">🔍</span>
+        <input type="text" class="search-modal__input" id="searchInput" placeholder="Search articles, tools, topics..." autofocus>
+        <button class="search-modal__close" id="searchClose">ESC</button>
+      </div>
+      <div class="search-modal__results" id="searchResults">
+        <div class="search-modal__empty">Type to search across all articles and reviews...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero__bg"></div>
+    <div class="hero__glow hero__glow--purple"></div>
+    <div class="hero__glow hero__glow--cyan"></div>
+    <div class="hero__grid-overlay"></div>
+
+    <div class="container">
+      <div class="hero__content">
+        <div class="hero__badge">
+          <span class="hero__badge-dot"></span>
+          The Future of Tech Reviews
+        </div>
+
+        <h1 class="hero__title">
+          Discover the Best
+          <span class="hero__title-gradient">AI & Tech Tools</span>
+          for 2026
+        </h1>
+
+        <p class="hero__description">
+          In-depth reviews, head-to-head comparisons, and expert guides to help you choose the right tools — and master them.
+        </p>
+
+        <div class="hero__search">
+          <span class="hero__search-icon">🔍</span>
+          <input type="text" class="hero__search-input" id="heroSearch" placeholder="Search for tools, reviews, comparisons...">
+          <button class="hero__search-btn" id="heroSearchBtn">Search</button>
+        </div>
+
+        <div class="hero__stats">
+          <div class="hero__stat">
+            <span class="hero__stat-number" id="statArticles">50+</span>
+            <span class="hero__stat-label">Reviews</span>
+          </div>
+          <div class="hero__stat">
+            <span class="hero__stat-number">200+</span>
+            <span class="hero__stat-label">Tools Tested</span>
+          </div>
+          <div class="hero__stat">
+            <span class="hero__stat-number">100K+</span>
+            <span class="hero__stat-label">Monthly Readers</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ad: Header Leaderboard -->
+  <div class="container">
+    <div class="ad-container ad-container--leaderboard" id="ad-header">
+      <!-- AdSense ad unit will be placed here -->
+      <span>Ad Space — Header Leaderboard (728×90)</span>
+    </div>
+  </div>
+
+  <!-- Featured Article -->
+  <section class="section">
+    <div class="container">
+      <div class="section__header">
+        <div>
+          <div class="section__label">// Featured Review</div>
+          <h2 class="section__title">Editor's Pick</h2>
+        </div>
+      </div>
+      <div id="featuredArticle"></div>
+    </div>
+  </section>
+
+  <!-- Categories -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section__header">
+        <div>
+          <div class="section__label">// Browse by Topic</div>
+          <h2 class="section__title">Explore Categories</h2>
+          <p class="section__subtitle">Find the tools that matter most to you</p>
+        </div>
+      </div>
+      <div class="categories-grid" id="categoriesGrid"></div>
+    </div>
+  </section>
+
+  <!-- Latest Articles -->
+  <section class="section">
+    <div class="container">
+      <div class="section__header">
+        <div>
+          <div class="section__label">// Latest</div>
+          <h2 class="section__title">Recent Reviews & Guides</h2>
+          <p class="section__subtitle">Stay up to date with our latest in-depth analyses</p>
+        </div>
+        <a href="category.html" class="section__link">View All →</a>
+      </div>
+
+      <!-- Ad: In-feed -->
+      <div class="ad-container ad-container--in-article" id="ad-infeed" style="margin-bottom:var(--space-8)">
+        <span>Ad Space — In-Feed (Responsive)</span>
+      </div>
+
+      <div class="cards-grid" id="latestArticles"></div>
+    </div>
+  </section>
+
+  <!-- Newsletter -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="newsletter">
+        <div class="newsletter__icon">📬</div>
+        <h2 class="newsletter__title">Stay Ahead of the Curve</h2>
+        <p class="newsletter__text">Get our weekly digest of the best AI and tech tool reviews delivered straight to your inbox. No spam, ever.</p>
+        <form class="newsletter__form" id="newsletterForm">
+          <input type="email" class="newsletter__input" placeholder="Enter your email" required>
+          <button type="submit" class="newsletter__btn">Subscribe</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div>
+          <a href="index.html" class="navbar__logo">
+            <div class="navbar__logo-icon">🚀</div>
+            <span>TechNova AI</span>
+          </a>
+          <p class="footer__brand-description">
+            Your trusted source for honest, in-depth reviews of AI tools, software, and technology that shapes the future.
+          </p>
+          <div class="footer__social">
+            <a href="#" class="footer__social-link" aria-label="Twitter">𝕏</a>
+            <a href="#" class="footer__social-link" aria-label="YouTube">▶</a>
+            <a href="#" class="footer__social-link" aria-label="GitHub">⌥</a>
+            <a href="#" class="footer__social-link" aria-label="RSS">☰</a>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer__heading">Categories</h4>
+          <div class="footer__links">
+            <a href="category.html?id=ai-tools" class="footer__link">AI Tools</a>
+            <a href="category.html?id=dev-tools" class="footer__link">Dev Tools</a>
+            <a href="category.html?id=productivity" class="footer__link">Productivity</a>
+            <a href="category.html?id=design" class="footer__link">Design</a>
+            <a href="category.html?id=security" class="footer__link">Cybersecurity</a>
+            <a href="category.html?id=cloud" class="footer__link">Cloud & SaaS</a>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer__heading">Popular</h4>
+          <div class="footer__links">
+            <a href="article.html?id=claude-vs-chatgpt-2026" class="footer__link">Claude vs ChatGPT</a>
+            <a href="article.html?id=best-ai-code-editors-2026" class="footer__link">Best AI Code Editors</a>
+            <a href="article.html?id=notion-vs-obsidian-2026" class="footer__link">Notion vs Obsidian</a>
+            <a href="article.html?id=midjourney-v7-review" class="footer__link">Midjourney V7 Review</a>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer__heading">Company</h4>
+          <div class="footer__links">
+            <a href="about.html" class="footer__link">About Us</a>
+            <a href="#" class="footer__link">Contact</a>
+            <a href="#" class="footer__link">Write for Us</a>
+            <a href="#" class="footer__link">Advertise</a>
+            <a href="admin/index.html" class="footer__link">Admin Panel</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer__bottom">
+        <span>© 2026 TechNova AI. All rights reserved.</span>
+        <div class="footer__bottom-links">
+          <a href="#" class="footer__bottom-link">Privacy Policy</a>
+          <a href="#" class="footer__bottom-link">Terms of Service</a>
+          <a href="#" class="footer__bottom-link">Cookie Policy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to Top -->
+  <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // Render Homepage
+    document.addEventListener('DOMContentLoaded', () => {
+      // Featured Article
+      const featured = getFeaturedArticles();
+      if (featured.length > 0) {
+        document.getElementById('featuredArticle').innerHTML = generateArticleCardHTML(featured[0], true);
+      }
+
+      // Categories
+      const catGrid = document.getElementById('categoriesGrid');
+      catGrid.innerHTML = CATEGORIES.map(cat => `
+        <a href="category.html?id=${cat.id}" class="category-card">
+          <div class="category-card__icon ${cat.iconClass}">${cat.icon}</div>
+          <div class="category-card__info">
+            <div class="category-card__name">${cat.name}</div>
+            <div class="category-card__count">${cat.count} article${cat.count !== 1 ? 's' : ''}</div>
+          </div>
+          <span class="category-card__arrow">→</span>
+        </a>
+      `).join('');
+
+      // Latest Articles
+      const latest = getLatestArticles(6).filter(a => !a.featured);
+      document.getElementById('latestArticles').innerHTML = latest.map(a => generateArticleCardHTML(a)).join('');
+    });
+  </script>
+</body>
+</html>

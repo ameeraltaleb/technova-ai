@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Categories — TechNova AI</title>
+  <meta name="description" content="Browse all categories: AI Tools, Dev Tools, Productivity, Design, Security, and Cloud.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+
+  <div class="reading-progress" id="readingProgress"></div>
+
+  <nav class="navbar" id="navbar">
+    <div class="container navbar__inner">
+      <a href="index.html" class="navbar__logo">
+        <div class="navbar__logo-icon">🚀</div>
+        <span>TechNova AI</span>
+      </a>
+      <div class="navbar__nav">
+        <a href="index.html" class="navbar__link">Home</a>
+        <a href="category.html?id=ai-tools" class="navbar__link">AI Tools</a>
+        <a href="category.html?id=dev-tools" class="navbar__link">Dev Tools</a>
+        <a href="category.html?id=productivity" class="navbar__link">Productivity</a>
+        <a href="about.html" class="navbar__link">About</a>
+      </div>
+      <div class="navbar__actions">
+        <button class="navbar__search-btn" id="searchBtn" aria-label="Search">🔍</button>
+        <button class="navbar__theme-btn" id="themeBtn" aria-label="Toggle theme">🌙</button>
+        <button class="navbar__mobile-toggle" id="mobileToggle" aria-label="Menu">☰</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-menu__close" id="mobileClose">✕</button>
+    <div class="mobile-menu__inner">
+      <a href="index.html" class="mobile-menu__link">Home</a>
+      <a href="category.html?id=ai-tools" class="mobile-menu__link">AI Tools</a>
+      <a href="category.html?id=dev-tools" class="mobile-menu__link">Dev Tools</a>
+      <a href="category.html?id=productivity" class="mobile-menu__link">Productivity</a>
+      <a href="about.html" class="mobile-menu__link">About</a>
+    </div>
+  </div>
+
+  <div class="search-modal" id="searchModal">
+    <div class="search-modal__inner">
+      <div class="search-modal__header">
+        <span class="search-modal__icon">🔍</span>
+        <input type="text" class="search-modal__input" id="searchInput" placeholder="Search articles...">
+        <button class="search-modal__close" id="searchClose">ESC</button>
+      </div>
+      <div class="search-modal__results" id="searchResults">
+        <div class="search-modal__empty">Type to search...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Category Hero -->
+  <section class="category-hero">
+    <div class="container">
+      <div class="article__breadcrumb">
+        <a href="index.html">Home</a> <span>/</span>
+        <span id="breadcrumbCat">Categories</span>
+      </div>
+      <div class="category-hero__icon" id="categoryIcon" style="background:rgba(108,92,231,0.15);color:var(--color-primary-light)">📂</div>
+      <h1 class="category-hero__title" id="categoryTitle">All Articles</h1>
+      <p class="category-hero__description" id="categoryDescription">Browse our complete collection of reviews, comparisons, and guides.</p>
+      <p class="category-hero__count" id="categoryCount"></p>
+    </div>
+  </section>
+
+  <!-- Filters -->
+  <section class="section" style="padding-top:var(--space-6)">
+    <div class="container">
+      <div class="filters" id="filters">
+        <button class="filter-btn active" data-filter="all">All</button>
+      </div>
+
+      <div class="ad-container ad-container--leaderboard" style="margin-bottom:var(--space-8)">
+        <span>Ad Space — Category Top (728×90)</span>
+      </div>
+
+      <div class="cards-grid" id="articlesGrid">
+        <p style="color:var(--text-tertiary)">No articles found.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div>
+          <a href="index.html" class="navbar__logo">
+            <div class="navbar__logo-icon">🚀</div>
+            <span>TechNova AI</span>
+          </a>
+          <p class="footer__brand-description">Your trusted source for honest, in-depth reviews of AI tools, software, and technology.</p>
+        </div>
+        <div>
+          <h4 class="footer__heading">Categories</h4>
+          <div class="footer__links">
+            <a href="category.html?id=ai-tools" class="footer__link">AI Tools</a>
+            <a href="category.html?id=dev-tools" class="footer__link">Dev Tools</a>
+            <a href="category.html?id=productivity" class="footer__link">Productivity</a>
+            <a href="category.html?id=design" class="footer__link">Design</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="footer__heading">Company</h4>
+          <div class="footer__links">
+            <a href="about.html" class="footer__link">About</a>
+            <a href="#" class="footer__link">Contact</a>
+            <a href="admin/index.html" class="footer__link">Admin Panel</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="footer__heading">Legal</h4>
+          <div class="footer__links">
+            <a href="#" class="footer__link">Privacy</a>
+            <a href="#" class="footer__link">Terms</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <span>© 2026 TechNova AI. All rights reserved.</span>
+      </div>
+    </div>
+  </footer>
+
+  <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
+  <div class="toast" id="toast"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const categoryId = params.get('id');
+      const grid = document.getElementById('articlesGrid');
+      const filtersEl = document.getElementById('filters');
+
+      let articles = ARTICLES;
+
+      if (categoryId) {
+        const category = getCategoryById(categoryId);
+        if (category) {
+          document.title = `${category.name} — TechNova AI`;
+          document.getElementById('categoryIcon').innerHTML = category.icon;
+          document.getElementById('categoryIcon').className = `category-hero__icon ${category.iconClass}`;
+          document.getElementById('categoryTitle').textContent = category.name;
+          document.getElementById('categoryDescription').textContent = category.description;
+          document.getElementById('breadcrumbCat').textContent = category.name;
+          articles = getArticlesByCategory(categoryId);
+
+          // Highlight active nav link
+          document.querySelectorAll('.navbar__link').forEach(link => {
+            link.classList.toggle('active', link.href.includes(`id=${categoryId}`));
+          });
+        }
+      } else {
+        // Show all — add category filter buttons
+        CATEGORIES.forEach(cat => {
+          const btn = document.createElement('button');
+          btn.className = 'filter-btn';
+          btn.dataset.filter = cat.id;
+          btn.textContent = `${cat.icon} ${cat.name}`;
+          btn.addEventListener('click', () => filterArticles(cat.id));
+          filtersEl.appendChild(btn);
+        });
+      }
+
+      document.getElementById('categoryCount').textContent = `${articles.length} article${articles.length !== 1 ? 's' : ''}`;
+      renderArticles(articles);
+
+      // Filter handler
+      filtersEl.querySelector('[data-filter="all"]').addEventListener('click', () => filterArticles('all'));
+
+      function filterArticles(filter) {
+        filtersEl.querySelectorAll('.filter-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.filter === filter);
+        });
+
+        const filtered = filter === 'all' ? ARTICLES : getArticlesByCategory(filter);
+        document.getElementById('categoryCount').textContent = `${filtered.length} article${filtered.length !== 1 ? 's' : ''}`;
+        renderArticles(filtered);
+      }
+
+      function renderArticles(list) {
+        if (list.length === 0) {
+          grid.innerHTML = '<p style="color:var(--text-tertiary);grid-column:1/-1;text-align:center;padding:var(--space-16)">No articles found in this category yet. Stay tuned!</p>';
+        } else {
+          grid.innerHTML = list.map(a => generateArticleCardHTML(a)).join('');
+        }
+        initScrollAnimations();
+      }
+    });
+  </script>
+</body>
+</html>

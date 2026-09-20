@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Article — TechNova AI</title>
+  <meta name="description" content="">
+  <meta name="author" content="TechNova AI">
+  <meta property="og:type" content="article">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+
+  <div class="reading-progress" id="readingProgress"></div>
+
+  <!-- Navigation -->
+  <nav class="navbar" id="navbar">
+    <div class="container navbar__inner">
+      <a href="index.html" class="navbar__logo">
+        <div class="navbar__logo-icon">🚀</div>
+        <span>TechNova AI</span>
+      </a>
+      <div class="navbar__nav">
+        <a href="index.html" class="navbar__link">Home</a>
+        <a href="category.html?id=ai-tools" class="navbar__link">AI Tools</a>
+        <a href="category.html?id=dev-tools" class="navbar__link">Dev Tools</a>
+        <a href="category.html?id=productivity" class="navbar__link">Productivity</a>
+        <a href="about.html" class="navbar__link">About</a>
+      </div>
+      <div class="navbar__actions">
+        <button class="navbar__search-btn" id="searchBtn" aria-label="Search">🔍</button>
+        <button class="navbar__theme-btn" id="themeBtn" aria-label="Toggle theme">🌙</button>
+        <button class="navbar__mobile-toggle" id="mobileToggle" aria-label="Menu">☰</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-menu__close" id="mobileClose">✕</button>
+    <div class="mobile-menu__inner">
+      <a href="index.html" class="mobile-menu__link">Home</a>
+      <a href="category.html?id=ai-tools" class="mobile-menu__link">AI Tools</a>
+      <a href="category.html?id=dev-tools" class="mobile-menu__link">Dev Tools</a>
+      <a href="category.html?id=productivity" class="mobile-menu__link">Productivity</a>
+      <a href="about.html" class="mobile-menu__link">About</a>
+    </div>
+  </div>
+
+  <!-- Search Modal -->
+  <div class="search-modal" id="searchModal">
+    <div class="search-modal__inner">
+      <div class="search-modal__header">
+        <span class="search-modal__icon">🔍</span>
+        <input type="text" class="search-modal__input" id="searchInput" placeholder="Search articles...">
+        <button class="search-modal__close" id="searchClose">ESC</button>
+      </div>
+      <div class="search-modal__results" id="searchResults">
+        <div class="search-modal__empty">Type to search...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Article Hero -->
+  <section class="article-hero" id="articleHero">
+    <div class="container container--narrow">
+      <div class="article__breadcrumb">
+        <a href="index.html">Home</a> <span>/</span>
+        <a href="#" id="breadcrumbCategory">Category</a> <span>/</span>
+        <span id="breadcrumbTitle">Article</span>
+      </div>
+      <div class="article__category-tag" id="articleCategoryTag"></div>
+      <h1 class="article__title" id="articleTitle">Loading...</h1>
+      <div class="article__meta" id="articleMeta"></div>
+    </div>
+  </section>
+
+  <!-- Article Body -->
+  <main class="section" style="padding-top:0">
+    <div class="container container--narrow">
+
+      <!-- Ad: After Hero -->
+      <div class="ad-container ad-container--leaderboard" id="ad-article-top">
+        <span>Ad Space — Article Top (728×90)</span>
+      </div>
+
+      <div class="article-layout">
+        <!-- Content -->
+        <div>
+          <!-- Rating Box -->
+          <div class="rating-box" id="ratingBox" style="display:none">
+            <div>
+              <div class="rating-box__score" id="ratingScore"></div>
+            </div>
+            <div>
+              <div class="rating-box__stars" id="ratingStars"></div>
+              <div class="rating-box__label" id="ratingLabel"></div>
+            </div>
+          </div>
+
+          <div class="article-content" id="articleContent">
+            <p>Loading article...</p>
+          </div>
+
+          <!-- Ad: Mid-article -->
+          <div class="ad-container ad-container--in-article" id="ad-mid-article">
+            <span>Ad Space — Mid-Article (Responsive)</span>
+          </div>
+
+          <!-- Pros / Cons -->
+          <div class="pros-cons" id="prosCons" style="display:none">
+            <div class="pros-box">
+              <div class="pros-box__title">✅ Pros</div>
+              <ul id="prosList"></ul>
+            </div>
+            <div class="cons-box">
+              <div class="cons-box__title">❌ Cons</div>
+              <ul id="consList"></ul>
+            </div>
+          </div>
+
+          <!-- Tags -->
+          <div class="article__tags" id="articleTags"></div>
+
+          <!-- Share -->
+          <div class="share-buttons">
+            <span style="font-size:var(--fs-sm);color:var(--text-tertiary);margin-right:var(--space-2)">Share:</span>
+            <button class="share-btn share-btn--twitter" onclick="shareArticle('twitter')" aria-label="Share on Twitter">𝕏</button>
+            <button class="share-btn share-btn--facebook" onclick="shareArticle('facebook')" aria-label="Share on Facebook">f</button>
+            <button class="share-btn share-btn--linkedin" onclick="shareArticle('linkedin')" aria-label="Share on LinkedIn">in</button>
+            <button class="share-btn share-btn--copy" onclick="shareArticle('copy')" aria-label="Copy link">🔗</button>
+          </div>
+
+          <!-- Ad: After Article -->
+          <div class="ad-container ad-container--in-article" id="ad-after-article" style="margin-top:var(--space-8)">
+            <span>Ad Space — After Article (Responsive)</span>
+          </div>
+        </div>
+
+        <!-- Sidebar / TOC -->
+        <aside>
+          <div class="toc">
+            <div class="toc__title">📑 Table of Contents</div>
+            <nav class="toc__list" id="tocList"></nav>
+          </div>
+
+          <div class="ad-container ad-container--rectangle" style="margin-top:var(--space-6)">
+            <span>Ad Space — Sidebar (300×250)</span>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Related Articles -->
+      <div class="related-articles" id="relatedArticles">
+        <div class="section__header">
+          <div>
+            <div class="section__label">// You May Also Like</div>
+            <h2 class="section__title">Related Reviews</h2>
+          </div>
+        </div>
+        <div class="cards-grid" id="relatedGrid"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div>
+          <a href="index.html" class="navbar__logo">
+            <div class="navbar__logo-icon">🚀</div>
+            <span>TechNova AI</span>
+          </a>
+          <p class="footer__brand-description">Your trusted source for honest, in-depth reviews of AI tools, software, and technology.</p>
+        </div>
+        <div>
+          <h4 class="footer__heading">Categories</h4>
+          <div class="footer__links">
+            <a href="category.html?id=ai-tools" class="footer__link">AI Tools</a>
+            <a href="category.html?id=dev-tools" class="footer__link">Dev Tools</a>
+            <a href="category.html?id=productivity" class="footer__link">Productivity</a>
+            <a href="category.html?id=design" class="footer__link">Design</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="footer__heading">Company</h4>
+          <div class="footer__links">
+            <a href="about.html" class="footer__link">About Us</a>
+            <a href="#" class="footer__link">Contact</a>
+            <a href="admin/index.html" class="footer__link">Admin Panel</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="footer__heading">Legal</h4>
+          <div class="footer__links">
+            <a href="#" class="footer__link">Privacy Policy</a>
+            <a href="#" class="footer__link">Terms of Service</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <span>© 2026 TechNova AI. All rights reserved.</span>
+      </div>
+    </div>
+  </footer>
+
+  <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
+  <div class="toast" id="toast"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const articleId = params.get('id');
+
+      if (!articleId) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      const article = getArticleById(articleId);
+      if (!article) {
+        document.getElementById('articleTitle').textContent = 'Article Not Found';
+        document.getElementById('articleContent').innerHTML = '<p>Sorry, this article could not be found. <a href="index.html">Go back home</a>.</p>';
+        return;
+      }
+
+      const category = getCategoryById(article.category);
+
+      // Update page meta
+      document.title = `${article.title} — TechNova AI`;
+      document.querySelector('meta[name="description"]').content = article.excerpt;
+
+      // Structured Data
+      const ld = document.createElement('script');
+      ld.type = 'application/ld+json';
+      ld.textContent = JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": article.title,
+        "description": article.excerpt,
+        "author": { "@type": "Person", "name": article.author },
+        "datePublished": article.date,
+        "publisher": { "@type": "Organization", "name": "TechNova AI" }
+      });
+      document.head.appendChild(ld);
+
+      // Breadcrumb
+      const breadCat = document.getElementById('breadcrumbCategory');
+      breadCat.textContent = category ? category.name : 'Articles';
+      breadCat.href = `category.html?id=${article.category}`;
+      document.getElementById('breadcrumbTitle').textContent = article.title.substring(0, 40) + '...';
+
+      // Category tag
+      document.getElementById('articleCategoryTag').innerHTML = `${category ? category.icon : ''} ${category ? category.name : ''}`;
+
+      // Title
+      document.getElementById('articleTitle').textContent = article.title;
+
+      // Meta
+      document.getElementById('articleMeta').innerHTML = `
+        <span class="article__meta-item">
+          <span class="card__author-avatar">${article.authorInitial}</span>
+          ${article.author}
+        </span>
+        <span class="article__meta-item">📅 ${formatDate(article.date)}</span>
+        <span class="article__meta-item">⏱ ${article.readTime}</span>
+        <span class="article__meta-item">⭐ ${article.rating}/5</span>
+      `;
+
+      // Rating Box
+      if (article.ratingBreakdown) {
+        const ratingBox = document.getElementById('ratingBox');
+        ratingBox.style.display = 'flex';
+        document.getElementById('ratingScore').textContent = article.ratingBreakdown.overall + '/5';
+        document.getElementById('ratingStars').textContent = generateStars(article.ratingBreakdown.overall);
+        document.getElementById('ratingLabel').textContent = article.ratingBreakdown.label;
+      }
+
+      // Content
+      document.getElementById('articleContent').innerHTML = article.content;
+
+      // Pros/Cons
+      if (article.pros && article.cons) {
+        document.getElementById('prosCons').style.display = 'grid';
+        document.getElementById('prosList').innerHTML = article.pros.map(p => `<li>${p}</li>`).join('');
+        document.getElementById('consList').innerHTML = article.cons.map(c => `<li>${c}</li>`).join('');
+      }
+
+      // Tags
+      document.getElementById('articleTags').innerHTML = article.tags.map(t =>
+        `<a href="category.html?search=${encodeURIComponent(t)}" class="article__tag">#${t}</a>`
+      ).join('');
+
+      // TOC
+      initTableOfContents();
+
+      // Related Articles
+      const related = ARTICLES
+        .filter(a => a.id !== article.id && (a.category === article.category || a.tags.some(t => article.tags.includes(t))))
+        .slice(0, 3);
+      document.getElementById('relatedGrid').innerHTML = related.map(a => generateArticleCardHTML(a)).join('');
+
+      // Re-init scroll animations for related cards
+      initScrollAnimations();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel — TechNova AI</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚙️</text></svg>">
+  <link rel="stylesheet" href="../styles/admin.css">
+</head>
+<body class="admin-body">
+
+  <!-- Mobile Toggle -->
+  <button class="admin-mobile-toggle" id="sidebarToggle">☰</button>
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="admin-sidebar__header">
+      <a href="../index.html" class="admin-sidebar__logo">
+        <div class="admin-sidebar__logo-icon">🚀</div>
+        TechNova AI
+      </a>
+      <div class="admin-sidebar__badge">Admin Panel</div>
+    </div>
+
+    <nav class="admin-sidebar__nav">
+      <a href="#" class="admin-nav-link active" data-view="dashboard">
+        <span class="admin-nav-link__icon">📊</span> Dashboard
+      </a>
+      <a href="#" class="admin-nav-link" data-view="articles">
+        <span class="admin-nav-link__icon">📝</span> Articles
+      </a>
+      <a href="#" class="admin-nav-link" data-view="editor">
+        <span class="admin-nav-link__icon">✏️</span> New Article
+      </a>
+      <a href="#" class="admin-nav-link" data-view="categories">
+        <span class="admin-nav-link__icon">📂</span> Categories
+      </a>
+    </nav>
+
+    <div class="admin-sidebar__footer">
+      <a href="../index.html">← Back to Blog</a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <h1 class="admin-topbar__title" id="viewTitle">Dashboard</h1>
+      <div class="admin-topbar__actions" id="topbarActions"></div>
+    </div>
+
+    <div class="admin-content">
+
+      <!-- ============ DASHBOARD VIEW ============ -->
+      <div class="admin-view active" id="view-dashboard">
+        <div class="dashboard-grid">
+          <div class="stat-card">
+            <div class="stat-card__icon">📝</div>
+            <div class="stat-card__value" id="totalArticles">0</div>
+            <div class="stat-card__label">Total Articles</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__icon">📂</div>
+            <div class="stat-card__value" id="totalCategories">0</div>
+            <div class="stat-card__label">Categories</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__icon">⭐</div>
+            <div class="stat-card__value" id="avgRating">0</div>
+            <div class="stat-card__label">Avg Rating</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__icon">📅</div>
+            <div class="stat-card__value" id="thisMonth">0</div>
+            <div class="stat-card__label">This Month</div>
+          </div>
+        </div>
+
+        <div class="articles-table">
+          <div class="articles-table__header">
+            <span class="articles-table__title">Recent Articles</span>
+            <button class="btn btn--primary btn--sm" onclick="switchView('editor')">+ New Article</button>
+          </div>
+          <div class="table-row table-row__head">
+            <span>Title</span>
+            <span>Category</span>
+            <span>Date</span>
+            <span>Rating</span>
+            <span style="text-align:right">Actions</span>
+          </div>
+          <div id="dashboardArticles"></div>
+        </div>
+      </div>
+
+      <!-- ============ ARTICLES VIEW ============ -->
+      <div class="admin-view" id="view-articles" style="display:none">
+        <div class="articles-table">
+          <div class="articles-table__header">
+            <span class="articles-table__title">All Articles</span>
+            <button class="btn btn--primary btn--sm" onclick="switchView('editor')">+ New Article</button>
+          </div>
+          <div class="table-row table-row__head">
+            <span>Title</span>
+            <span>Category</span>
+            <span>Date</span>
+            <span>Rating</span>
+            <span style="text-align:right">Actions</span>
+          </div>
+          <div id="allArticles"></div>
+        </div>
+      </div>
+
+      <!-- ============ EDITOR VIEW ============ -->
+      <div class="admin-view" id="view-editor" style="display:none">
+        <div class="editor-grid">
+          <!-- Left: Content -->
+          <div>
+            <div class="editor-panel">
+              <div class="editor-panel__title">Article Content</div>
+
+              <div class="editor-field">
+                <label for="editorTitle">Title</label>
+                <input type="text" id="editorTitle" placeholder="e.g. Best AI Tools for Developers in 2026">
+              </div>
+
+              <div class="editor-field">
+                <label for="editorExcerpt">Excerpt / Summary</label>
+                <textarea id="editorExcerpt" rows="3" style="min-height:80px;font-family:var(--font-primary)" placeholder="A brief summary that appears in article cards..."></textarea>
+              </div>
+
+              <div class="editor-field">
+                <label>Content</label>
+                <div class="editor-toolbar">
+                  <button class="editor-toolbar__btn" onclick="execCmd('bold')" title="Bold"><b>B</b></button>
+                  <button class="editor-toolbar__btn" onclick="execCmd('italic')" title="Italic"><i>I</i></button>
+                  <button class="editor-toolbar__btn" onclick="execCmd('underline')" title="Underline"><u>U</u></button>
+                  <div class="editor-toolbar__sep"></div>
+                  <button class="editor-toolbar__btn" onclick="execBlock('h2')" title="Heading 2">H2</button>
+                  <button class="editor-toolbar__btn" onclick="execBlock('h3')" title="Heading 3">H3</button>
+                  <button class="editor-toolbar__btn" onclick="execBlock('p')" title="Paragraph">¶</button>
+                  <div class="editor-toolbar__sep"></div>
+                  <button class="editor-toolbar__btn" onclick="execCmd('insertUnorderedList')" title="Bullet List">•</button>
+                  <button class="editor-toolbar__btn" onclick="execCmd('insertOrderedList')" title="Numbered List">1.</button>
+                  <div class="editor-toolbar__sep"></div>
+                  <button class="editor-toolbar__btn" onclick="insertLink()" title="Link">🔗</button>
+                  <button class="editor-toolbar__btn" onclick="execBlock('blockquote')" title="Quote">❝</button>
+                  <button class="editor-toolbar__btn" onclick="insertCode()" title="Code">{'<>'}</button>
+                </div>
+                <div class="rich-editor" id="richEditor" contenteditable="true" data-placeholder="Start writing your article here..."></div>
+              </div>
+            </div>
+
+            <!-- Pros/Cons -->
+            <div class="editor-panel" style="margin-top:var(--space-6)">
+              <div class="editor-panel__title">Pros & Cons</div>
+
+              <div class="editor-field">
+                <label>✅ Pros</label>
+                <div class="list-editor" id="prosEditor">
+                  <div class="list-editor__item">
+                    <input type="text" placeholder="Add a pro...">
+                    <button class="list-editor__remove" onclick="removeListItem(this)">✕</button>
+                  </div>
+                </div>
+                <button class="list-editor__add" onclick="addListItem('prosEditor')">+ Add Pro</button>
+              </div>
+
+              <div class="editor-field">
+                <label>❌ Cons</label>
+                <div class="list-editor" id="consEditor">
+                  <div class="list-editor__item">
+                    <input type="text" placeholder="Add a con...">
+                    <button class="list-editor__remove" onclick="removeListItem(this)">✕</button>
+                  </div>
+                </div>
+                <button class="list-editor__add" onclick="addListItem('consEditor')">+ Add Con</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Settings -->
+          <div>
+            <div class="editor-panel">
+              <div class="editor-panel__title">Article Settings</div>
+
+              <div class="editor-field">
+                <label for="editorCategory">Category</label>
+                <select id="editorCategory"></select>
+              </div>
+
+              <div class="editor-field">
+                <label for="editorAuthor">Author</label>
+                <input type="text" id="editorAuthor" placeholder="Author name" value="TechNova AI Team">
+              </div>
+
+              <div class="editor-field">
+                <label for="editorDate">Date</label>
+                <input type="date" id="editorDate">
+              </div>
+
+              <div class="editor-field">
+                <label for="editorRating">Rating (1-5)</label>
+                <input type="number" id="editorRating" min="1" max="5" step="0.1" value="4.5">
+              </div>
+
+              <div class="editor-field">
+                <label for="editorTags">Tags (comma separated)</label>
+                <input type="text" id="editorTags" placeholder="AI, Review, Comparison">
+              </div>
+
+              <div class="editor-field">
+                <label>
+                  <input type="checkbox" id="editorFeatured" style="margin-right:var(--space-2)">
+                  Featured Article
+                </label>
+              </div>
+            </div>
+
+            <div class="editor-panel" style="margin-top:var(--space-4)">
+              <div class="editor-panel__title">Actions</div>
+              <div style="display:flex;flex-direction:column;gap:var(--space-3)">
+                <button class="btn btn--primary btn--lg" onclick="saveArticle()" style="width:100%;justify-content:center">
+                  💾 Save & Publish
+                </button>
+                <button class="btn btn--secondary" onclick="previewArticle()" style="width:100%;justify-content:center">
+                  👁 Preview
+                </button>
+                <button class="btn btn--secondary" onclick="exportArticle()" style="width:100%;justify-content:center">
+                  📤 Export as JSON
+                </button>
+                <button class="btn btn--danger" onclick="clearEditor()" style="width:100%;justify-content:center">
+                  🗑 Clear
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ CATEGORIES VIEW ============ -->
+      <div class="admin-view" id="view-categories" style="display:none">
+        <div class="dashboard-grid" id="categoriesGrid"></div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Toast -->
+  <div class="admin-toast" id="adminToast"></div>
+
+  <script src="../js/data.js"></script>
+  <script>
+    // ============================================
+    // Admin Panel Logic
+    // ============================================
+
+    let editingArticleId = null;
+    let customArticles = JSON.parse(localStorage.getItem('technova-custom-articles') || '[]');
+
+    // Merge custom articles with built-in ones
+    function getAllArticles() {
+      return [...ARTICLES, ...customArticles];
+    }
+
+    // ---- INIT ---- //
+    document.addEventListener('DOMContentLoaded', () => {
+      initSidebar();
+      initEditor();
+      updateDashboard();
+      renderAllArticles();
+      renderCategories();
+    });
+
+    // ---- SIDEBAR NAV ---- //
+    function initSidebar() {
+      const links = document.querySelectorAll('.admin-nav-link');
+      links.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const view = link.dataset.view;
+          switchView(view);
+        });
+      });
+
+      // Mobile toggle
+      const toggle = document.getElementById('sidebarToggle');
+      const sidebar = document.getElementById('adminSidebar');
+      if (toggle) {
+        toggle.addEventListener('click', () => sidebar.classList.toggle('active'));
+      }
+    }
+
+    function switchView(viewId) {
+      document.querySelectorAll('.admin-view').forEach(v => v.style.display = 'none');
+      const view = document.getElementById('view-' + viewId);
+      if (view) view.style.display = 'block';
+
+      document.querySelectorAll('.admin-nav-link').forEach(l => l.classList.remove('active'));
+      const navLink = document.querySelector(`[data-view="${viewId}"]`);
+      if (navLink) navLink.classList.add('active');
+
+      const titles = {
+        dashboard: 'Dashboard',
+        articles: 'All Articles',
+        editor: editingArticleId ? 'Edit Article' : 'New Article',
+        categories: 'Categories'
+      };
+      document.getElementById('viewTitle').textContent = titles[viewId] || 'Dashboard';
+
+      // Close mobile sidebar
+      document.getElementById('adminSidebar').classList.remove('active');
+    }
+
+    // ---- DASHBOARD ---- //
+    function updateDashboard() {
+      const all = getAllArticles();
+      document.getElementById('totalArticles').textContent = all.length;
+      document.getElementById('totalCategories').textContent = CATEGORIES.length;
+
+      const avg = all.length > 0 ? (all.reduce((s, a) => s + a.rating, 0) / all.length).toFixed(1) : '0';
+      document.getElementById('avgRating').textContent = avg;
+
+      const now = new Date();
+      const thisMonth = all.filter(a => {
+        const d = new Date(a.date);
+        return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+      }).length;
+      document.getElementById('thisMonth').textContent = thisMonth;
+
+      // Recent articles
+      const recent = [...all].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
+      document.getElementById('dashboardArticles').innerHTML = recent.map(a => renderArticleRow(a)).join('');
+    }
+
+    // ---- ARTICLES LIST ---- //
+    function renderAllArticles() {
+      const all = [...getAllArticles()].sort((a, b) => new Date(b.date) - new Date(a.date));
+      document.getElementById('allArticles').innerHTML = all.length > 0
+        ? all.map(a => renderArticleRow(a)).join('')
+        : '<div class="empty-state"><div class="empty-state__icon">📝</div><p class="empty-state__text">No articles yet. Create your first one!</p></div>';
+    }
+
+    function renderArticleRow(article) {
+      const cat = getCategoryById(article.category);
+      const isCustom = customArticles.some(a => a.id === article.id);
+      return `
+        <div class="table-row">
+          <div class="table-row__title">
+            <span class="table-row__title-text">${article.title}</span>
+            <span class="table-row__title-excerpt">${article.excerpt}</span>
+          </div>
+          <span class="table-row__category">${cat ? cat.icon + ' ' + cat.name : article.category}</span>
+          <span class="table-row__date">${formatDate(article.date)}</span>
+          <span class="table-row__rating">★ ${article.rating}</span>
+          <div class="table-row__actions">
+            <button class="btn btn--secondary btn--sm" onclick="editArticle('${article.id}')" title="Edit">✏️</button>
+            <button class="btn btn--secondary btn--sm" onclick="window.open('../article.html?id=${article.id}','_blank')" title="View">👁</button>
+            ${isCustom ? `<button class="btn btn--danger btn--sm" onclick="deleteArticle('${article.id}')" title="Delete">🗑</button>` : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    // ---- CATEGORIES ---- //
+    function renderCategories() {
+      const all = getAllArticles();
+      document.getElementById('categoriesGrid').innerHTML = CATEGORIES.map(cat => {
+        const count = all.filter(a => a.category === cat.id).length;
+        return `
+          <div class="stat-card">
+            <div class="stat-card__icon">${cat.icon}</div>
+            <div class="stat-card__value">${count}</div>
+            <div class="stat-card__label">${cat.name}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ---- EDITOR ---- //
+    function initEditor() {
+      // Category dropdown
+      const sel = document.getElementById('editorCategory');
+      sel.innerHTML = CATEGORIES.map(c =>
+        `<option value="${c.id}">${c.icon} ${c.name}</option>`
+      ).join('');
+
+      // Set today's date
+      document.getElementById('editorDate').value = new Date().toISOString().split('T')[0];
+    }
+
+    function execCmd(command) {
+      document.execCommand(command, false, null);
+      document.getElementById('richEditor').focus();
+    }
+
+    function execBlock(tag) {
+      document.execCommand('formatBlock', false, '<' + tag + '>');
+      document.getElementById('richEditor').focus();
+    }
+
+    function insertLink() {
+      const url = prompt('Enter URL:');
+      if (url) {
+        document.execCommand('createLink', false, url);
+      }
+    }
+
+    function insertCode() {
+      const code = prompt('Enter code:');
+      if (code) {
+        document.execCommand('insertHTML', false, `<code>${code}</code>`);
+      }
+    }
+
+    function addListItem(editorId) {
+      const editor = document.getElementById(editorId);
+      const item = document.createElement('div');
+      item.className = 'list-editor__item';
+      item.innerHTML = `
+        <input type="text" placeholder="Add item...">
+        <button class="list-editor__remove" onclick="removeListItem(this)">✕</button>
+      `;
+      editor.appendChild(item);
+    }
+
+    function removeListItem(btn) {
+      const item = btn.parentElement;
+      const editor = item.parentElement;
+      if (editor.children.length > 1) {
+        item.remove();
+      } else {
+        item.querySelector('input').value = '';
+      }
+    }
+
+    function getListItems(editorId) {
+      const items = document.querySelectorAll(`#${editorId} .list-editor__item input`);
+      return Array.from(items).map(i => i.value.trim()).filter(v => v.length > 0);
+    }
+
+    // ---- SAVE ARTICLE ---- //
+    function saveArticle() {
+      const title = document.getElementById('editorTitle').value.trim();
+      if (!title) {
+        showAdminToast('❌ Please enter a title');
+        return;
+      }
+
+      const content = document.getElementById('richEditor').innerHTML.trim();
+      if (!content || content === '<br>') {
+        showAdminToast('❌ Please add some content');
+        return;
+      }
+
+      const author = document.getElementById('editorAuthor').value.trim() || 'TechNova AI Team';
+      const article = {
+        id: editingArticleId || generateId(title),
+        title: title,
+        excerpt: document.getElementById('editorExcerpt').value.trim() || title,
+        category: document.getElementById('editorCategory').value,
+        author: author,
+        authorInitial: author.charAt(0).toUpperCase(),
+        date: document.getElementById('editorDate').value,
+        readTime: estimateReadTime(content) + ' min read',
+        rating: parseFloat(document.getElementById('editorRating').value) || 4.5,
+        featured: document.getElementById('editorFeatured').checked,
+        tags: document.getElementById('editorTags').value.split(',').map(t => t.trim()).filter(t => t),
+        image: '',
+        content: content,
+        pros: getListItems('prosEditor'),
+        cons: getListItems('consEditor'),
+        ratingBreakdown: {
+          overall: parseFloat(document.getElementById('editorRating').value) || 4.5,
+          label: getRatingLabel(parseFloat(document.getElementById('editorRating').value) || 4.5)
+        }
+      };
+
+      // Save to localStorage
+      if (editingArticleId) {
+        const idx = customArticles.findIndex(a => a.id === editingArticleId);
+        if (idx !== -1) {
+          customArticles[idx] = article;
+        } else {
+          customArticles.push(article);
+        }
+      } else {
+        customArticles.push(article);
+      }
+
+      localStorage.setItem('technova-custom-articles', JSON.stringify(customArticles));
+      editingArticleId = null;
+
+      showAdminToast('✅ Article saved successfully!');
+      clearEditor();
+      updateDashboard();
+      renderAllArticles();
+      renderCategories();
+      switchView('articles');
+    }
+
+    function editArticle(id) {
+      const allArticles = getAllArticles();
+      const article = allArticles.find(a => a.id === id);
+      if (!article) return;
+
+      editingArticleId = id;
+      document.getElementById('editorTitle').value = article.title;
+      document.getElementById('editorExcerpt').value = article.excerpt;
+      document.getElementById('richEditor').innerHTML = article.content;
+      document.getElementById('editorCategory').value = article.category;
+      document.getElementById('editorAuthor').value = article.author;
+      document.getElementById('editorDate').value = article.date;
+      document.getElementById('editorRating').value = article.rating;
+      document.getElementById('editorFeatured').checked = article.featured;
+      document.getElementById('editorTags').value = (article.tags || []).join(', ');
+
+      // Pros
+      const prosEditor = document.getElementById('prosEditor');
+      prosEditor.innerHTML = '';
+      (article.pros || ['']).forEach(p => {
+        const item = document.createElement('div');
+        item.className = 'list-editor__item';
+        item.innerHTML = `<input type="text" value="${p}" placeholder="Add a pro..."><button class="list-editor__remove" onclick="removeListItem(this)">✕</button>`;
+        prosEditor.appendChild(item);
+      });
+
+      // Cons
+      const consEditor = document.getElementById('consEditor');
+      consEditor.innerHTML = '';
+      (article.cons || ['']).forEach(c => {
+        const item = document.createElement('div');
+        item.className = 'list-editor__item';
+        item.innerHTML = `<input type="text" value="${c}" placeholder="Add a con..."><button class="list-editor__remove" onclick="removeListItem(this)">✕</button>`;
+        consEditor.appendChild(item);
+      });
+
+      switchView('editor');
+    }
+
+    function deleteArticle(id) {
+      if (!confirm('Are you sure you want to delete this article?')) return;
+      customArticles = customArticles.filter(a => a.id !== id);
+      localStorage.setItem('technova-custom-articles', JSON.stringify(customArticles));
+      showAdminToast('🗑 Article deleted');
+      updateDashboard();
+      renderAllArticles();
+      renderCategories();
+    }
+
+    function previewArticle() {
+      const title = document.getElementById('editorTitle').value.trim();
+      if (!title) {
+        showAdminToast('❌ Save the article first to preview');
+        return;
+      }
+      // Temporarily save and open
+      saveArticle();
+      const id = generateId(title);
+      window.open(`../article.html?id=${id}`, '_blank');
+    }
+
+    function exportArticle() {
+      const title = document.getElementById('editorTitle').value.trim();
+      if (!title) {
+        showAdminToast('❌ Please enter a title first');
+        return;
+      }
+
+      const article = {
+        id: generateId(title),
+        title: title,
+        excerpt: document.getElementById('editorExcerpt').value.trim(),
+        category: document.getElementById('editorCategory').value,
+        author: document.getElementById('editorAuthor').value.trim(),
+        date: document.getElementById('editorDate').value,
+        rating: parseFloat(document.getElementById('editorRating').value),
+        tags: document.getElementById('editorTags').value.split(',').map(t => t.trim()).filter(t => t),
+        content: document.getElementById('richEditor').innerHTML,
+        pros: getListItems('prosEditor'),
+        cons: getListItems('consEditor')
+      };
+
+      const blob = new Blob([JSON.stringify(article, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `article-${article.id}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showAdminToast('📤 Article exported as JSON');
+    }
+
+    function clearEditor() {
+      editingArticleId = null;
+      document.getElementById('editorTitle').value = '';
+      document.getElementById('editorExcerpt').value = '';
+      document.getElementById('richEditor').innerHTML = '';
+      document.getElementById('editorAuthor').value = 'TechNova AI Team';
+      document.getElementById('editorDate').value = new Date().toISOString().split('T')[0];
+      document.getElementById('editorRating').value = '4.5';
+      document.getElementById('editorFeatured').checked = false;
+      document.getElementById('editorTags').value = '';
+
+      // Reset pros/cons
+      ['prosEditor', 'consEditor'].forEach(id => {
+        document.getElementById(id).innerHTML = `
+          <div class="list-editor__item">
+            <input type="text" placeholder="Add item...">
+            <button class="list-editor__remove" onclick="removeListItem(this)">✕</button>
+          </div>
+        `;
+      });
+    }
+
+    // ---- HELPERS ---- //
+    function generateId(title) {
+      return title.toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .substring(0, 60);
+    }
+
+    function estimateReadTime(html) {
+      const text = html.replace(/<[^>]*>/g, '');
+      const words = text.split(/\s+/).length;
+      return Math.max(1, Math.ceil(words / 200));
+    }
+
+    function getRatingLabel(rating) {
+      if (rating >= 4.5) return 'Exceptional';
+      if (rating >= 4.0) return 'Excellent';
+      if (rating >= 3.5) return 'Very Good';
+      if (rating >= 3.0) return 'Good';
+      if (rating >= 2.0) return 'Fair';
+      return 'Poor';
+    }
+
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+
+    function showAdminToast(message) {
+      const toast = document.getElementById('adminToast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+  </script>
+</body>
+</html>
