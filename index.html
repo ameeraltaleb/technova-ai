@@ -50,6 +50,7 @@
 
       <div class="navbar__nav">
         <a href="index.html" class="navbar__link active">Home</a>
+        <a href="category.html" class="navbar__link">All Articles</a>
         <a href="category.html?id=ai-tools" class="navbar__link">AI Tools</a>
         <a href="category.html?id=dev-tools" class="navbar__link">Dev Tools</a>
         <a href="category.html?id=productivity" class="navbar__link">Productivity</a>
@@ -69,6 +70,7 @@
     <button class="mobile-menu__close" id="mobileClose">✕</button>
     <div class="mobile-menu__inner">
       <a href="index.html" class="mobile-menu__link">Home</a>
+      <a href="category.html" class="mobile-menu__link">All Articles</a>
       <a href="category.html?id=ai-tools" class="mobile-menu__link">AI Tools</a>
       <a href="category.html?id=dev-tools" class="mobile-menu__link">Dev Tools</a>
       <a href="category.html?id=productivity" class="mobile-menu__link">Productivity</a>
@@ -180,11 +182,16 @@
     <div class="container">
       <div class="section__header">
         <div>
-          <div class="section__label">// Latest</div>
-          <h2 class="section__title">Recent Reviews & Guides</h2>
-          <p class="section__subtitle">Stay up to date with our latest in-depth analyses</p>
+          <div class="section__label">// Articles Library</div>
+          <h2 class="section__title">All Reviews & Guides (<span id="totalArticlesBadge">26</span>)</h2>
+          <p class="section__subtitle">Explore our complete collection of deep-dive analyses, comparisons, and tutorials</p>
         </div>
-        <a href="category.html" class="section__link">View All →</a>
+        <a href="category.html" class="section__link">Full Directory →</a>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="filters" id="homeFilters" style="margin-bottom:var(--space-6);display:flex;flex-wrap:wrap;gap:var(--space-2)">
+        <button class="filter-btn active" data-filter="all">All (<span id="filterAllCount">0</span>)</button>
       </div>
 
       <!-- Ad: In-feed -->
@@ -193,6 +200,13 @@
       </div>
 
       <div class="cards-grid" id="latestArticles"></div>
+
+      <!-- Load More Container -->
+      <div id="loadMoreContainer" style="text-align:center;margin-top:var(--space-12)">
+        <button id="loadMoreBtn" class="filter-btn active" style="padding:var(--space-3) var(--space-8);font-size:var(--text-base);font-weight:600;cursor:pointer;display:inline-block">
+          Load More Articles ↓
+        </button>
+      </div>
     </div>
   </section>
 
@@ -305,9 +319,73 @@
         </a>
       `).join('');
 
-      // Latest Articles
-      const latest = getLatestArticles(6).filter(a => !a.featured);
-      document.getElementById('latestArticles').innerHTML = latest.map(a => generateArticleCardHTML(a)).join('');
+      // Render Articles with Category Filters & Load More
+      const homeFilters = document.getElementById('homeFilters');
+      const allNonFeatured = ARTICLES.filter(a => !a.featured);
+
+      document.getElementById('totalArticlesBadge').textContent = ARTICLES.length;
+      document.getElementById('filterAllCount').textContent = allNonFeatured.length;
+
+      // Populate Category Filter Buttons
+      if (homeFilters) {
+        CATEGORIES.forEach(cat => {
+          const btn = document.createElement('button');
+          btn.className = 'filter-btn';
+          btn.dataset.filter = cat.id;
+          btn.textContent = `${cat.icon} ${cat.name} (${cat.count})`;
+          homeFilters.appendChild(btn);
+        });
+
+        homeFilters.addEventListener('click', (e) => {
+          const btn = e.target.closest('.filter-btn');
+          if (!btn) return;
+          homeFilters.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentFilter = btn.dataset.filter;
+          displayedCount = 12;
+          renderArticleList();
+        });
+      }
+
+      let currentFilter = 'all';
+      let displayedCount = 12;
+
+      function getFilteredList() {
+        if (currentFilter === 'all') return allNonFeatured;
+        return allNonFeatured.filter(a => a.category === currentFilter);
+      }
+
+      function renderArticleList() {
+        const list = getFilteredList();
+        const toShow = list.slice(0, displayedCount);
+        const grid = document.getElementById('latestArticles');
+        
+        if (toShow.length === 0) {
+          grid.innerHTML = '<p style="color:var(--text-tertiary);grid-column:1/-1;text-align:center;padding:var(--space-12)">No articles found in this category.</p>';
+        } else {
+          grid.innerHTML = toShow.map(a => generateArticleCardHTML(a)).join('');
+        }
+
+        const loadMoreBtn = document.getElementById('loadMoreBtn');
+        const loadMoreContainer = document.getElementById('loadMoreContainer');
+        if (loadMoreBtn && loadMoreContainer) {
+          if (displayedCount >= list.length) {
+            loadMoreContainer.style.display = 'none';
+          } else {
+            loadMoreContainer.style.display = 'block';
+            loadMoreBtn.textContent = `Load More Articles (${list.length - displayedCount} remaining) ↓`;
+          }
+        }
+
+        if (typeof initScrollAnimations === 'function') initScrollAnimations();
+      }
+
+      renderArticleList();
+
+      document.getElementById('loadMoreBtn')?.addEventListener('click', () => {
+        displayedCount += 12;
+        renderArticleList();
+      });
     });
   </script>
 </body>
