@@ -1271,3 +1271,109 @@ const ARTICLES = [
     }
   }
 ];
+
+// ============================================
+// HELPER FUNCTIONS
+// ============================================
+
+function formatDate(dateStr) {
+  const date = new Date(dateStr);
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+function getArticlesByCategory(categoryId) {
+  return ARTICLES.filter(a => a.category === categoryId);
+}
+
+function getFeaturedArticles() {
+  return ARTICLES.filter(a => a.featured);
+}
+
+function getLatestArticles(count = 6) {
+  return [...ARTICLES]
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .slice(0, count);
+}
+
+function getArticleById(id) {
+  return ARTICLES.find(a => a.id === id);
+}
+
+function getCategoryById(id) {
+  return CATEGORIES.find(c => c.id === id);
+}
+
+function searchArticles(query) {
+  const q = query.toLowerCase().trim();
+  if (!q) return [];
+  return ARTICLES.filter(a =>
+    a.title.toLowerCase().includes(q) ||
+    a.excerpt.toLowerCase().includes(q) ||
+    a.tags.some(t => t.toLowerCase().includes(q)) ||
+    a.category.toLowerCase().includes(q)
+  );
+}
+
+function generateStars(rating) {
+  const full = Math.floor(rating);
+  const half = rating % 1 >= 0.3;
+  let stars = '';
+  for (let i = 0; i < full; i++) stars += '★';
+  if (half) stars += '½';
+  const empty = 5 - full - (half ? 1 : 0);
+  for (let i = 0; i < empty; i++) stars += '☆';
+  return stars;
+}
+
+function generateArticleCardHTML(article, featured = false) {
+  const category = getCategoryById(article.category);
+  return `
+    <article class="card ${featured ? 'card--featured' : ''}" onclick="navigateToArticle('${article.id}')">
+      <div class="card__image">
+        <div style="width:100%;height:100%;background:linear-gradient(135deg, ${getGradientForCategory(article.category)});display:flex;align-items:center;justify-content:center;font-size:${featured ? '4rem' : '3rem'}">
+          ${category ? category.icon : '📄'}
+        </div>
+        <div class="card__image-overlay"></div>
+        <span class="card__badge">${category ? category.name : ''}</span>
+        <span class="card__rating">★ ${article.rating}</span>
+      </div>
+      <div class="card__body">
+        <div class="card__meta">
+          <span class="card__meta-item">📅 ${formatDate(article.date)}</span>
+          <span class="card__meta-dot"></span>
+          <span class="card__meta-item">⏱ ${article.readTime}</span>
+        </div>
+        <h3 class="card__title">${article.title}</h3>
+        <p class="card__excerpt">${article.excerpt}</p>
+        <div class="card__footer">
+          <div class="card__author">
+            <div class="card__author-avatar">${article.authorInitial}</div>
+            <span class="card__author-name">${article.author}</span>
+          </div>
+          <span class="card__read-more">Read More →</span>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function getGradientForCategory(categoryId) {
+  const gradients = {
+    'ai-tools': '#6C5CE7 0%, #A29BFE 50%, #6C5CE7 100%',
+    'productivity': '#00D2FF 0%, #0099CC 50%, #00D2FF 100%',
+    'dev-tools': '#00B894 0%, #00FF88 50%, #00B894 100%',
+    'design': '#FF6B6B 0%, #FF8E8E 50%, #FF6B6B 100%',
+    'security': '#FDCB6E 0%, #FFD700 50%, #FDCB6E 100%',
+    'cloud': '#72EFDD 0%, #48C9B0 50%, #72EFDD 100%'
+  };
+  return gradients[categoryId] || '#6C5CE7 0%, #A29BFE 100%';
+}
+
+function navigateToArticle(articleId) {
+  window.location.href = `article.html?id=${articleId}`;
+}
+
+function navigateToCategory(categoryId) {
+  window.location.href = `category.html?id=${categoryId}`;
+}
+
