@@ -7,6 +7,7 @@
   <meta name="description" content="Your go-to source for in-depth reviews, comparisons, and guides on the latest AI tools, software, and digital productivity solutions.">
   <meta name="keywords" content="AI tools, tech reviews, software comparison, productivity apps, developer tools, AI assistants">
   <meta name="author" content="TechNova AI">
+  <link rel="canonical" href="https://www.technova-ai.online/">
 
   <!-- Open Graph -->
   <meta property="og:type" content="website">
@@ -22,14 +23,33 @@
   <meta name="twitter:description" content="Your go-to source for in-depth reviews, comparisons, and guides on the latest AI tools and software.">
   <meta name="twitter:image" content="https://www.technova-ai.online/assets/og-image.jpg">
 
-  <!-- Structured Data -->
+  <!-- Structured Data: Organization -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "TechNova AI",
     "description": "In-depth reviews, comparisons, and guides on the latest AI tools and software.",
-    "url": "https://technova-ai.vercel.app"
+    "url": "https://www.technova-ai.online",
+    "logo": "https://www.technova-ai.online/assets/og-image.jpg"
+  }
+  </script>
+
+  <!-- Structured Data: WebSite with SearchAction -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "TechNova AI",
+    "url": "https://www.technova-ai.online",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://www.technova-ai.online/category.html?search={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    }
   }
   </script>
 

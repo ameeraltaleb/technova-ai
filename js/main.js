@@ -106,7 +106,7 @@ function initSearch() {
 
       const found = searchArticles(query);
       if (found.length === 0) {
-        results.innerHTML = `<div class="search-modal__empty">No results found for "${query}"</div>`;
+        results.innerHTML = `<div class="search-modal__empty">No results found for "${escapeHTML(query)}"</div>`;
         return;
       }
 
@@ -153,8 +153,15 @@ function initSearch() {
   }
 }
 
+function escapeHTML(str) {
+  const div = document.createElement('div');
+  div.appendChild(document.createTextNode(str));
+  return div.innerHTML;
+}
+
 function highlightMatch(text, query) {
-  const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
+  const safeQuery = escapeHTML(query);
+  const regex = new RegExp(`(${escapeRegex(safeQuery)})`, 'gi');
   return text.replace(regex, '<strong style="color:var(--color-accent)">$1</strong>');
 }
 

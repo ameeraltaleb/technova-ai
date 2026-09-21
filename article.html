@@ -6,19 +6,24 @@
   <title>Article — TechNova AI</title>
   <meta name="description" content="">
   <meta name="author" content="TechNova AI">
+  <link rel="canonical" id="canonicalLink" href="https://www.technova-ai.online/article.html">
   <!-- Open Graph -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://www.technova-ai.online/">
-  <meta property="og:title" content="TechNova AI — Discover, Compare &amp; Master the Best AI Tools">
-  <meta property="og:description" content="Your go-to source for in-depth reviews, comparisons, and guides on the latest AI tools and software.">
-  <meta property="og:image" content="https://www.technova-ai.online/assets/og-image.jpg">
+  <meta property="og:type" id="ogType" content="article">
+  <meta property="og:url" id="ogUrl" content="https://www.technova-ai.online/">
+  <meta property="og:title" id="ogTitle" content="TechNova AI — Discover, Compare &amp; Master the Best AI Tools">
+  <meta property="og:description" id="ogDescription" content="Your go-to source for in-depth reviews, comparisons, and guides on the latest AI tools and software.">
+  <meta property="og:image" id="ogImage" content="https://www.technova-ai.online/assets/og-image.jpg">
+  <meta property="og:site_name" content="TechNova AI">
+  <meta property="article:published_time" id="ogArticlePublished" content="">
+  <meta property="article:author" content="TechNova AI">
+  <meta property="article:section" id="ogArticleSection" content="">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:url" content="https://www.technova-ai.online/">
-  <meta name="twitter:title" content="TechNova AI — Discover, Compare &amp; Master the Best AI Tools">
-  <meta name="twitter:description" content="Your go-to source for in-depth reviews, comparisons, and guides on the latest AI tools and software.">
-  <meta name="twitter:image" content="https://www.technova-ai.online/assets/og-image.jpg">
+  <meta name="twitter:url" id="twitterUrl" content="https://www.technova-ai.online/">
+  <meta name="twitter:title" id="twitterTitle" content="TechNova AI — Discover, Compare &amp; Master the Best AI Tools">
+  <meta name="twitter:description" id="twitterDescription" content="Your go-to source for in-depth reviews, comparisons, and guides on the latest AI tools and software.">
+  <meta name="twitter:image" id="twitterImage" content="https://www.technova-ai.online/assets/og-image.jpg">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
   <link rel="stylesheet" href="styles/main.css">
   <meta name="google-site-verification" content="pz9GEGv-Bv4P9R1DSaF51xHj0bW2cBos1PNYkLTLtYQ" />
@@ -259,19 +264,81 @@
       document.title = `${article.title} — TechNova AI`;
       document.querySelector('meta[name="description"]').content = article.excerpt;
 
-      // Structured Data
-      const ld = document.createElement('script');
-      ld.type = 'application/ld+json';
-      ld.textContent = JSON.stringify({
+      // Dynamic OG Tags
+      const articleUrl = `https://www.technova-ai.online/article.html?id=${article.id}`;
+      const articleImage = article.image || 'https://www.technova-ai.online/assets/og-image.jpg';
+      document.getElementById('canonicalLink').href = articleUrl;
+      document.getElementById('ogUrl').content = articleUrl;
+      document.getElementById('ogTitle').content = article.title;
+      document.getElementById('ogDescription').content = article.excerpt;
+      document.getElementById('ogImage').content = articleImage;
+      document.getElementById('ogArticlePublished').content = article.date;
+      document.getElementById('ogArticleSection').content = category ? category.name : '';
+      document.getElementById('twitterUrl').content = articleUrl;
+      document.getElementById('twitterTitle').content = article.title;
+      document.getElementById('twitterDescription').content = article.excerpt;
+      document.getElementById('twitterImage').content = articleImage;
+
+      // Calculate word count from content
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = article.content;
+      const wordCount = tempDiv.textContent.trim().split(/\s+/).length;
+
+      // Enhanced Structured Data — Article
+      const ldArticle = document.createElement('script');
+      ldArticle.type = 'application/ld+json';
+      ldArticle.textContent = JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Article",
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": articleUrl
+        },
         "headline": article.title,
         "description": article.excerpt,
+        "image": articleImage,
         "author": { "@type": "Person", "name": article.author },
         "datePublished": article.date,
-        "publisher": { "@type": "Organization", "name": "TechNova AI" }
+        "dateModified": article.date,
+        "wordCount": wordCount,
+        "publisher": {
+          "@type": "Organization",
+          "name": "TechNova AI",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.technova-ai.online/assets/og-image.jpg"
+          }
+        }
       });
-      document.head.appendChild(ld);
+      document.head.appendChild(ldArticle);
+
+      // Structured Data — BreadcrumbList
+      const ldBreadcrumb = document.createElement('script');
+      ldBreadcrumb.type = 'application/ld+json';
+      ldBreadcrumb.textContent = JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://www.technova-ai.online/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": category ? category.name : 'Articles',
+            "item": `https://www.technova-ai.online/category.html?id=${article.category}`
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": article.title
+          }
+        ]
+      });
+      document.head.appendChild(ldBreadcrumb);
 
       // Breadcrumb
       const breadCat = document.getElementById('breadcrumbCategory');
