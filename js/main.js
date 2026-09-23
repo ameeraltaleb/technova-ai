@@ -334,3 +334,36 @@ function shareArticle(platform) {
     window.open(urls[platform], '_blank', 'width=600,height=400');
   }
 }
+
+function generateToolCardHTML(tool) {
+  return \`n  <a href="\\" target="_blank" rel="noopener noreferrer" class="article-card" style="display:flex;flex-direction:column;">
+    <div style="padding:var(--space-6);background:rgba(255,255,255,0.02);display:flex;align-items:center;justify-content:center;font-size:3rem;height:120px;">
+      \\
+    </div>
+    <div class="article-card__content" style="flex:1;display:flex;flex-direction:column;">
+      <div class="article-card__meta">
+        <span class="article-card__tag">\\</span>
+        <span>? \\</span>
+      </div>
+      <h3 class="article-card__title">\\</h3>
+      <p class="article-card__excerpt" style="flex:1;">\\</p>
+      <div style="margin-top:var(--space-4);font-size:var(--text-sm);color:var(--color-primary-light);font-weight:600;">
+        \\ ?
+      </div>
+    </div>
+  </a>
+  \;
+}
+
+function generateNewsItemHTML(news) {
+  return \`n  <article class="news-card" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:var(--space-6);margin-bottom:var(--space-4);transition:transform 0.3s ease;">
+    <div style="display:flex;justify-content:space-between;margin-bottom:var(--space-2);font-size:var(--text-sm);color:var(--text-tertiary);">
+      <span style="font-weight:600;color:var(--color-primary-light);">\\</span>
+      <span>\\</span>
+    </div>
+    <h3 style="font-size:var(--text-xl);margin-bottom:var(--space-3);line-height:1.4;">\\</h3>
+    <p style="color:var(--text-secondary);line-height:1.6;">\\</p>
+  </article>
+  \;
+}
+

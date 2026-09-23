@@ -1744,3 +1744,110 @@ function navigateToCategory(categoryId) {
   window.location.href = `category.html?id=${categoryId}`;
 }
 
+
+// ============================================
+// AI TOOLS DIRECTORY
+// ============================================
+const TOOLS = [
+  {
+    id: "chatgpt",
+    name: "ChatGPT",
+    description: "The industry-standard AI chatbot by OpenAI. Perfect for coding, writing, and brainstorming.",
+    url: "https://chatgpt.com",
+    category: "productivity",
+    pricing: "Freemium (/mo)",
+    rating: 4.9,
+    icon: "??"
+  },
+  {
+    id: "midjourney",
+    name: "Midjourney",
+    description: "The most powerful AI image generator available, producing hyper-realistic art and photography.",
+    url: "https://midjourney.com",
+    category: "design",
+    pricing: "Paid (/mo)",
+    rating: 4.8,
+    icon: "??"
+  },
+  {
+    id: "cursor",
+    name: "Cursor",
+    description: "An AI-first code editor built on VS Code. The best Copilot alternative for serious developers.",
+    url: "https://cursor.com",
+    category: "dev-tools",
+    pricing: "Freemium (/mo)",
+    rating: 4.9,
+    icon: "??"
+  },
+  {
+    id: "claude",
+    name: "Claude 3.5",
+    description: "Anthropic's LLM that excels at nuance, large context windows, and advanced reasoning.",
+    url: "https://claude.ai",
+    category: "productivity",
+    pricing: "Freemium (/mo)",
+    rating: 4.8,
+    icon: "??"
+  },
+  {
+    id: "figma-ai",
+    name: "Figma AI",
+    description: "Generate UI designs, organize layers, and remove backgrounds instantly within Figma.",
+    url: "https://figma.com",
+    category: "design",
+    pricing: "Freemium",
+    rating: 4.7,
+    icon: "?"
+  },
+  {
+    id: "v0-dev",
+    name: "v0 by Vercel",
+    description: "Generate production-ready React UI components using simple text prompts.",
+    url: "https://v0.dev",
+    category: "dev-tools",
+    pricing: "Freemium",
+    rating: 4.6,
+    icon: "?"
+  }
+];
+
+// ============================================
+// TECH NEWS BITES
+// ============================================
+const NEWS = [
+  {
+    id: "gpt5-rumors-2026",
+    headline: "OpenAI Teases 'Strawberry' Architecture for Next-Gen Models",
+    content: "Rumors are swirling around OpenAI's upcoming model release, internally dubbed 'Strawberry', which reportedly features significantly advanced step-by-step reasoning capabilities for complex mathematics and coding.",
+    date: "2026-09-22",
+    source: "TechCrunch"
+  },
+  {
+    id: "vercel-acquires-startup",
+    headline: "Vercel Announces Major Edge Computing Upgrades",
+    content: "Vercel has just rolled out its new global edge network architecture, promising 30% faster serverless function execution times and cheaper bandwidth for Next.js users.",
+    date: "2026-09-21",
+    source: "Vercel Blog"
+  },
+  {
+    id: "react-19-adoption",
+    headline: "React 19 Reaches 50% Adoption Among Enterprise Apps",
+    content: "A recent survey shows that over half of enterprise frontend teams have fully migrated to React 19, heavily utilizing the new React Compiler to eliminate manual useMemo hooks.",
+    date: "2026-09-18",
+    source: "Frontend Daily"
+  },
+  {
+    id: "eu-ai-act",
+    headline: "EU AI Act Begins Strict Enforcement on Open Source",
+    content: "The European Union has officially started enforcing compliance for high-risk AI models. Open-source developers are scrambling to understand the liability clauses for releasing unaligned foundation models.",
+    date: "2026-09-15",
+    source: "Wired"
+  },
+  {
+    id: "apple-intelligence",
+    headline: "Apple Intelligence Officially Rolls Out to MacBooks",
+    content: "After months of beta testing, Apple Intelligence is now live on macOS, integrating on-device AI directly into Xcode, Mail, and Safari for M-series chips.",
+    date: "2026-09-10",
+    source: "The Verge"
+  }
+];

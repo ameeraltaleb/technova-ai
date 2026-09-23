@@ -86,6 +86,8 @@
       <div class="navbar__nav">
         <a href="index.html" class="navbar__link active">Home</a>
         <a href="category.html" class="navbar__link">All Articles</a>
+        <a href="tools.html" class="navbar__link">Tools Directory</a>
+        <a href="news.html" class="navbar__link">News</a>
         <a href="category.html?id=ai-tools" class="navbar__link">AI Tools</a>
         <a href="category.html?id=dev-tools" class="navbar__link">Dev Tools</a>
         <a href="category.html?id=productivity" class="navbar__link">Productivity</a>
@@ -106,6 +108,8 @@
     <div class="mobile-menu__inner">
       <a href="index.html" class="mobile-menu__link">Home</a>
       <a href="category.html" class="mobile-menu__link">All Articles</a>
+      <a href="tools.html" class="mobile-menu__link">Tools Directory</a>
+      <a href="news.html" class="mobile-menu__link">News</a>
       <a href="category.html?id=ai-tools" class="mobile-menu__link">AI Tools</a>
       <a href="category.html?id=dev-tools" class="mobile-menu__link">Dev Tools</a>
       <a href="category.html?id=productivity" class="mobile-menu__link">Productivity</a>
@@ -198,7 +202,38 @@
     </div>
   </section>
 
+
+
+  <!-- Top AI Tools Widget -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section__header">
+        <div>
+          <div class="section__label">// Directory</div>
+          <h2 class="section__title">Top AI Tools</h2>
+        </div>
+        <a href="tools.html" class="section__link">View All Tools →</a>
+      </div>
+      <div class="cards-grid" id="homeToolsWidget" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));"></div>
+    </div>
+  </section>
+
+  <!-- Trending Tech News Widget -->
+  <section class="section">
+    <div class="container">
+      <div class="section__header">
+        <div>
+          <div class="section__label">// Breaking</div>
+          <h2 class="section__title">Trending Tech News</h2>
+        </div>
+        <a href="news.html" class="section__link">View All News →</a>
+      </div>
+      <div id="homeNewsWidget" style="display:grid;gap:var(--space-4);max-width:800px;"></div>
+    </div>
+  </section>
+
   <!-- Categories -->
+
   <section class="section section--alt">
     <div class="container">
       <div class="section__header">
