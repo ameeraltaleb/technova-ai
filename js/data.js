@@ -1816,6 +1816,77 @@ const TOOLS = [
 // ============================================
 const NEWS = [
   {
+    id: "openai-gpt-5-release",
+    headline: "OpenAI Officially Unveils GPT-5: A Quantum Leap in Reasoning",
+    content: "OpenAI has officially launched GPT-5, demonstrating unprecedented zero-shot reasoning capabilities and near-human performance on complex physics and mathematical benchmarks.",
+    date: "2026-09-23",
+    source: "The Verge"
+  },
+  {
+    id: "google-deepmind-medical",
+    headline: "DeepMind's AlphaMed Solves 50-Year-Old Protein Challenge",
+    content: "Google DeepMind announced a breakthrough in predicting protein folding for rare diseases, potentially accelerating the drug discovery process by over a decade.",
+    date: "2026-09-22",
+    source: "Nature"
+  },
+  {
+    id: "nvidia-blackwell-ultra",
+    headline: "NVIDIA Unveils Blackwell Ultra: The Ultimate AI Chip",
+    content: "NVIDIA's CEO Jensen Huang announced the Blackwell Ultra architecture, delivering a 10x performance boost for training trillion-parameter models while slashing energy consumption by 40%.",
+    date: "2026-09-21",
+    source: "Bloomberg"
+  },
+  {
+    id: "eu-ai-act-fines",
+    headline: "First Major Fines Issued Under the EU AI Act",
+    content: "European regulators have levied their first multi-million euro fines against three tech giants for failing to properly label AI-generated deepfakes in consumer advertising.",
+    date: "2026-09-20",
+    source: "Reuters"
+  },
+  {
+    id: "apple-intelligence-homepod",
+    headline: "Apple Intelligence Revamps the HomePod Experience",
+    content: "Apple's latest software update integrates fully on-device LLMs into the HomePod, allowing Siri to handle complex, multi-step smart home commands without internet latency.",
+    date: "2026-09-19",
+    source: "9to5Mac"
+  },
+  {
+    id: "meta-llama-4-open-source",
+    headline: "Meta Releases Llama 4 as Fully Open Source",
+    content: "Mark Zuckerberg confirmed that Meta's Llama 4, a 500-billion parameter model, is now available to developers completely open-source, escalating the AI arms race.",
+    date: "2026-09-18",
+    source: "Wired"
+  },
+  {
+    id: "microsoft-copilot-os",
+    headline: "Microsoft Teases Windows 12: An AI-First Operating System",
+    content: "Leaked developer builds of Windows 12 show an OS fundamentally rebuilt around Copilot, where natural language commands can control system settings and file management seamlessly.",
+    date: "2026-09-17",
+    source: "Windows Central"
+  },
+  {
+    id: "ai-hollywood-strike",
+    headline: "Hollywood Studios Reach Historic Agreement on AI Usage",
+    content: "Major studios and actor guilds have signed a landmark 5-year agreement establishing strict ethical boundaries and royalties for using AI-generated likenesses in blockbuster films.",
+    date: "2026-09-16",
+    source: "Variety"
+  },
+  {
+    id: "boston-dynamics-atlas-ai",
+    headline: "Boston Dynamics Integrates Multimodal AI into Atlas Robot",
+    content: "The latest humanoid robot from Boston Dynamics can now interpret visual and verbal commands simultaneously, successfully navigating a chaotic construction site autonomously.",
+    date: "2026-09-15",
+    source: "TechCrunch"
+  },
+  {
+    id: "xai-grok-3",
+    headline: "xAI Launches Grok 3 with Live Web Integration",
+    content: "Elon Musk's xAI released Grok 3, which features real-time, unfiltered access to global news streams and financial markets, aiming to be the most current AI assistant available.",
+    date: "2026-09-14",
+    source: "Wall Street Journal"
+  },
+
+  {
     id: "gpt5-rumors-2026",
     headline: "OpenAI Teases 'Strawberry' Architecture for Next-Gen Models",
     content: "Rumors are swirling around OpenAI's upcoming model release, internally dubbed 'Strawberry', which reportedly features significantly advanced step-by-step reasoning capabilities for complex mathematics and coding.",
