@@ -1650,7 +1650,7 @@ export const TOOLS = [
     category: "productivity",
     pricing: "Freemium (/mo)",
     rating: 4.9,
-    icon: "??"
+    icon: "💬"
   },
   {
     id: "midjourney",
@@ -1660,7 +1660,7 @@ export const TOOLS = [
     category: "design",
     pricing: "Paid (/mo)",
     rating: 4.8,
-    icon: "??"
+    icon: "🎨"
   },
   {
     id: "cursor",
@@ -1670,7 +1670,7 @@ export const TOOLS = [
     category: "dev-tools",
     pricing: "Freemium (/mo)",
     rating: 4.9,
-    icon: "??"
+    icon: "💻"
   },
   {
     id: "claude",
@@ -1680,7 +1680,7 @@ export const TOOLS = [
     category: "productivity",
     pricing: "Freemium (/mo)",
     rating: 4.8,
-    icon: "??"
+    icon: "🧠"
   },
   {
     id: "figma-ai",

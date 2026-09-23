@@ -27,7 +27,7 @@ export default function ToolsPage() {
           <div className="cards-grid" id="toolsGrid">
             {TOOLS.map(tool => (
               <a key={tool.id} href={tool.url} target="_blank" rel="noopener noreferrer" className="article-card" style={{ display: 'flex', flexDirection: 'column' }}>
-                <div style={{ padding: 'var(--space-6)', background: 'rgba(255,255,255,0.02)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem', height: '120px' }}>
+                <div style={{ padding: 'var(--space-6)', background: 'var(--bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem', height: '120px' }}>
                   {tool.icon}
                 </div>
                 <div className="article-card__content" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
