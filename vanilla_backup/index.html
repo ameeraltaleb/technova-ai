@@ -376,6 +376,18 @@
         document.getElementById('featuredArticle').innerHTML = generateArticleCardHTML(featured[0], true);
       }
 
+// Render Top AI Tools Widget
+      const toolsGrid = document.getElementById('homeToolsWidget');
+      if (toolsGrid) {
+        toolsGrid.innerHTML = TOOLS.slice(0, 4).map(t => generateToolCardHTML(t)).join('');
+      }
+
+      // Render Trending News Widget
+      const newsGrid = document.getElementById('homeNewsWidget');
+      if (newsGrid) {
+        newsGrid.innerHTML = NEWS.slice(0, 3).map(n => generateNewsItemHTML(n)).join('');
+      }
+
       // Categories
       const catGrid = document.getElementById('categoriesGrid');
       catGrid.innerHTML = CATEGORIES.map(cat => `
