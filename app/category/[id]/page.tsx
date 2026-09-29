@@ -1,4 +1,5 @@
 import { CATEGORIES, ARTICLES } from '@/lib/data';
+import { getArticleImage } from '@/lib/utils';
 import Link from 'next/link';
 
 export function generateStaticParams() {
@@ -7,23 +8,26 @@ export function generateStaticParams() {
   }));
 }
 
-export function generateMetadata({ params }: { params: { id: string } }) {
-  const cat = CATEGORIES.find(c => c.id === params.id);
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const cat = CATEGORIES.find(c => c.id === id);
   if (!cat) return { title: 'Category Not Found' };
   return {
     title: `${cat.name} — TechNova AI`,
-    description: `Browse all articles related to ${cat.name} on TechNova AI.`,
+    description: `Browse all ${cat.count} articles related to ${cat.name} on TechNova AI.`,
   };
 }
 
-export default function CategoryPage({ params }: { params: { id: string } }) {
-  const category = CATEGORIES.find(c => c.id === params.id);
-  const articles = ARTICLES.filter(a => a.category === params.id);
+export default async function CategoryPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const category = CATEGORIES.find(c => c.id === id);
+  const articles = ARTICLES.filter(a => a.category === id);
 
   if (!category) {
     return (
       <div className="container" style={{ padding: 'var(--space-12) 0', textAlign: 'center' }}>
         <h1>Category not found</h1>
+        <Link href="/category" style={{ color: 'var(--text-link)', marginTop: 'var(--space-4)', display: 'inline-block' }}>← Browse All Categories</Link>
       </div>
     );
   }
@@ -34,12 +38,13 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
         <div className="container">
           <div className="article__breadcrumb">
             <Link href="/">Home</Link> <span>/</span>
+            <Link href="/category">Categories</Link> <span>/</span>
             <span>{category.name}</span>
           </div>
           <div className={`category-hero__icon ${category.iconClass}`}>{category.icon}</div>
           <h1 className="category-hero__title">{category.name}</h1>
-          <p className="category-hero__description">Explore {category.name} articles and reviews.</p>
-          <p className="category-hero__count">{category.count} articles</p>
+          <p className="category-hero__description">{category.description}</p>
+          <p className="category-hero__count">{articles.length} article{articles.length !== 1 ? 's' : ''}</p>
         </div>
       </section>
 
@@ -47,12 +52,12 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
         <div className="container">
           <div className="cards-grid">
             {articles.length === 0 ? (
-              <p style={{ color: 'var(--text-tertiary)' }}>No articles found.</p>
+              <p style={{ color: 'var(--text-tertiary)' }}>No articles found in this category yet.</p>
             ) : (
               articles.map(a => (
                 <Link key={a.id} href={`/article/${a.id}`} className="article-card">
                   <div className="article-card__image-container">
-                    <img src={a.image} alt={a.title} className="article-card__image" />
+                    <img src={getArticleImage(a)} alt={a.title} className="article-card__image" loading="lazy" />
                     <div className="article-card__category">{a.category}</div>
                   </div>
                   <div className="article-card__content">

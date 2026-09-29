@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export const metadata = {
   title: 'All Categories — TechNova AI',
-  description: 'Browse all categories on TechNova AI.',
+  description: 'Browse all article categories on TechNova AI — AI Tools, Dev Tools, Productivity, Design, Security, Cloud, and more.',
 };
 
 export default function AllCategoriesPage() {
@@ -11,7 +11,13 @@ export default function AllCategoriesPage() {
     <>
       <section className="category-hero">
         <div className="container">
+          <div className="article__breadcrumb">
+            <Link href="/">Home</Link> <span>/</span>
+            <span>Categories</span>
+          </div>
           <h1 className="category-hero__title">All Categories</h1>
+          <p className="category-hero__description">Browse all topics covered on TechNova AI</p>
+          <p className="category-hero__count">{CATEGORIES.length} categories</p>
         </div>
       </section>
 

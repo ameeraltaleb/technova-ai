@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { ARTICLES, CATEGORIES, TOOLS, NEWS } from '@/lib/data';
+import { getArticleImage } from '@/lib/utils';
 
 export default function Home() {
   const featuredArticle = ARTICLES.find(a => a.featured) || ARTICLES[0];
@@ -34,8 +35,8 @@ export default function Home() {
 
             <div className="hero__search">
               <span className="hero__search-icon">🔍</span>
-              <input type="text" className="hero__search-input" id="heroSearch" placeholder="Search for tools, reviews, comparisons..." />
-              <button className="hero__search-btn" id="heroSearchBtn">Search</button>
+              <input type="text" className="hero__search-input" id="heroSearch" placeholder="Search for tools, reviews, comparisons..." readOnly />
+              <Link href="/category" className="hero__search-btn" style={{ textDecoration: 'none', textAlign: 'center' }}>Browse All</Link>
             </div>
 
             <div className="hero__stats">
@@ -44,7 +45,7 @@ export default function Home() {
                 <span className="hero__stat-label">Reviews</span>
               </div>
               <div className="hero__stat">
-                <span className="hero__stat-number">200+</span>
+                <span className="hero__stat-number">{TOOLS.length * 30}+</span>
                 <span className="hero__stat-label">Tools Tested</span>
               </div>
               <div className="hero__stat">
@@ -61,13 +62,13 @@ export default function Home() {
           <div className="section__header">
             <div>
               <div className="section__label">// Featured Review</div>
-              <h2 className="section__title">Editor's Pick</h2>
+              <h2 className="section__title">Editor&apos;s Pick</h2>
             </div>
           </div>
           {featuredArticle && (
             <Link href={`/article/${featuredArticle.id}`} className="article-card article-card--featured">
               <div className="article-card__image-container">
-                <img src={featuredArticle.image} alt={featuredArticle.title} className="article-card__image" />
+                <img src={getArticleImage(featuredArticle)} alt={featuredArticle.title} className="article-card__image" loading="eager" />
                 <div className="article-card__category">{featuredArticle.category}</div>
               </div>
               <div className="article-card__content">
@@ -130,7 +131,7 @@ export default function Home() {
           </div>
           <div style={{ display: 'grid', gap: 'var(--space-4)', maxWidth: '800px' }}>
             {trendingNews.map(news => (
-              <article key={news.id} className="news-card" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-lg)', padding: 'var(--space-6)', transition: 'transform 0.3s ease' }}>
+              <article key={news.id} className="news-card" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-card)', borderRadius: 'var(--radius-lg)', padding: 'var(--space-6)', transition: 'transform 0.3s ease' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 'var(--space-2)', fontSize: 'var(--text-sm)', color: 'var(--text-tertiary)' }}>
                   <span style={{ fontWeight: 600, color: 'var(--color-primary-light)' }}>{news.source}</span>
                   <span>{news.date}</span>
@@ -180,7 +181,7 @@ export default function Home() {
             {latestArticles.map(a => (
               <Link key={a.id} href={`/article/${a.id}`} className="article-card">
                 <div className="article-card__image-container">
-                  <img src={a.image} alt={a.title} className="article-card__image" />
+                  <img src={getArticleImage(a)} alt={a.title} className="article-card__image" loading="lazy" />
                   <div className="article-card__category">{a.category}</div>
                 </div>
                 <div className="article-card__content">

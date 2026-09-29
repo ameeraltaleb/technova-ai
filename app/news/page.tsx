@@ -26,7 +26,7 @@ export default function NewsPage() {
         <div className="container">
           <div style={{ display: 'grid', gap: 'var(--space-4)', maxWidth: '800px', margin: '0 auto' }}>
             {NEWS.map(news => (
-              <article key={news.id} className="news-card" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-lg)', padding: 'var(--space-6)', transition: 'transform 0.3s ease' }}>
+              <article key={news.id} className="news-card" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-card)', borderRadius: 'var(--radius-lg)', padding: 'var(--space-6)', transition: 'transform 0.3s ease' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 'var(--space-2)', fontSize: 'var(--text-sm)', color: 'var(--text-tertiary)' }}>
                   <span style={{ fontWeight: 600, color: 'var(--color-primary-light)' }}>{news.source}</span>
                   <span>{news.date}</span>

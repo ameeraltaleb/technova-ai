@@ -2,7 +2,7 @@
 // TechNova AI — Articles Data
 
 
-const SITE_CONFIG = {
+export const SITE_CONFIG = {
   "name": "TechNova AI",
   "tagline": "Discover, Compare & Master the Best AI & Tech Tools",
   "description": "Your go-to source for in-depth reviews, comparisons, and guides on the latest AI tools, software, and digital productivity solutions.",
@@ -59,6 +59,30 @@ export const CATEGORIES = [
     "iconClass": "category-card__icon--cloud",
     "description": "Cloud platforms, SaaS solutions, and infrastructure tools for businesses of all sizes.",
     "count": 5
+  },
+  {
+    "id": "technology",
+    "name": "Technology",
+    "icon": "🔬",
+    "iconClass": "category-card__icon--tech",
+    "description": "Emerging technologies, industry trends, and deep dives into the tech shaping our future.",
+    "count": 0
+  },
+  {
+    "id": "programming",
+    "name": "Programming",
+    "icon": "🧑‍💻",
+    "iconClass": "category-card__icon--programming",
+    "description": "Programming languages, coding best practices, and software engineering insights.",
+    "count": 0
+  },
+  {
+    "id": "crypto",
+    "name": "Crypto & Web3",
+    "icon": "🪙",
+    "iconClass": "category-card__icon--crypto",
+    "description": "Cryptocurrency, blockchain technology, DeFi, and the evolving Web3 ecosystem.",
+    "count": 0
   }
 ];
 
@@ -1639,6 +1663,11 @@ export const ARTICLES = [
   }
 ];
 
+// Dynamically compute article counts per category
+CATEGORIES.forEach(cat => {
+  cat.count = ARTICLES.filter(a => a.category === cat.id).length;
+});
+
 // AI TOOLS DIRECTORY
 
 export const TOOLS = [
@@ -1690,7 +1719,7 @@ export const TOOLS = [
     category: "design",
     pricing: "Freemium",
     rating: 4.7,
-    icon: "?"
+    icon: "🖌️"
   },
   {
     id: "v0-dev",
@@ -1700,7 +1729,7 @@ export const TOOLS = [
     category: "dev-tools",
     pricing: "Freemium",
     rating: 4.6,
-    icon: "?"
+    icon: "▲"
   }
 ];
 
