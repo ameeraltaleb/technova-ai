@@ -62,7 +62,7 @@ export default function NewsTab({ news, onEdit, onDelete, onNew }: NewsTabProps)
               filtered.map((item) => (
                 <tr key={item.id}>
                   <td style={{ maxWidth: '380px' }}>
-                    <div style={{ fontWeight: 600, color: '#fff' }}>{item.headline}</div>
+                    <div style={{ fontWeight: 600, color: 'var(--admin-text-main)' }}>{item.headline}</div>
                     <div
                       style={{
                         fontSize: '0.75rem',

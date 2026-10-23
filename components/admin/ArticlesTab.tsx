@@ -89,7 +89,7 @@ export default function ArticlesTab({
               filtered.map((art) => (
                 <tr key={art.id}>
                   <td style={{ maxWidth: '340px' }}>
-                    <div style={{ fontWeight: 600, color: '#fff', marginBottom: '2px' }}>
+                    <div style={{ fontWeight: 600, color: 'var(--admin-text-main)', marginBottom: '2px' }}>
                       {art.title}
                     </div>
                     <div

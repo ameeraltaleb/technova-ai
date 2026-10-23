@@ -85,9 +85,9 @@ export default function OverviewTab({
       <div
         className="admin-panel"
         style={{
-          padding: '20px',
-          background: 'linear-gradient(135deg, rgba(108, 92, 231, 0.12) 0%, rgba(17, 24, 39, 0.6) 100%)',
-          borderColor: 'rgba(108, 92, 231, 0.25)',
+          padding: '22px',
+          background: 'linear-gradient(135deg, #eef2ff 0%, #ffffff 100%)',
+          borderColor: '#e0e7ff',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>

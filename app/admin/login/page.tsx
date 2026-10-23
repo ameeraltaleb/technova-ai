@@ -37,7 +37,7 @@ export default function AdminLoginPage() {
     <div
       style={{
         minHeight: '100vh',
-        background: '#0b0f19',
+        background: '#f8fafc',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -48,10 +48,10 @@ export default function AdminLoginPage() {
         className="admin-modal"
         style={{
           maxWidth: '420px',
-          padding: '36px 32px',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7)',
-          border: '1px solid rgba(108, 92, 231, 0.3)',
-          background: 'linear-gradient(180deg, #111827 0%, #0d121f 100%)',
+          padding: '40px 34px',
+          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04)',
+          border: '1px solid #e2e8f0',
+          background: '#ffffff',
         }}
       >
         <div style={{ textAlign: 'center', marginBottom: '28px' }}>
@@ -59,18 +59,18 @@ export default function AdminLoginPage() {
             src="/logo.png"
             alt="TechNova AI"
             style={{
-              width: '54px',
-              height: '54px',
-              borderRadius: '12px',
+              width: '56px',
+              height: '56px',
+              borderRadius: '14px',
               marginBottom: '14px',
-              boxShadow: '0 0 20px rgba(108, 92, 231, 0.4)',
-              border: '1px solid rgba(108, 92, 231, 0.5)',
+              boxShadow: '0 4px 12px rgba(79, 70, 229, 0.15)',
+              border: '1px solid #cbd5e1',
             }}
           />
-          <h1 style={{ fontSize: '1.4rem', fontWeight: 800, margin: '0 0 6px', color: '#fff' }}>
+          <h1 style={{ fontSize: '1.45rem', fontWeight: 800, margin: '0 0 6px', color: '#0f172a' }}>
             TechNova AI Admin
           </h1>
-          <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--admin-text-muted)' }}>
+          <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b' }}>
             Sign in to manage articles, tools directory, and monetization
           </p>
         </div>

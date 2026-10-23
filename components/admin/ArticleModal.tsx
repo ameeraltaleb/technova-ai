@@ -149,9 +149,9 @@ export default function ArticleModal({
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', flex: 1 }}>
           <div className="admin-modal__body">
             {activeTab === 'preview' ? (
-              <div style={{ background: '#0b0f19', padding: '24px', borderRadius: '8px', border: '1px solid var(--admin-border)' }}>
+              <div style={{ background: '#f8fafc', padding: '24px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
                 <span className="badge-pill badge-pill-primary" style={{ marginBottom: '12px' }}>{category}</span>
-                <h1 style={{ fontSize: '1.75rem', fontWeight: 800, margin: '8px 0 12px', color: '#fff' }}>{title || 'Article Title Preview'}</h1>
+                <h1 style={{ fontSize: '1.75rem', fontWeight: 800, margin: '8px 0 12px', color: '#0f172a' }}>{title || 'Article Title Preview'}</h1>
                 <p style={{ color: 'var(--admin-text-muted)', fontSize: '1.05rem', lineHeight: 1.6, marginBottom: '20px' }}>{excerpt}</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px', fontSize: '0.85rem', color: 'var(--admin-text-dim)' }}>
                   <span>By <strong>{authorName}</strong></span>
@@ -164,7 +164,7 @@ export default function ArticleModal({
                   <img src={image} alt={title} style={{ width: '100%', maxHeight: '350px', objectFit: 'cover', borderRadius: '10px', marginBottom: '24px' }} />
                 )}
                 <div
-                  style={{ lineHeight: 1.8, color: '#e5e7eb' }}
+                  style={{ lineHeight: 1.8, color: '#334155' }}
                   dangerouslySetInnerHTML={{ __html: content }}
                 />
               </div>

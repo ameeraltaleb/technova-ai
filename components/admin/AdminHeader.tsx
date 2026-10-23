@@ -51,7 +51,7 @@ export default function AdminHeader({
             alignItems: 'center',
             gap: '8px',
             padding: '4px 10px',
-            background: 'rgba(255, 255, 255, 0.05)',
+            background: '#f1f5f9',
             borderRadius: '20px',
             border: '1px solid var(--admin-border)',
             fontSize: '0.8rem',

@@ -73,7 +73,7 @@ export default function SubscribersTab({ subscribers, onDelete }: SubscribersTab
                 <tr key={i}>
                   <td style={{ color: 'var(--admin-text-dim)', fontSize: '0.8rem' }}>{i + 1}</td>
                   <td>
-                    <strong style={{ color: '#fff' }}>{sub.email}</strong>
+                    <strong style={{ color: 'var(--admin-text-main)' }}>{sub.email}</strong>
                   </td>
                   <td style={{ fontSize: '0.85rem', color: 'var(--admin-text-muted)' }}>
                     {sub.date}

@@ -71,7 +71,7 @@ export default function SubmissionsTab({
                 return (
                   <tr key={i}>
                     <td>
-                      <div style={{ fontWeight: 600, color: '#fff' }}>{sub.name}</div>
+                      <div style={{ fontWeight: 600, color: 'var(--admin-text-main)' }}>{sub.name}</div>
                       <div style={{ fontSize: '0.75rem', color: 'var(--admin-text-muted)' }}>
                         {sub.url}
                       </div>

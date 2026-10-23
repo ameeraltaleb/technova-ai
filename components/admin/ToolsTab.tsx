@@ -85,7 +85,7 @@ export default function ToolsTab({ tools, onEdit, onDelete, onNew }: ToolsTabPro
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                       <span style={{ fontSize: '1.4rem' }}>{tool.icon || '⚡'}</span>
                       <div>
-                        <div style={{ fontWeight: 600, color: '#fff' }}>{tool.name}</div>
+                        <div style={{ fontWeight: 600, color: 'var(--admin-text-main)' }}>{tool.name}</div>
                         <div
                           style={{
                             fontSize: '0.75rem',
