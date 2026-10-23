@@ -7,7 +7,7 @@ export default function Footer() {
         <div className="footer__grid">
           <div>
             <Link href="/" className="navbar__logo">
-              <div className="navbar__logo-icon">🚀</div>
+              <img src="/logo.png" alt="TechNova AI" className="navbar__logo-img" width={36} height={36} />
               <span>TechNova AI</span>
             </Link>
             <p className="footer__brand-description">

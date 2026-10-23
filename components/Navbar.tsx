@@ -34,7 +34,7 @@ export default function Navbar() {
       <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`} id="navbar">
         <div className="container navbar__inner">
           <Link href="/" className="navbar__logo">
-            <div className="navbar__logo-icon">🚀</div>
+            <img src="/logo.png" alt="TechNova AI" className="navbar__logo-img" width={36} height={36} />
             <span>TechNova AI</span>
           </Link>
 
