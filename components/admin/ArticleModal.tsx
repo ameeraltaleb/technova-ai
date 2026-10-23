@@ -50,21 +50,21 @@ export default function ArticleModal({
       setConsText((initialArticle.cons || []).join('\n'));
       setContent(initialArticle.content || '');
     } else {
-      // New article defaults
+      // New article defaults: clean and empty
       setTitle('');
       setSlug('');
       setExcerpt('');
       setCategory('ai-tools');
       setAuthorName('TechNova AI Team');
       setRating(4.8);
-      setReadTime('7 min read');
+      setReadTime('6 min read');
       setFeatured(false);
-      setTags('AI, Review, Guide');
-      setImage('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&h=450&fit=crop');
+      setTags('');
+      setImage('');
       setAffiliateUrl('');
-      setProsText('Fast processing\nIntuitive user interface\nAffordable pricing');
-      setConsText('Requires stable internet\nLimited free tier');
-      setContent(`<h2>Introduction</h2>\n<p>Enter your comprehensive review content here...</p>\n\n<h2>Key Features</h2>\n<ul>\n  <li>Feature 1: Seamless integration</li>\n  <li>Feature 2: High accuracy</li>\n</ul>\n\n<h2>Verdict</h2>\n<p>Why this tool is recommended in 2026.</p>`);
+      setProsText('');
+      setConsText('');
+      setContent('');
     }
   }, [initialArticle, isOpen]);
 
@@ -90,6 +90,16 @@ export default function ArticleModal({
     const cons = consText.split('\n').map((c) => c.trim()).filter(Boolean);
     const parsedTags = tags.split(',').map((t) => t.trim()).filter(Boolean);
 
+    // Auto-format plain text into paragraphs if no HTML tags were used
+    let formattedContent = content;
+    if (content && !content.includes('<') && !content.includes('>')) {
+      formattedContent = content
+        .split('\n\n')
+        .filter((block) => block.trim())
+        .map((block) => `<p>${block.replace(/\n/g, '<br/>')}</p>`)
+        .join('\n\n');
+    }
+
     const articleItem: ArticleItem = {
       id: slug,
       title,
@@ -105,7 +115,7 @@ export default function ArticleModal({
       featured,
       tags: parsedTags,
       image,
-      content,
+      content: formattedContent,
       pros,
       cons,
       affiliateUrl,
@@ -116,6 +126,27 @@ export default function ArticleModal({
     };
 
     onSave(articleItem);
+  };
+
+  const insertTag = (before: string, after: string = '') => {
+    setContent((prev) => prev + before + after);
+  };
+
+  const insertTemplate = () => {
+    setContent(`<h2>Introduction</h2>
+<p>Write an engaging opening that explains what this tool is and why it matters in 2026.</p>
+
+<h2>Key Features</h2>
+<ul>
+  <li><strong>Feature 1:</strong> Description of the capability.</li>
+  <li><strong>Feature 2:</strong> Description of the capability.</li>
+</ul>
+
+<h2>Pricing & Plans</h2>
+<p>Break down the free vs paid tiers and whether it offers good value.</p>
+
+<h2>Final Verdict</h2>
+<p>Summary recommendation for creators, developers, or teams.</p>`);
   };
 
   return (
@@ -329,13 +360,22 @@ export default function ArticleModal({
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label">Article HTML Content *</label>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
+                    <label className="form-label" style={{ margin: 0 }}>محتوى المقال (Article Content) *</label>
+                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                      <button type="button" onClick={() => insertTag('<h2>', '</h2>\n')} className="btn-admin btn-admin-outline" style={{ padding: '2px 8px', fontSize: '0.75rem' }}>+ H2 عنوان</button>
+                      <button type="button" onClick={() => insertTag('<h3>', '</h3>\n')} className="btn-admin btn-admin-outline" style={{ padding: '2px 8px', fontSize: '0.75rem' }}>+ H3 فرعي</button>
+                      <button type="button" onClick={() => insertTag('<strong>', '</strong>')} className="btn-admin btn-admin-outline" style={{ padding: '2px 8px', fontSize: '0.75rem' }}>+ B عريض</button>
+                      <button type="button" onClick={() => insertTag('<ul>\n  <li>', '</li>\n</ul>\n')} className="btn-admin btn-admin-outline" style={{ padding: '2px 8px', fontSize: '0.75rem' }}>+ قائمة نقاط</button>
+                      <button type="button" onClick={insertTemplate} className="btn-admin btn-admin-outline" style={{ padding: '2px 8px', fontSize: '0.75rem', borderColor: '#818cf8', color: '#4f46e5' }}>📋 إدراج قالب جاهز</button>
+                    </div>
+                  </div>
                   <textarea
                     className="form-textarea"
-                    style={{ minHeight: '220px', fontFamily: 'monospace', fontSize: '0.85rem' }}
+                    style={{ minHeight: '220px', fontSize: '0.9rem', lineHeight: 1.7 }}
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
-                    placeholder="<p>Full article body...</p>"
+                    placeholder="اكتب المقال بحرية هنا... يمكنك كتابة نص عادي وسيقوم النظام بتنسيقه تلقائياً إلى فقرات، أو استخدام أزرار التنسيق السريعة أعلاه..."
                     required
                   />
                 </div>
