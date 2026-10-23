@@ -1540,50 +1540,152 @@ input, textarea, select {
   color: var(--color-primary-light);
 }
 
-/* ── Author Card ── */
+/* ── Author / Editorial Trust Card ── */
 .ap-author-card {
   display: flex;
-  gap: var(--space-5);
+  align-items: flex-start;
+  gap: var(--space-6);
   margin-top: var(--space-10);
   padding: var(--space-7);
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-card);
+  background: linear-gradient(135deg, rgba(108, 92, 231, 0.08) 0%, rgba(20, 20, 35, 0.6) 100%);
+  border: 1px solid rgba(108, 92, 231, 0.25);
+  border-radius: var(--radius-2xl);
+  backdrop-filter: blur(12px);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.ap-author-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--gradient-primary);
+}
+
+.ap-author-card__avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.ap-author-card__badge-icon {
+  width: 68px;
+  height: 68px;
   border-radius: var(--radius-xl);
+  background: var(--gradient-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  box-shadow: 0 8px 24px rgba(108, 92, 231, 0.4);
 }
 
 .ap-author-card__avatar {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  border: 3px solid rgba(108, 92, 231, 0.3);
+  width: 68px;
+  height: 68px;
+  border-radius: var(--radius-xl);
+  border: 2px solid rgba(108, 92, 231, 0.4);
   object-fit: cover;
   flex-shrink: 0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.ap-author-card__verified {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #00cec9;
+  color: #0b0f19;
+  font-size: 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--bg-card);
+  box-shadow: 0 2px 6px rgba(0, 206, 201, 0.5);
 }
 
 .ap-author-card__info {
   flex: 1;
 }
 
-.ap-author-card__label {
-  font-size: var(--fs-xs);
+.ap-author-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.ap-author-card__eyebrow {
+  font-size: 0.72rem;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--text-tertiary);
-  margin-bottom: var(--space-1);
+  letter-spacing: 0.12em;
+  color: var(--color-primary-light);
+  font-weight: 700;
+  margin-bottom: 2px;
 }
 
 .ap-author-card__name {
-  font-size: var(--fs-lg);
+  font-size: 1.25rem;
   font-weight: var(--fw-bold);
   color: var(--text-primary);
-  margin-bottom: var(--space-2);
+  font-family: var(--font-display);
+  margin: 0;
+}
+
+.ap-author-card__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  background: rgba(0, 206, 201, 0.12);
+  border: 1px solid rgba(0, 206, 201, 0.3);
+  color: #00cec9;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.ap-author-card__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #00cec9;
+  box-shadow: 0 0 8px #00cec9;
 }
 
 .ap-author-card__bio {
-  font-size: var(--fs-sm);
+  font-size: 0.92rem;
   color: var(--text-secondary);
-  line-height: 1.6;
-  margin: 0;
+  line-height: 1.65;
+  margin: 0 0 var(--space-4);
+}
+
+.ap-author-card__meta-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.ap-author-card__pill {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-secondary);
+  padding: 3px 10px;
+  border-radius: var(--radius-md);
+  white-space: nowrap;
 }
 
 /* ── Sidebar ── */
