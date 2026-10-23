@@ -1,10 +1,7 @@
 import type { Metadata } from 'next';
 import Script from 'next/script';
 import './globals.css';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import BackToTop from '@/components/BackToTop';
-import SearchModal from '@/components/SearchModal';
+import LayoutShell from '@/components/LayoutShell';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.technova-ai.online'),
@@ -124,11 +121,7 @@ export default function RootLayout({
           strategy="afterInteractive"
         />
 
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
-        <BackToTop />
-        <SearchModal />
+        <LayoutShell>{children}</LayoutShell>
       </body>
     </html>
   );
