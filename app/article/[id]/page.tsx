@@ -111,18 +111,9 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
 
             <div className="ap-author-bar">
               <div className="ap-author-bar__left">
-                {article.author?.name && !article.author.name.toLowerCase().includes('technova') ? (
-                  <img src={article.author.avatar} alt={article.author.name} className="ap-author-bar__avatar" />
-                ) : (
-                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--gradient-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', flexShrink: 0, boxShadow: '0 4px 12px rgba(108, 92, 231, 0.4)' }}>🚀</div>
-                )}
+                <span style={{ fontSize: '1.25rem' }}>✍️</span>
                 <div>
-                  <div className="ap-author-bar__name">
-                    {article.author?.name && !article.author.name.toLowerCase().includes('technova') ? article.author.name : 'TechNova AI Editorial Board'}
-                  </div>
-                  <div className="ap-author-bar__role">
-                    {article.author?.name && !article.author.name.toLowerCase().includes('technova') ? ((article.author as Record<string, string>).role || 'Contributor') : 'Independent Benchmarks'}
-                  </div>
+                  <div className="ap-author-bar__name">{article.author?.name || 'TechNova AI Team'}</div>
                 </div>
               </div>
               <div className="ap-author-bar__right">
@@ -185,44 +176,20 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
                 </div>
               )}
 
-              {/* Author / Editorial Trust Box */}
+              {/* Simple Clean Author Box */}
               <div className="ap-author-card">
-                <div className="ap-author-card__avatar-wrap">
-                  {article.author?.name && !article.author.name.toLowerCase().includes('technova') ? (
-                    <img src={article.author.avatar} alt={article.author.name} className="ap-author-card__avatar" />
-                  ) : (
-                    <div className="ap-author-card__badge-icon">🚀</div>
-                  )}
-                  <span className="ap-author-card__verified" title="Verified Editorial Board">✓</span>
+                <div className="ap-author-card__avatar">
+                  <span>✍️</span>
                 </div>
-                <div className="ap-author-card__info">
-                  <div className="ap-author-card__header">
-                    <div>
-                      <div className="ap-author-card__eyebrow">
-                        {article.author?.name && !article.author.name.toLowerCase().includes('technova')
-                          ? 'Contributing Author'
-                          : 'Independent Editorial Review'}
-                      </div>
-                      <h4 className="ap-author-card__name">
-                        {article.author?.name && !article.author.name.toLowerCase().includes('technova')
-                          ? article.author.name
-                          : 'TechNova AI Editorial Board'}
-                      </h4>
-                    </div>
-                    <span className="ap-author-card__tag">
-                      <span className="ap-author-card__dot"></span>
-                      Peer Reviewed
-                    </span>
+                <div className="ap-author-card__content">
+                  <div className="ap-author-card__top">
+                    <span className="ap-author-card__name">{article.author?.name || 'TechNova AI Team'}</span>
+                    <span className="ap-author-card__date">Published on {article.date}</span>
                   </div>
                   <p className="ap-author-card__bio">
                     {(article.author as Record<string, string>).bio ||
-                      'Researched, bench-tested, and fact-checked by TechNova AI’s independent engineering team. We evaluate every developer tool, AI model, and productivity platform hands-on with zero paid sponsorship bias.'}
+                      'In-depth reviews and practical guides on modern AI tools and technology.'}
                   </p>
-                  <div className="ap-author-card__meta-bar">
-                    <span className="ap-author-card__pill">🛡️ 100% Unbiased Benchmarks</span>
-                    <span className="ap-author-card__pill">🔬 Production Hardware Tested</span>
-                    <span className="ap-author-card__pill">⚡ Updated for 2026</span>
-                  </div>
                 </div>
               </div>
 
