@@ -1,14 +1,21 @@
 import Link from 'next/link';
-import { ARTICLES, CATEGORIES, TOOLS, NEWS } from '@/lib/data';
+import { CATEGORIES } from '@/lib/data';
+import { getLiveArticles, getLiveTools, getLiveNews } from '@/lib/public-data';
 import { getArticleImage } from '@/lib/utils';
 import Newsletter from '@/components/Newsletter';
 import HeroSearchTrigger from '@/components/HeroSearchTrigger';
 
-export default function Home() {
-  const featuredArticle = ARTICLES.find(a => a.featured) || ARTICLES[0];
-  const topTools = TOOLS.slice(0, 4);
-  const trendingNews = NEWS.slice(0, 3);
-  const latestArticles = ARTICLES.filter(a => !a.featured).slice(0, 12);
+export const revalidate = 0;
+
+export default async function Home() {
+  const articles = await getLiveArticles();
+  const tools = await getLiveTools();
+  const news = await getLiveNews();
+
+  const featuredArticle = articles.find(a => a.featured) || articles[0];
+  const topTools = tools.slice(0, 4);
+  const trendingNews = news.slice(0, 3);
+  const latestArticles = articles.filter(a => !a.featured).slice(0, 12);
 
   return (
     <>
@@ -39,11 +46,11 @@ export default function Home() {
 
             <div className="hero__stats">
               <div className="hero__stat">
-                <span className="hero__stat-number">{ARTICLES.length}+</span>
+                <span className="hero__stat-number">{articles.length}+</span>
                 <span className="hero__stat-label">Reviews</span>
               </div>
               <div className="hero__stat">
-                <span className="hero__stat-number">{TOOLS.length * 30}+</span>
+                <span className="hero__stat-number">{tools.length * 30}+</span>
                 <span className="hero__stat-label">Tools Tested</span>
               </div>
               <div className="hero__stat">

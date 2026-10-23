@@ -1,6 +1,9 @@
-import { CATEGORIES, ARTICLES } from '@/lib/data';
+import { CATEGORIES } from '@/lib/data';
+import { getLiveArticles } from '@/lib/public-data';
 import { getArticleImage } from '@/lib/utils';
 import Link from 'next/link';
+
+export const revalidate = 0;
 
 export function generateStaticParams() {
   return CATEGORIES.map((cat) => ({
@@ -21,7 +24,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 export default async function CategoryPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const category = CATEGORIES.find(c => c.id === id);
-  const articles = ARTICLES.filter(a => a.category === id);
+  const allArticles = await getLiveArticles();
+  const articles = allArticles.filter(a => a.category === id);
 
   if (!category) {
     return (

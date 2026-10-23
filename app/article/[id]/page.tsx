@@ -1,22 +1,24 @@
-import { ARTICLES, CATEGORIES } from '@/lib/data';
+import { CATEGORIES } from '@/lib/data';
+import { getLiveArticleById, getLiveArticles } from '@/lib/public-data';
 import { getArticleImage, parseTOC, injectHeadingIds } from '@/lib/utils';
 import Link from 'next/link';
 import ReadingProgress from '@/components/ReadingProgress';
 import ShareButtons from '@/components/ShareButtons';
 import Newsletter from '@/components/Newsletter';
 
+export const dynamicParams = true;
+export const revalidate = 0;
+
 export function generateStaticParams() {
-  return ARTICLES.map((a) => ({
-    id: a.id,
-  }));
+  return [];
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const article = ARTICLES.find(a => a.id === id);
+  const article = await getLiveArticleById(id);
   if (!article) return { title: 'Article Not Found' };
 
-  const image = getArticleImage(article);
+  const image = getArticleImage(article as any);
   return {
     title: article.title,
     description: article.excerpt,
@@ -39,7 +41,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function ArticlePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const article = ARTICLES.find(a => a.id === id);
+  const article = await getLiveArticleById(id);
 
   if (!article) {
     return (
@@ -51,14 +53,15 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
     );
   }
 
-  const articleImage = getArticleImage(article);
+  const allArticles = await getLiveArticles();
+  const articleImage = getArticleImage(article as any);
   const toc = parseTOC(article.content);
   const contentWithIds = injectHeadingIds(article.content);
   const categoryData = CATEGORIES.find(c => c.id === article.category);
   const categoryName = categoryData?.name || article.category;
 
   // Related articles (same category, excluding current)
-  const relatedArticles = ARTICLES
+  const relatedArticles = allArticles
     .filter(a => a.category === article.category && a.id !== article.id)
     .slice(0, 3);
 
