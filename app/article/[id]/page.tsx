@@ -68,11 +68,12 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
     description: article.excerpt,
     image: articleImage,
     datePublished: article.date,
+    dateModified: article.date,
     author: { '@type': 'Person', name: article.author.name },
     publisher: {
       '@type': 'Organization',
       name: 'TechNova AI',
-      logo: { '@type': 'ImageObject', url: 'https://www.technova-ai.online/favicon.ico' },
+      logo: { '@type': 'ImageObject', url: 'https://www.technova-ai.online/og-image.png' },
     },
     mainEntityOfPage: { '@type': 'WebPage', '@id': `https://www.technova-ai.online/article/${article.id}` },
   };

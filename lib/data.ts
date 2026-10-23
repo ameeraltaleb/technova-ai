@@ -1741,106 +1741,150 @@ export const NEWS = [
     id: "openai-gpt-5-release",
     headline: "OpenAI Officially Unveils GPT-5: A Quantum Leap in Reasoning",
     content: "OpenAI has officially launched GPT-5, demonstrating unprecedented zero-shot reasoning capabilities and near-human performance on complex physics and mathematical benchmarks.",
+    fullContent: "<p>OpenAI has officially launched GPT-5, its most ambitious model yet, showcasing capabilities that many industry experts are calling a genuine leap toward artificial general intelligence. The model demonstrates unprecedented zero-shot reasoning abilities, achieving near-human performance on complex physics problems, advanced mathematics, and multi-step logical deductions.</p><h2>Key Highlights</h2><p>In benchmark tests, GPT-5 scored 92% on the Graduate-Level Physics Exam (up from GPT-4's 68%) and solved 87% of International Mathematical Olympiad problems — a task that previously required specialized fine-tuning. The model also introduces a native 1-million-token context window, enabling entire codebases and research papers to be processed in a single prompt.</p><h2>What This Means for Developers</h2><p>For developers, GPT-5's improved function calling, reduced hallucination rate (down 73% from GPT-4), and native multimodal capabilities (text, image, audio, and video in a single stream) open up entirely new application categories. OpenAI is offering the model through its existing API with a new pricing tier, and early enterprise partners report 40-60% improvements in task completion accuracy.</p><h2>Industry Reaction</h2><p>Google and Anthropic have reportedly accelerated their own model release timelines in response. The AI safety community has raised concerns about the model's persuasion capabilities, which OpenAI says it has mitigated through Constitutional AI techniques and extensive red-teaming.</p>",
     date: "2026-09-23",
-    source: "The Verge"
+    source: "The Verge",
+    category: "AI Models",
+    tags: ["OpenAI", "GPT-5", "AI", "LLM", "Machine Learning"]
   },
   {
     id: "google-deepmind-medical",
     headline: "DeepMind's AlphaMed Solves 50-Year-Old Protein Challenge",
     content: "Google DeepMind announced a breakthrough in predicting protein folding for rare diseases, potentially accelerating the drug discovery process by over a decade.",
+    fullContent: "<p>Google DeepMind's latest AI system, AlphaMed, has successfully predicted the protein folding structures associated with over 200 rare diseases — a problem that has stumped biochemists for half a century. The breakthrough could drastically reduce the timeline for developing targeted therapies from decades to just a few years.</p><h2>The Science Behind AlphaMed</h2><p>Building on the foundation laid by AlphaFold 2, AlphaMed incorporates a novel attention mechanism specifically designed for multi-chain protein complexes. It can predict how disease-causing mutations alter protein interactions at atomic resolution, giving pharmaceutical researchers an unprecedented molecular-level view of disease mechanisms.</p><h2>Real-World Impact</h2><p>Three major pharmaceutical companies — Pfizer, Roche, and AstraZeneca — have already signed partnerships with DeepMind to integrate AlphaMed into their drug discovery pipelines. Early results suggest that the AI could help identify viable drug candidates 10x faster than traditional computational chemistry methods.</p><h2>What's Next</h2><p>DeepMind plans to make the AlphaMed database freely available to academic researchers by Q1 2027, following the open-access model that made AlphaFold's protein structure predictions available to the global scientific community.</p>",
     date: "2026-09-22",
-    source: "Nature"
+    source: "Nature",
+    category: "AI Research",
+    tags: ["DeepMind", "AlphaFold", "Healthcare", "Protein Folding", "Google"]
   },
   {
     id: "nvidia-blackwell-ultra",
     headline: "NVIDIA Unveils Blackwell Ultra: The Ultimate AI Chip",
     content: "NVIDIA's CEO Jensen Huang announced the Blackwell Ultra architecture, delivering a 10x performance boost for training trillion-parameter models while slashing energy consumption by 40%.",
+    fullContent: "<p>At a packed GTC keynote, NVIDIA CEO Jensen Huang unveiled the Blackwell Ultra GPU architecture — the company's most powerful AI accelerator yet. The chip delivers a staggering 10x performance improvement over the H100 for training trillion-parameter models, while simultaneously reducing energy consumption by 40%.</p><h2>Technical Specifications</h2><p>The Blackwell Ultra features 208 billion transistors, 192GB of HBM4 memory with 12TB/s bandwidth, and a new 'Transformer Engine 3.0' that natively supports FP4 precision for inference. The chip can train a 1-trillion-parameter model in under 3 days using a single DGX cluster — a task that previously required weeks.</p><h2>Pricing and Availability</h2><p>NVIDIA has priced the Blackwell Ultra DGX system at $500,000, positioning it as a premium offering for hyperscalers and large enterprises. Pre-orders are already sold out through Q2 2027. Cloud providers AWS, Azure, and GCP will offer Blackwell Ultra instances starting in January 2027.</p><h2>Market Impact</h2><p>NVIDIA's stock surged 8% following the announcement. AMD and Intel, which have been racing to catch up in the AI chip market, both acknowledged that Blackwell Ultra sets a new performance bar that will take at least 18 months to match.</p>",
     date: "2026-09-21",
-    source: "Bloomberg"
+    source: "Bloomberg",
+    category: "Hardware",
+    tags: ["NVIDIA", "Blackwell", "GPU", "AI Chips", "Hardware"]
   },
   {
     id: "eu-ai-act-fines",
     headline: "First Major Fines Issued Under the EU AI Act",
     content: "European regulators have levied their first multi-million euro fines against three tech giants for failing to properly label AI-generated deepfakes in consumer advertising.",
+    fullContent: "<p>The European Union has made history by issuing its first major enforcement actions under the AI Act, fining three unnamed tech companies a combined €45 million for failing to properly label AI-generated content in consumer-facing advertising campaigns.</p><h2>What Happened</h2><p>EU regulators found that the companies used AI-generated human likenesses in video advertisements without the mandatory 'AI-Generated Content' watermark required by Article 52 of the AI Act. The deepfake ads were viewed by an estimated 80 million EU consumers before being flagged.</p><h2>Industry Response</h2><p>The fines have sent shockwaves through the advertising industry. Major ad agencies are now scrambling to implement AI content detection and labeling pipelines. Several startups, including C2PA-compliant toolmakers, have seen a 300% surge in enterprise inquiries since the announcement.</p><h2>Global Implications</h2><p>The enforcement action is being watched closely by regulators in the US, UK, and Asia. The Biden administration has cited the EU action as a model for the proposed US AI Transparency Act, which would introduce similar labeling requirements for AI-generated media.</p>",
     date: "2026-09-20",
-    source: "Reuters"
+    source: "Reuters",
+    category: "Regulation",
+    tags: ["EU AI Act", "Regulation", "Deepfakes", "AI Policy", "Compliance"]
   },
   {
     id: "apple-intelligence-homepod",
     headline: "Apple Intelligence Revamps the HomePod Experience",
     content: "Apple's latest software update integrates fully on-device LLMs into the HomePod, allowing Siri to handle complex, multi-step smart home commands without internet latency.",
+    fullContent: "<p>Apple has rolled out a transformative software update for the HomePod that integrates a fully on-device large language model, powered by Apple Intelligence. The update fundamentally changes how Siri processes smart home commands, enabling complex multi-step automations without any cloud dependency.</p><h2>What's New</h2><p>Users can now speak naturally to Siri with commands like 'When I get home from work, dim the living room lights, play jazz music, and set the thermostat to 72' — and the HomePod will understand the temporal context, chaining multiple actions intelligently. Previously, each command required a separate interaction.</p><h2>Privacy-First AI</h2><p>Apple emphasized that the entire LLM runs locally on the HomePod's M2 chip, meaning voice data never leaves the device. This positions Apple's approach as fundamentally different from Amazon's Alexa and Google Home, which still rely heavily on cloud processing.</p><h2>Developer Tools</h2><p>Apple also released a new SiriKit API that allows third-party smart home developers to create custom Siri 'Skills' that leverage the on-device LLM. Early partners include Philips Hue, Ecobee, and August, with native deep integrations expected by early 2027.</p>",
     date: "2026-09-19",
-    source: "9to5Mac"
+    source: "9to5Mac",
+    category: "Apple",
+    tags: ["Apple", "Siri", "HomePod", "Smart Home", "Apple Intelligence"]
   },
   {
     id: "meta-llama-4-open-source",
     headline: "Meta Releases Llama 4 as Fully Open Source",
     content: "Mark Zuckerberg confirmed that Meta's Llama 4, a 500-billion parameter model, is now available to developers completely open-source, escalating the AI arms race.",
+    fullContent: "<p>In a move that further cements Meta's position as the leader of the open-source AI movement, CEO Mark Zuckerberg announced that Llama 4 — the company's most powerful language model with 500 billion parameters — is now fully open-source under a permissive Apache 2.0 license.</p><h2>Model Capabilities</h2><p>Llama 4 features native multilingual support for 95 languages, a 256K context window, and built-in tool-use capabilities. On industry benchmarks, it matches or exceeds GPT-4.5 Turbo on coding, reasoning, and multilingual tasks, making it the most capable open-source model ever released.</p><h2>Why It Matters</h2><p>By releasing Llama 4 open-source, Meta is democratizing access to frontier AI capabilities. Startups, researchers, and governments in developing nations can now build on top of a world-class model without paying API fees. The model is already available on Hugging Face, Ollama, and through Meta's own inference platform.</p><h2>Community Reception</h2><p>The AI developer community has responded with enthusiasm. Within 48 hours of release, over 10,000 fine-tuned variants appeared on Hugging Face, ranging from specialized medical assistants to code-generation experts. Some AI safety researchers, however, have expressed concern about the lack of usage restrictions.</p>",
     date: "2026-09-18",
-    source: "Wired"
+    source: "Wired",
+    category: "Open Source",
+    tags: ["Meta", "Llama 4", "Open Source", "LLM", "AI"]
   },
   {
     id: "microsoft-copilot-os",
     headline: "Microsoft Teases Windows 12: An AI-First Operating System",
     content: "Leaked developer builds of Windows 12 show an OS fundamentally rebuilt around Copilot, where natural language commands can control system settings and file management seamlessly.",
+    fullContent: "<p>Leaked developer builds of Windows 12 have given the tech world its first look at Microsoft's vision for an 'AI-first operating system.' The next version of Windows appears to be fundamentally rebuilt around Copilot, with natural language commands replacing traditional UI interactions for system settings, file management, and application control.</p><h2>What the Leaks Reveal</h2><p>In the leaked builds, users can type or speak commands like 'Find all PDFs I edited last week and compress them into a zip' directly into the taskbar. Copilot processes these requests locally using an on-device Phi-4 model, with cloud fallback for complex tasks. The Start Menu has been redesigned as a conversational interface.</p><h2>Developer Impact</h2><p>Microsoft has introduced a new 'Copilot Extensions' framework that allows third-party apps to expose their functionality to the OS-level AI. This means Copilot could, for example, open Photoshop and apply specific filters through a single voice command — without the user ever touching Photoshop's UI.</p><h2>Release Timeline</h2><p>Microsoft hasn't officially confirmed Windows 12, but insider sources suggest a public preview in Q1 2027, with general availability in late 2027. The company is expected to make an official announcement at Build 2027.</p>",
     date: "2026-09-17",
-    source: "Windows Central"
+    source: "Windows Central",
+    category: "Microsoft",
+    tags: ["Microsoft", "Windows 12", "Copilot", "Operating System", "AI"]
   },
   {
     id: "ai-hollywood-strike",
     headline: "Hollywood Studios Reach Historic Agreement on AI Usage",
     content: "Major studios and actor guilds have signed a landmark 5-year agreement establishing strict ethical boundaries and royalties for using AI-generated likenesses in blockbuster films.",
+    fullContent: "<p>In what's being called the most significant labor agreement in entertainment history, the Screen Actors Guild (SAG-AFTRA), the Writers Guild (WGA), and the Alliance of Motion Picture and Television Producers (AMPTP) have signed a landmark 5-year deal that establishes comprehensive rules for AI usage in film and television production.</p><h2>Key Provisions</h2><p>The agreement requires studios to obtain explicit written consent from actors before creating or using AI-generated likenesses. Performers will receive royalties equal to their standard day rate for each day their AI likeness is used in production. Background actors receive a new minimum 'Digital Scan Fee' of $2,000 per scan session.</p><h2>Writer Protections</h2><p>For writers, the agreement prohibits studios from using AI-generated scripts as a basis for final productions. AI tools can be used as writing aids, but human writers must be credited as primary authors and compensated at full WGA minimums. Studios cannot use AI to reduce the number of writers on a project.</p><h2>Industry Impact</h2><p>The deal is expected to serve as a template for similar agreements in the music, gaming, and publishing industries. Several European countries are already drafting legislation modeled on the agreement's key provisions.</p>",
     date: "2026-09-16",
-    source: "Variety"
+    source: "Variety",
+    category: "Industry",
+    tags: ["Hollywood", "AI Ethics", "SAG-AFTRA", "Entertainment", "Regulation"]
   },
   {
     id: "boston-dynamics-atlas-ai",
     headline: "Boston Dynamics Integrates Multimodal AI into Atlas Robot",
     content: "The latest humanoid robot from Boston Dynamics can now interpret visual and verbal commands simultaneously, successfully navigating a chaotic construction site autonomously.",
+    fullContent: "<p>Boston Dynamics has demonstrated a stunning upgrade to its Atlas humanoid robot, integrating a multimodal AI system that enables the robot to simultaneously process visual input, verbal commands, and environmental sensor data in real-time. In a viral demonstration video, Atlas successfully navigated a chaotic construction site, carrying materials, avoiding obstacles, and responding to worker instructions.</p><h2>Technical Breakthrough</h2><p>The new AI system uses a custom vision-language model (VLM) running on an NVIDIA Jetson Thor processor embedded in the robot's chest cavity. Atlas can now understand spoken instructions like 'Bring that blue toolbox to the second floor' while simultaneously mapping its environment and planning a safe path through dynamic obstacles.</p><h2>Commercial Applications</h2><p>Boston Dynamics announced that Atlas will begin commercial pilot programs in construction, warehousing, and disaster response by mid-2027. Three major construction firms — Skanska, Bechtel, and Turner Construction — have signed letters of intent for pilot deployments.</p><h2>Competition</h2><p>The announcement puts pressure on competitors Figure AI, Tesla (Optimus), and Agility Robotics, all of which are racing to bring commercially viable humanoid robots to market. Industry analysts predict the humanoid robotics market will reach $38 billion by 2030.</p>",
     date: "2026-09-15",
-    source: "TechCrunch"
+    source: "TechCrunch",
+    category: "Robotics",
+    tags: ["Boston Dynamics", "Atlas", "Robotics", "AI", "Humanoid"]
   },
   {
     id: "xai-grok-3",
     headline: "xAI Launches Grok 3 with Live Web Integration",
     content: "Elon Musk's xAI released Grok 3, which features real-time, unfiltered access to global news streams and financial markets, aiming to be the most current AI assistant available.",
+    fullContent: "<p>Elon Musk's xAI has released Grok 3, the latest version of its AI chatbot, featuring what the company calls 'real-time intelligence' — live, unfiltered access to global news streams, financial markets, social media trends, and academic publications. The model aims to be the most temporally current AI assistant available.</p><h2>Real-Time Capabilities</h2><p>Unlike competitors that rely on periodic index updates, Grok 3 ingests data from over 50,000 news sources, financial feeds, and social platforms in real-time. Users can ask questions like 'What happened in the stock market in the last 30 minutes?' and receive accurate, sourced answers. The system updates its knowledge base every 15 seconds.</p><h2>X Integration</h2><p>Grok 3 is deeply integrated with X (formerly Twitter), using the platform's real-time data to track breaking events, trending topics, and public sentiment. Premium X subscribers get unlimited access to Grok 3, while a new standalone subscription tier is available for $29/month.</p><h2>Controversy</h2><p>The 'unfiltered' positioning has drawn criticism from AI safety advocates, who argue that the model's lack of content guardrails could facilitate misinformation. Musk responded that 'truth should not be filtered' and that users should judge information for themselves.</p>",
     date: "2026-09-14",
-    source: "Wall Street Journal"
+    source: "Wall Street Journal",
+    category: "AI Models",
+    tags: ["xAI", "Grok 3", "Elon Musk", "Real-time AI", "X"]
   },
-
   {
     id: "gpt5-rumors-2026",
     headline: "OpenAI Teases 'Strawberry' Architecture for Next-Gen Models",
     content: "Rumors are swirling around OpenAI's upcoming model release, internally dubbed 'Strawberry', which reportedly features significantly advanced step-by-step reasoning capabilities for complex mathematics and coding.",
+    fullContent: "<p>The AI community is buzzing with speculation about OpenAI's next-generation model architecture, internally codenamed 'Strawberry.' Multiple sources within the company have confirmed that Strawberry represents a fundamental departure from the transformer architecture, incorporating novel 'chain-of-verification' mechanisms that dramatically improve step-by-step reasoning.</p><h2>What We Know</h2><p>According to leaked internal documents, Strawberry achieves 95% accuracy on the MATH benchmark (up from GPT-5's 87%) and can generate formally verified mathematical proofs. The model reportedly uses a new 'deliberative alignment' technique that allows it to self-correct during inference, essentially 'thinking through' problems more carefully before providing answers.</p><h2>Coding Capabilities</h2><p>Early testers report that Strawberry can complete SWE-bench (a benchmark of real-world software engineering tasks) at a 78% success rate, compared to GPT-5's 42%. The model can apparently understand entire codebases, identify bugs across multiple files, and propose architecturally sound refactoring plans.</p><h2>Expected Timeline</h2><p>Industry analysts expect OpenAI to announce Strawberry at its annual DevDay conference in November 2026, with a public release in Q1 2027. The model is expected to be offered at a premium tier above GPT-5, targeting enterprise and research customers.</p>",
     date: "2026-09-22",
-    source: "TechCrunch"
+    source: "TechCrunch",
+    category: "AI Models",
+    tags: ["OpenAI", "Strawberry", "AI Architecture", "Reasoning", "LLM"]
   },
   {
     id: "vercel-acquires-startup",
     headline: "Vercel Announces Major Edge Computing Upgrades",
     content: "Vercel has just rolled out its new global edge network architecture, promising 30% faster serverless function execution times and cheaper bandwidth for Next.js users.",
+    fullContent: "<p>Vercel, the company behind the popular Next.js framework, has announced a major overhaul of its global edge computing infrastructure. The upgrade promises 30% faster serverless function execution, 50% cheaper bandwidth, and a new suite of developer tools designed to make edge computing accessible to every web developer.</p><h2>Technical Details</h2><p>The new edge network spans 120 global points of presence (up from 76), with a new 'Smart Routing' algorithm that automatically directs requests to the nearest server with the freshest cached content. Vercel has also introduced 'Edge Functions v2', which support up to 30 seconds of execution time (up from 25ms) and access to key-value storage, SQL databases, and blob storage directly at the edge.</p><h2>Pricing Changes</h2><p>In a move that will please cost-conscious developers, Vercel has reduced bandwidth pricing by 50% across all plans and introduced a new 'Community' tier with 1TB of free bandwidth per month. The Pro plan now includes unlimited edge function invocations.</p><h2>Developer Reaction</h2><p>The announcement has been positively received by the developer community, with many noting that Vercel's pricing is now competitive with Cloudflare Workers and Deno Deploy. Several high-profile migrations from AWS Lambda@Edge to Vercel have been announced in the days following the upgrade.</p>",
     date: "2026-09-21",
-    source: "Vercel Blog"
+    source: "Vercel Blog",
+    category: "Dev Tools",
+    tags: ["Vercel", "Edge Computing", "Next.js", "Serverless", "Web Development"]
   },
   {
     id: "react-19-adoption",
     headline: "React 19 Reaches 50% Adoption Among Enterprise Apps",
     content: "A recent survey shows that over half of enterprise frontend teams have fully migrated to React 19, heavily utilizing the new React Compiler to eliminate manual useMemo hooks.",
+    fullContent: "<p>A comprehensive survey by the State of JS team reveals that React 19 has crossed the 50% adoption threshold among enterprise frontend teams — one of the fastest major version adoptions in the framework's history. The rapid uptake is largely driven by the React Compiler, which automatically optimizes re-renders and eliminates the need for manual useMemo, useCallback, and React.memo wrappers.</p><h2>Why Teams Are Migrating</h2><p>The top reasons cited for migration include: the React Compiler (78% of respondents), Server Components for improved SEO and performance (65%), and the new use() hook for simplified data fetching (54%). Teams report an average 35% reduction in bundle size and 40% improvement in Lighthouse performance scores after migration.</p><h2>Migration Challenges</h2><p>The survey also highlighted common migration pain points. 42% of teams reported issues with third-party library compatibility, particularly older component libraries that rely on class components or legacy lifecycle methods. CSS-in-JS libraries that aren't compatible with Server Components were also flagged as a major friction point.</p><h2>What's Coming Next</h2><p>The React team has teased several upcoming features, including native Activity components for managing complex state machines, improved Suspense support for streaming SSR, and deeper integration with the React Native New Architecture. React 20 is expected in mid-2027.</p>",
     date: "2026-09-18",
-    source: "Frontend Daily"
+    source: "Frontend Daily",
+    category: "Dev Tools",
+    tags: ["React", "React 19", "Frontend", "JavaScript", "Web Development"]
   },
   {
     id: "eu-ai-act",
     headline: "EU AI Act Begins Strict Enforcement on Open Source",
     content: "The European Union has officially started enforcing compliance for high-risk AI models. Open-source developers are scrambling to understand the liability clauses for releasing unaligned foundation models.",
+    fullContent: "<p>The European Union has officially begun enforcing compliance requirements under the AI Act for high-risk AI systems, including foundation models released as open-source software. The enforcement marks a new era of AI regulation that has sent ripples through the global open-source AI community.</p><h2>What's Being Enforced</h2><p>Under the AI Act, developers of 'general-purpose AI models' — defined as models trained on more than 10^25 FLOPs — must now provide technical documentation, implement adversarial testing, and report serious incidents to the European AI Office. The requirements apply regardless of whether the model is released commercially or as open-source.</p><h2>Impact on Open Source</h2><p>The regulation has created significant uncertainty in the open-source AI community. Several prominent researchers have paused releases of large models, citing unclear liability provisions. The Linux Foundation and Mozilla have formed a joint working group to develop compliance tools and best practices for open-source AI developers.</p><h2>Global Response</h2><p>The enforcement has prompted reactions from governments worldwide. The US has criticized the regulation as potentially stifling innovation, while China and Singapore have expressed interest in adopting similar frameworks. The debate over how to regulate open-source AI without hampering research is expected to dominate policy discussions throughout 2027.</p>",
     date: "2026-09-15",
-    source: "Wired"
+    source: "Wired",
+    category: "Regulation",
+    tags: ["EU AI Act", "Open Source", "AI Regulation", "Compliance", "Policy"]
   },
   {
     id: "apple-intelligence",
     headline: "Apple Intelligence Officially Rolls Out to MacBooks",
     content: "After months of beta testing, Apple Intelligence is now live on macOS, integrating on-device AI directly into Xcode, Mail, and Safari for M-series chips.",
+    fullContent: "<p>After months of public beta testing, Apple has officially rolled out Apple Intelligence to all MacBooks and iMacs running M-series chips. The update integrates on-device AI capabilities directly into core macOS applications including Xcode, Mail, Safari, Pages, and Keynote.</p><h2>Developer Features</h2><p>For developers, the Xcode integration is the standout feature. Apple Intelligence can now suggest entire functions based on code comments, automatically generate unit tests, explain complex code blocks in plain English, and refactor legacy Swift code to modern patterns. Early reports suggest that developer productivity has increased by 25-30% in code review and debugging workflows.</p><h2>Consumer Features</h2><p>For general users, Mail now features intelligent email summarization and suggested replies that learn from your writing style. Safari includes a built-in page summarizer accessible from the toolbar, and Pages can generate first drafts of documents from brief bullet-point outlines.</p><h2>Privacy Architecture</h2><p>True to Apple's brand, all AI processing happens entirely on the device's Neural Engine. No user data is sent to Apple's servers. The company has published a detailed technical paper explaining the privacy-preserving architecture, which uses a custom 3-billion-parameter model optimized for Apple Silicon.</p>",
     date: "2026-09-10",
-    source: "The Verge"
+    source: "The Verge",
+    category: "Apple",
+    tags: ["Apple", "Apple Intelligence", "macOS", "Xcode", "AI"]
   }
 ];
