@@ -123,13 +123,13 @@ const DEFAULT_SETTINGS: SiteSettings = {
 };
 
 const DEFAULT_FIREBASE_CONFIG: FirebaseConfig = {
-  apiKey: 'AIzaSyBAlVXgdHCfYYFB0SDGyYQiVlwMI6H4M1k',
-  authDomain: 'technova-ai-3cce9.firebaseapp.com',
-  projectId: 'technova-ai-3cce9',
-  storageBucket: 'technova-ai-3cce9.firebasestorage.app',
-  messagingSenderId: '767008444965',
-  appId: '1:767008444965:web:11ccc0f24febd94cf365cc',
-  isConnected: true,
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || '',
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || '',
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || '',
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || '',
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || '',
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || '',
+  isConnected: !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
 };
 
 export const AdminStore = {
