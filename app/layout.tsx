@@ -4,6 +4,7 @@ import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import BackToTop from '@/components/BackToTop';
+import SearchModal from '@/components/SearchModal';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.technova-ai.online'),
@@ -122,6 +123,7 @@ export default function RootLayout({
         <main>{children}</main>
         <Footer />
         <BackToTop />
+        <SearchModal />
       </body>
     </html>
   );

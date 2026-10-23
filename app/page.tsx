@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { ARTICLES, CATEGORIES, TOOLS, NEWS } from '@/lib/data';
 import { getArticleImage } from '@/lib/utils';
+import Newsletter from '@/components/Newsletter';
+import HeroSearchTrigger from '@/components/HeroSearchTrigger';
 
 export default function Home() {
   const featuredArticle = ARTICLES.find(a => a.featured) || ARTICLES[0];
@@ -33,11 +35,7 @@ export default function Home() {
               In-depth reviews, head-to-head comparisons, and expert guides to help you choose the right tools — and master them.
             </p>
 
-            <div className="hero__search">
-              <span className="hero__search-icon">🔍</span>
-              <input type="text" className="hero__search-input" id="heroSearch" placeholder="Search for tools, reviews, comparisons..." readOnly />
-              <Link href="/category" className="hero__search-btn" style={{ textDecoration: 'none', textAlign: 'center' }}>Browse All</Link>
-            </div>
+            <HeroSearchTrigger />
 
             <div className="hero__stats">
               <div className="hero__stat">
@@ -200,6 +198,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <Newsletter />
     </>
   );
 }

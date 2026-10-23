@@ -2,6 +2,8 @@ import { ARTICLES, CATEGORIES } from '@/lib/data';
 import { getArticleImage, parseTOC, injectHeadingIds } from '@/lib/utils';
 import Link from 'next/link';
 import ReadingProgress from '@/components/ReadingProgress';
+import ShareButtons from '@/components/ShareButtons';
+import Newsletter from '@/components/Newsletter';
 
 export function generateStaticParams() {
   return ARTICLES.map((a) => ({
@@ -186,6 +188,9 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
                   </p>
                 </div>
               </div>
+
+              {/* Share Buttons */}
+              <ShareButtons title={article.title} />
             </article>
 
             {/* Sidebar */}
@@ -242,6 +247,9 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
           </div>
         </div>
       </section>
+
+      {/* Newsletter */}
+      <Newsletter />
 
       {/* ── Related Articles ── */}
       {relatedArticles.length > 0 && (

@@ -50,6 +50,14 @@ export default function Navbar() {
           </div>
 
           <div className="navbar__actions">
+            <button
+              className="navbar__search-btn"
+              onClick={() => window.dispatchEvent(new CustomEvent('open-search'))}
+              aria-label="Search"
+              title="Search articles & tools (Ctrl+K)"
+            >
+              🔍
+            </button>
             <button className="navbar__theme-btn" onClick={toggleTheme} aria-label="Toggle theme">
               {theme === 'dark' ? '☀️' : '🌙'}
             </button>
@@ -62,6 +70,16 @@ export default function Navbar() {
       <div className={`mobile-menu ${isMobileOpen ? 'active' : ''}`}>
         <button className="mobile-menu__close" onClick={() => setIsMobileOpen(false)}>✕</button>
         <div className="mobile-menu__inner">
+          <button
+            className="mobile-menu__link"
+            style={{ background: 'none', border: 'none', cursor: 'pointer', textAlign: 'center', width: '100%', color: 'var(--color-primary-light)' }}
+            onClick={() => {
+              setIsMobileOpen(false);
+              window.dispatchEvent(new CustomEvent('open-search'));
+            }}
+          >
+            🔍 Search Tools & Articles
+          </button>
           <Link href="/" className="mobile-menu__link" onClick={() => setIsMobileOpen(false)}>Home</Link>
           <Link href="/category" className="mobile-menu__link" onClick={() => setIsMobileOpen(false)}>All Articles</Link>
           <Link href="/tools" className="mobile-menu__link" onClick={() => setIsMobileOpen(false)}>Tools Directory</Link>
