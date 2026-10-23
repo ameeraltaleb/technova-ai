@@ -11,6 +11,8 @@ import {
   SiteSettings,
   FirebaseConfig,
 } from '@/lib/admin-store';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 import AdminSidebar, { AdminTab } from '@/components/admin/AdminSidebar';
 import AdminHeader from '@/components/admin/AdminHeader';
 import OverviewTab from '@/components/admin/OverviewTab';
@@ -48,14 +50,25 @@ export default function AdminPage() {
   const [editingNews, setEditingNews] = useState<NewsItem | null>(null);
 
   useEffect(() => {
-    const auth = AdminStore.getAuthState();
-    if (!auth.isAuthenticated) {
+    // 1. Local Auth state check
+    const localAuth = AdminStore.getAuthState();
+    if (!localAuth.isAuthenticated) {
       router.push('/admin/login');
       return;
     }
-    if (auth.user?.email) {
-      setUserEmail(auth.user.email);
-    }
+
+    // 2. Live Firebase Auth session listener
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (!firebaseUser) {
+        AdminStore.setAuthState(null);
+        router.push('/admin/login');
+      } else {
+        if (firebaseUser.email) {
+          setUserEmail(firebaseUser.email);
+        }
+        setIsLoaded(true);
+      }
+    });
 
     setArticles(AdminStore.getArticles());
     setTools(AdminStore.getTools());
@@ -67,7 +80,8 @@ export default function AdminPage() {
     if (typeof window !== 'undefined') {
       (window as any).syncToFirestore = () => AdminStore.syncToFirestore();
     }
-    setIsLoaded(true);
+
+    return () => unsubscribe();
   }, [router]);
 
   if (!isLoaded) {
@@ -75,14 +89,15 @@ export default function AdminPage() {
       <div
         style={{
           minHeight: '100vh',
-          background: '#0b0f19',
+          background: '#f8fafc',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          color: '#a29bfe',
+          color: '#4f46e5',
+          fontWeight: 600,
         }}
       >
-        Loading TechNova AI Admin Console...
+        جاري التحقق من أمان وحساب المدير عبر Firebase...
       </div>
     );
   }
@@ -195,7 +210,12 @@ export default function AdminPage() {
     setFirebaseConfig(saved);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (e) {
+      console.error(e);
+    }
     AdminStore.setAuthState(null);
     router.push('/admin/login');
   };

@@ -2,35 +2,56 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 import { AdminStore } from '@/lib/admin-store';
 import '../admin.css';
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState('admin@technova-ai.online');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
-      setError('Please provide your email and password');
+      setError('يرجى إدخال البريد الإلكتروني وكلمة المرور');
       return;
     }
 
     setLoading(true);
     setError('');
 
-    // Verification check (ready for Firebase Auth integration)
-    setTimeout(() => {
-      // Allow sign-in
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
       AdminStore.setAuthState({
-        email,
-        name: 'TechNova Administrator',
+        email: user.email || email,
+        name: user.displayName || 'TechNova Administrator',
       });
+
       router.push('/admin');
-    }, 600);
+    } catch (err: any) {
+      console.error('Firebase Auth Login Error:', err);
+      if (
+        err.code === 'auth/invalid-credential' ||
+        err.code === 'auth/wrong-password' ||
+        err.code === 'auth/user-not-found'
+      ) {
+        setError('البريد الإلكتروني أو كلمة المرور غير صحيحة. يرجى التحقق من المستخدم في Firebase Authentication.');
+      } else if (err.code === 'auth/invalid-email') {
+        setError('صيغة البريد الإلكتروني غير صالحة.');
+      } else if (err.code === 'auth/too-many-requests') {
+        setError('تم حظر المحاولات مؤقتاً لكثرة المحاولات الخاطئة. يرجى المحاولة لاحقاً.');
+      } else {
+        setError(err.message || 'فشل التحقق من حساب المدير عبر Firebase.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -47,7 +68,7 @@ export default function AdminLoginPage() {
       <div
         className="admin-modal"
         style={{
-          maxWidth: '420px',
+          maxWidth: '430px',
           padding: '40px 34px',
           boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04)',
           border: '1px solid #e2e8f0',
@@ -71,29 +92,31 @@ export default function AdminLoginPage() {
             TechNova AI Admin
           </h1>
           <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b' }}>
-            Sign in to manage articles, tools directory, and monetization
+            تسجيل الدخول الآمن للمشرفين عبر Firebase Authentication
           </p>
         </div>
 
         {error && (
           <div
             style={{
-              padding: '10px 14px',
+              padding: '12px 14px',
               borderRadius: '8px',
-              background: 'rgba(239, 68, 68, 0.15)',
-              border: '1px solid rgba(239, 68, 68, 0.3)',
-              color: '#f87171',
+              background: '#fef2f2',
+              border: '1px solid #fecaca',
+              color: '#dc2626',
               fontSize: '0.85rem',
               marginBottom: '18px',
+              lineHeight: 1.5,
+              direction: 'rtl',
             }}
           >
-            {error}
+            ⚠️ {error}
           </div>
         )}
 
         <form onSubmit={handleLogin}>
           <div className="form-group">
-            <label className="form-label">Email Address</label>
+            <label className="form-label">البريد الإلكتروني للإدارة (Admin Email)</label>
             <input
               type="email"
               className="form-input"
@@ -105,7 +128,7 @@ export default function AdminLoginPage() {
           </div>
 
           <div className="form-group" style={{ marginBottom: '24px' }}>
-            <label className="form-label">Password</label>
+            <label className="form-label">كلمة المرور (Password)</label>
             <input
               type="password"
               className="form-input"
@@ -122,7 +145,7 @@ export default function AdminLoginPage() {
             style={{ width: '100%', justifyContent: 'center', padding: '12px', fontSize: '0.95rem' }}
             disabled={loading}
           >
-            {loading ? 'Authenticating...' : 'Sign In to Dashboard'}
+            {loading ? 'جاري التحقق من Firebase...' : 'تسجيل الدخول إلى اللوحة'}
           </button>
         </form>
 
@@ -136,7 +159,7 @@ export default function AdminLoginPage() {
             color: 'var(--admin-text-dim)',
           }}
         >
-          Protected by TechNova AI Security & Firebase Authentication
+          🔒 محمي بواسطة نظام أمان وتحقق Firebase Authentication
         </div>
       </div>
     </div>
