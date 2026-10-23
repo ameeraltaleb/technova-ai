@@ -27,7 +27,7 @@ export default function SubmitToolModal({ isOpen, onClose }: SubmitToolModalProp
     setTimeout(() => {
       try {
         const submissions = JSON.parse(localStorage.getItem('technova_tool_submissions') || '[]');
-        submissions.push({
+        const item = {
           name,
           url,
           category,
@@ -35,8 +35,12 @@ export default function SubmitToolModal({ isOpen, onClose }: SubmitToolModalProp
           description,
           tier,
           date: new Date().toISOString(),
-        });
+        };
+        submissions.push(item);
         localStorage.setItem('technova_tool_submissions', JSON.stringify(submissions));
+        import('@/lib/firebase-service').then(({ FirebaseService }) => {
+          FirebaseService.saveSubmission(item).catch(() => {});
+        }).catch(() => {});
       } catch {
         // Fallback
       }

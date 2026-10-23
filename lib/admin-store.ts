@@ -1,6 +1,7 @@
 'use client';
 
-import { ARTICLES, TOOLS, NEWS, SITE_CONFIG, CATEGORIES } from './data';
+import { ARTICLES, TOOLS, NEWS, SITE_CONFIG } from './data';
+import { FirebaseService } from './firebase-service';
 
 export interface ArticleItem {
   id: string;
@@ -121,6 +122,16 @@ const DEFAULT_SETTINGS: SiteSettings = {
   linkedinUrl: 'https://linkedin.com',
 };
 
+const DEFAULT_FIREBASE_CONFIG: FirebaseConfig = {
+  apiKey: 'AIzaSyBAlVXgdHCfYYFB0SDGyYQiVlwMI6H4M1k',
+  authDomain: 'technova-ai-3cce9.firebaseapp.com',
+  projectId: 'technova-ai-3cce9',
+  storageBucket: 'technova-ai-3cce9.firebasestorage.app',
+  messagingSenderId: '767008444965',
+  appId: '1:767008444965:web:11ccc0f24febd94cf365cc',
+  isConnected: true,
+};
+
 export const AdminStore = {
   // Articles
   getArticles(): ArticleItem[] {
@@ -147,6 +158,10 @@ export const AdminStore = {
     if (typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEYS.ARTICLES, JSON.stringify(updated));
     }
+    // Async Firebase Firestore sync
+    FirebaseService.saveArticle(article).catch((err) =>
+      console.warn('Background Firestore saveArticle:', err)
+    );
     return updated;
   },
 
@@ -156,6 +171,10 @@ export const AdminStore = {
     if (typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEYS.ARTICLES, JSON.stringify(updated));
     }
+    // Async Firebase Firestore delete
+    FirebaseService.deleteArticle(id).catch((err) =>
+      console.warn('Background Firestore deleteArticle:', err)
+    );
     return updated;
   },
 
@@ -184,6 +203,10 @@ export const AdminStore = {
     if (typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEYS.TOOLS, JSON.stringify(updated));
     }
+    // Async Firebase Firestore sync
+    FirebaseService.saveTool(tool).catch((err) =>
+      console.warn('Background Firestore saveTool:', err)
+    );
     return updated;
   },
 
@@ -193,6 +216,10 @@ export const AdminStore = {
     if (typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEYS.TOOLS, JSON.stringify(updated));
     }
+    // Async Firebase Firestore delete
+    FirebaseService.deleteTool(id).catch((err) =>
+      console.warn('Background Firestore deleteTool:', err)
+    );
     return updated;
   },
 
@@ -221,6 +248,10 @@ export const AdminStore = {
     if (typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEYS.NEWS, JSON.stringify(updated));
     }
+    // Async Firebase Firestore sync
+    FirebaseService.saveNews(item).catch((err) =>
+      console.warn('Background Firestore saveNews:', err)
+    );
     return updated;
   },
 
@@ -230,6 +261,10 @@ export const AdminStore = {
     if (typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEYS.NEWS, JSON.stringify(updated));
     }
+    // Async Firebase Firestore delete
+    FirebaseService.deleteNews(id).catch((err) =>
+      console.warn('Background Firestore deleteNews:', err)
+    );
     return updated;
   },
 
@@ -310,6 +345,7 @@ export const AdminStore = {
     if (typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEYS.SUBSCRIBERS, JSON.stringify(updated.map((u) => u.email)));
     }
+    FirebaseService.deleteSubscriber(email).catch((e) => console.warn(e));
     return updated;
   },
 
@@ -330,28 +366,20 @@ export const AdminStore = {
     if (typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(updated));
     }
+    FirebaseService.saveSettings(updated).catch((e) => console.warn(e));
     return updated;
   },
 
   // Firebase Config
   getFirebaseConfig(): FirebaseConfig {
-    const def: FirebaseConfig = {
-      apiKey: '',
-      authDomain: '',
-      projectId: '',
-      storageBucket: '',
-      messagingSenderId: '',
-      appId: '',
-      isConnected: false,
-    };
-    if (typeof window === 'undefined') return def;
+    if (typeof window === 'undefined') return DEFAULT_FIREBASE_CONFIG;
     try {
       const stored = localStorage.getItem(STORAGE_KEYS.FIREBASE);
       if (stored) return JSON.parse(stored);
     } catch (e) {
       console.error(e);
     }
-    return def;
+    return DEFAULT_FIREBASE_CONFIG;
   },
 
   saveFirebaseConfig(config: FirebaseConfig): FirebaseConfig {
@@ -380,5 +408,10 @@ export const AdminStore = {
     } else {
       localStorage.removeItem(STORAGE_KEYS.AUTH);
     }
+  },
+
+  // One-click Firestore Data Sync
+  async syncToFirestore() {
+    return await FirebaseService.seedAllData();
   },
 };

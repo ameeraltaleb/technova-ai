@@ -17,6 +17,9 @@ export default function Newsletter() {
         if (!existing.includes(email)) {
           existing.push(email);
           localStorage.setItem('technova_subscribers', JSON.stringify(existing));
+          import('@/lib/firebase-service').then(({ FirebaseService }) => {
+            FirebaseService.addSubscriber(email).catch(() => {});
+          }).catch(() => {});
         }
       } catch {
         // Fallback

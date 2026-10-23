@@ -64,6 +64,9 @@ export default function AdminPage() {
     setSubscribers(AdminStore.getSubscribers());
     setSettings(AdminStore.getSettings());
     setFirebaseConfig(AdminStore.getFirebaseConfig());
+    if (typeof window !== 'undefined') {
+      (window as any).syncToFirestore = () => AdminStore.syncToFirestore();
+    }
     setIsLoaded(true);
   }, [router]);
 
