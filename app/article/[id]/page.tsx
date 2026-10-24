@@ -39,6 +39,33 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   };
 }
 
+function splitContentForInlineCard(html: string): { part1: string; part2: string } {
+  // Find </p> tags to split nicely between paragraphs
+  const pRegex = /<\/p>/gi;
+  const matches: number[] = [];
+  let m: RegExpExecArray | null;
+  while ((m = pRegex.exec(html)) !== null) {
+    matches.push(m.index + 4);
+  }
+
+  // If there are at least 3 paragraphs, split around the 2nd paragraph
+  if (matches.length >= 3) {
+    const splitIndex = matches.length >= 6 ? matches[2] : matches[1];
+    return {
+      part1: html.substring(0, splitIndex),
+      part2: html.substring(splitIndex),
+    };
+  } else if (matches.length === 2) {
+    const splitIndex = matches[0];
+    return {
+      part1: html.substring(0, splitIndex),
+      part2: html.substring(splitIndex),
+    };
+  }
+
+  return { part1: html, part2: '' };
+}
+
 export default async function ArticlePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const article = await getLiveArticleById(id);
@@ -60,10 +87,32 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
   const categoryData = CATEGORIES.find(c => c.id === article.category);
   const categoryName = categoryData?.name || article.category;
 
-  // Related articles (same category, excluding current)
-  const relatedArticles = allArticles
-    .filter(a => a.category === article.category && a.id !== article.id)
-    .slice(0, 3);
+  // Split content around ~35-40% mark for the inline related article card
+  const { part1, part2 } = splitContentForInlineCard(contentWithIds);
+
+  // Smart Related Articles Algorithm (Tags similarity + Category match)
+  const currentTags = (article.tags || []).map((t: string) => t.toLowerCase().trim());
+  const rankedArticles = allArticles
+    .filter(a => a.id !== article.id)
+    .map(a => {
+      const aTags = (a.tags || []).map((t: string) => t.toLowerCase().trim());
+      const sharedTags = aTags.filter((t: string) => currentTags.includes(t)).length;
+      const sameCategory = a.category === article.category ? 1 : 0;
+      return {
+        article: a,
+        score: sharedTags * 3 + sameCategory * 2,
+      };
+    })
+    .sort((a, b) => b.score - a.score)
+    .map(item => item.article);
+
+  // Most relevant article goes into the inline card
+  const inlineRelated = rankedArticles[0] || null;
+
+  // The rest go to the bottom section
+  const relatedArticles = rankedArticles.slice(1, 4).length > 0
+    ? rankedArticles.slice(1, 4)
+    : rankedArticles.slice(0, 3);
 
   // JSON-LD
   const jsonLd = {
@@ -167,7 +216,38 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
                 </div>
               )}
 
-              <div className="article-content" dangerouslySetInnerHTML={{ __html: contentWithIds }} />
+              <div className="article-content" dangerouslySetInnerHTML={{ __html: part1 }} />
+
+              {/* ── Inline "Read Also" Related Article Card ── */}
+              {inlineRelated && (
+                <div className="ap-inline-related" role="complementary" aria-label="مقالات ذات صلة">
+                  <div className="ap-inline-related__badge">
+                    <span>💡</span>
+                    <span>اقرأ أيضاً • READ NEXT</span>
+                  </div>
+                  <Link href={`/article/${inlineRelated.id}`} className="ap-inline-related__link">
+                    <img
+                      src={getArticleImage(inlineRelated)}
+                      alt={inlineRelated.title}
+                      className="ap-inline-related__thumb"
+                      loading="lazy"
+                    />
+                    <div className="ap-inline-related__body">
+                      <h4 className="ap-inline-related__title">{inlineRelated.title}</h4>
+                      <div className="ap-inline-related__meta">
+                        <span className="ap-inline-related__cat">#{inlineRelated.category}</span>
+                        <span>•</span>
+                        <span>⏱️ {inlineRelated.readTime}</span>
+                      </div>
+                    </div>
+                    <span className="ap-inline-related__action">
+                      اقرأ المقال →
+                    </span>
+                  </Link>
+                </div>
+              )}
+
+              {part2 && <div className="article-content" dangerouslySetInnerHTML={{ __html: part2 }} />}
 
               {/* Tags */}
               {article.tags && article.tags.length > 0 && (
