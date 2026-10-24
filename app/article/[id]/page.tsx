@@ -218,12 +218,12 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
 
               <div className="article-content" dangerouslySetInnerHTML={{ __html: part1 }} />
 
-              {/* ── Inline "Read Also" Related Article Card ── */}
+              {/* ── Inline "Read Next" Related Article Card ── */}
               {inlineRelated && (
-                <div className="ap-inline-related" role="complementary" aria-label="مقالات ذات صلة">
+                <div className="ap-inline-related" role="complementary" aria-label="Related Article">
                   <div className="ap-inline-related__badge">
                     <span>💡</span>
-                    <span>اقرأ أيضاً • READ NEXT</span>
+                    <span>RECOMMENDED READ</span>
                   </div>
                   <Link href={`/article/${inlineRelated.id}`} className="ap-inline-related__link">
                     <img
@@ -241,7 +241,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
                       </div>
                     </div>
                     <span className="ap-inline-related__action">
-                      اقرأ المقال →
+                      Read Article →
                     </span>
                   </Link>
                 </div>

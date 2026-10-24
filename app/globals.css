@@ -2632,7 +2632,7 @@ input, textarea, select {
   }
 }
 
-/* ─── Inline Related Article Card (اقرأ أيضاً) ─── */
+/* ─── Inline Related Article Card (Read Next) ─── */
 .ap-inline-related {
   margin: var(--space-8, 2rem) 0;
   padding: 18px 22px;
