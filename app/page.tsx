@@ -12,6 +12,13 @@ export default async function Home() {
   const tools = await getLiveTools();
   const news = await getLiveNews();
 
+  const sortedArticles = [...articles].sort((a, b) => {
+    const timeA = a.date ? new Date(a.date).getTime() : 0;
+    const timeB = b.date ? new Date(b.date).getTime() : 0;
+    return timeB - timeA;
+  });
+
+  const latestThree = sortedArticles.slice(0, 3);
   const featuredArticle = articles.find(a => a.featured) || articles[0];
   const topTools = tools.slice(0, 4);
   const trendingNews = news.slice(0, 3);
@@ -62,7 +69,45 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* ── Latest Articles (Top 3) ── */}
       <section className="section">
+        <div className="container">
+          <div className="section__header">
+            <div>
+              <div className="section__label">// Fresh Releases</div>
+              <h2 className="section__title">Latest Articles</h2>
+            </div>
+            <Link href="/category" className="section__link">View All Articles →</Link>
+          </div>
+
+          <div className="cards-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+            {latestThree.map(a => (
+              <Link key={a.id} href={`/article/${a.id}`} className="article-card">
+                <div className="article-card__image-container">
+                  <img src={getArticleImage(a)} alt={a.title} className="article-card__image" loading="lazy" />
+                  <div className="article-card__category">{a.category}</div>
+                </div>
+                <div className="article-card__content">
+                  <div className="article-card__meta">
+                    <div className="article-card__author">
+                      <img src={a.author.avatar} alt={a.author.name} className="article-card__author-avatar" />
+                      <span>{a.author.name}</span>
+                    </div>
+                    <span>{a.date}</span>
+                    <span>•</span>
+                    <span>{a.readTime}</span>
+                  </div>
+                  <h3 className="article-card__title">{a.title}</h3>
+                  <p className="article-card__excerpt">{a.excerpt}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Editor's Pick ── */}
+      <section className="section section--alt">
         <div className="container">
           <div className="section__header">
             <div>
