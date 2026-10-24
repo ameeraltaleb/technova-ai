@@ -1,7 +1,10 @@
 import type { MetadataRoute } from 'next';
-import { ARTICLES, CATEGORIES } from '@/lib/data';
+import { CATEGORIES } from '@/lib/data';
+import { getLiveArticles } from '@/lib/public-data';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export const revalidate = 3600; // Revalidate sitemap every hour
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://www.technova-ai.online';
 
   const staticPages: MetadataRoute.Sitemap = [
@@ -14,11 +17,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/terms`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
   ];
 
-  const articlePages: MetadataRoute.Sitemap = ARTICLES.map((article) => ({
+  // Fetch live articles from Firestore with fallback to initial articles
+  const liveArticles = await getLiveArticles();
+
+  const articlePages: MetadataRoute.Sitemap = liveArticles.map((article) => ({
     url: `${baseUrl}/article/${article.id}`,
-    lastModified: new Date(article.date),
-    changeFrequency: 'monthly' as const,
-    priority: 0.7,
+    lastModified: article.date ? new Date(article.date) : new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.8,
   }));
 
   const categoryPages: MetadataRoute.Sitemap = CATEGORIES.map((cat) => ({
