@@ -147,7 +147,7 @@ export const AdminStore = {
     return ARTICLES as unknown as ArticleItem[];
   },
 
-  saveArticle(article: ArticleItem): ArticleItem[] {
+  async saveArticle(article: ArticleItem): Promise<ArticleItem[]> {
     const articles = this.getArticles();
     const index = articles.findIndex((a) => a.id === article.id);
     let updated: ArticleItem[];
@@ -159,10 +159,8 @@ export const AdminStore = {
     if (typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEYS.ARTICLES, JSON.stringify(updated));
     }
-    // Async Firebase Firestore sync
-    FirebaseService.saveArticle(article).catch((err) =>
-      console.warn('Background Firestore saveArticle:', err)
-    );
+    // Await Firebase Firestore sync to guarantee document is saved on server
+    await FirebaseService.saveArticle(article);
     return updated;
   },
 

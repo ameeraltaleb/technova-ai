@@ -8,7 +8,7 @@ import { callAdminAiApi } from '@/lib/admin-api';
 interface ArticleModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (article: ArticleItem) => void;
+  onSave: (article: ArticleItem) => Promise<void> | void;
   initialArticle?: ArticleItem | null;
 }
 
@@ -33,6 +33,11 @@ export default function ArticleModal({
   const [prosText, setProsText] = useState('');
   const [consText, setConsText] = useState('');
   const [content, setContent] = useState('');
+
+  // Save & Readiness State
+  const [isSaving, setIsSaving] = useState(false);
+  const [savedReadyId, setSavedReadyId] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   // AI Assistant States
   const [aiPrompt, setAiPrompt] = useState('');
@@ -77,6 +82,9 @@ export default function ArticleModal({
     setAiPrompt('');
     setAiStatusMsg('');
     setIsAiLoading(false);
+    setIsSaving(false);
+    setSavedReadyId(null);
+    setSaveError(null);
   }, [initialArticle, isOpen]);
 
   const handleGenerateFullArticle = async () => {
@@ -207,9 +215,13 @@ export default function ArticleModal({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !slug) return;
+
+    setIsSaving(true);
+    setSaveError(null);
+    setSavedReadyId(null);
 
     const pros = prosText.split('\n').map((p) => p.trim()).filter(Boolean);
     const cons = consText.split('\n').map((c) => c.trim()).filter(Boolean);
@@ -252,7 +264,16 @@ export default function ArticleModal({
       },
     };
 
-    onSave(articleItem);
+    try {
+      await onSave(articleItem);
+      // Confirmed saved and available on Firestore & storage!
+      setSavedReadyId(articleItem.id);
+    } catch (err: any) {
+      console.error('Error saving article:', err);
+      setSaveError(err?.message || 'حدث خطأ أثناء حفظ المقال، يرجى المحاولة مرة أخرى.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const insertTag = (before: string, after: string = '') => {
@@ -669,15 +690,158 @@ export default function ArticleModal({
                 </div>
               </>
             )}
+
+            {/* Saved and ready banner */}
+            {savedReadyId && (
+              <div
+                style={{
+                  background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(5, 150, 105, 0.08))',
+                  border: '1.5px solid #10b981',
+                  borderRadius: '10px',
+                  padding: '14px 18px',
+                  margin: '16px 0 8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '12px',
+                  flexWrap: 'wrap',
+                  boxShadow: '0 4px 12px rgba(16, 185, 129, 0.15)',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <span style={{ fontSize: '1.5rem' }}>✅</span>
+                  <div>
+                    <div style={{ fontWeight: 700, color: '#065f46', fontSize: '0.95rem' }}>
+                      تم حفظ وتأكيد المقال في قاعدة البيانات بنجاح!
+                    </div>
+                    <div style={{ fontSize: '0.8rem', color: '#047857' }}>
+                      المقال الآن جاهز ومتاح بالكامل على الموقع دون أي انتظار.
+                    </div>
+                  </div>
+                </div>
+                <a
+                  href={`/article/${savedReadyId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-admin btn-admin-primary"
+                  style={{
+                    background: '#10b981',
+                    borderColor: '#10b981',
+                    color: '#ffffff',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    textDecoration: 'none',
+                    fontWeight: 700,
+                    padding: '8px 16px',
+                    borderRadius: '6px',
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  👁️ عرض المقال بالموقع الآن ↗
+                </a>
+              </div>
+            )}
+
+            {saveError && (
+              <div
+                style={{
+                  background: 'rgba(239, 68, 68, 0.1)',
+                  border: '1px solid #ef4444',
+                  borderRadius: '8px',
+                  padding: '10px 14px',
+                  color: '#b91c1c',
+                  margin: '12px 0 6px',
+                  fontSize: '0.85rem',
+                }}
+              >
+                ⚠️ {saveError}
+              </div>
+            )}
           </div>
 
-          <div className="admin-modal__footer">
-            <button type="button" onClick={onClose} className="btn-admin btn-admin-outline">
-              Cancel
-            </button>
-            <button type="submit" className="btn-admin btn-admin-primary">
-              💾 Save Article
-            </button>
+          <div
+            className="admin-modal__footer"
+            style={{
+              display: 'flex',
+              justifyContent: savedReadyId ? 'space-between' : 'flex-end',
+              alignItems: 'center',
+              gap: '10px',
+            }}
+          >
+            {savedReadyId ? (
+              <>
+                <a
+                  href={`/article/${savedReadyId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-admin"
+                  style={{
+                    background: '#10b981',
+                    borderColor: '#10b981',
+                    color: '#ffffff',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    textDecoration: 'none',
+                    fontWeight: 700,
+                    padding: '8px 16px',
+                  }}
+                >
+                  👁️ عرض المقال بالموقع الآن ↗
+                </a>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button type="button" onClick={onClose} className="btn-admin btn-admin-outline">
+                    إغلاق النافذة
+                  </button>
+                  <button type="submit" disabled={isSaving} className="btn-admin btn-admin-primary">
+                    {isSaving ? '⏳ جاري الحفظ...' : '💾 حفظ التعديلات مجدداً'}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  disabled={isSaving}
+                  className="btn-admin btn-admin-outline"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSaving}
+                  className="btn-admin btn-admin-primary"
+                  style={{
+                    minWidth: '150px',
+                    display: 'inline-flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    gap: '6px',
+                  }}
+                >
+                  {isSaving ? (
+                    <>
+                      <span
+                        style={{
+                          width: '13px',
+                          height: '13px',
+                          border: '2px solid rgba(255,255,255,0.4)',
+                          borderTopColor: '#fff',
+                          borderRadius: '50%',
+                          display: 'inline-block',
+                          animation: 'spin 0.8s linear infinite',
+                        }}
+                      />
+                      <span>جاري الحفظ والتأكيد...</span>
+                    </>
+                  ) : (
+                    '💾 Save Article'
+                  )}
+                </button>
+              </>
+            )}
           </div>
         </form>
       </div>

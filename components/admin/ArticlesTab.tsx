@@ -134,10 +134,10 @@ export default function ArticlesTab({
                         href={`/article/${art.id}`}
                         target="_blank"
                         className="btn-admin btn-admin-outline"
-                        style={{ padding: '4px 8px', fontSize: '0.75rem' }}
-                        title="View Live"
+                        style={{ padding: '4px 10px', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '4px', textDecoration: 'none' }}
+                        title="عرض المقال بالموقع"
                       >
-                        ↗
+                        👁️ عرض
                       </Link>
                       <button
                         onClick={() => onEdit(art)}

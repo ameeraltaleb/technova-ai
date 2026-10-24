@@ -113,10 +113,9 @@ export default function AdminPage() {
     setArticleModalOpen(true);
   };
 
-  const handleSaveArticle = (art: ArticleItem) => {
-    const updated = AdminStore.saveArticle(art);
+  const handleSaveArticle = async (art: ArticleItem) => {
+    const updated = await AdminStore.saveArticle(art);
     setArticles(updated);
-    setArticleModalOpen(false);
   };
 
   const handleDeleteArticle = (id: string) => {
