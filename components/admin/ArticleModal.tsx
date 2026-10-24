@@ -33,6 +33,13 @@ export default function ArticleModal({
   const [consText, setConsText] = useState('');
   const [content, setContent] = useState('');
 
+  // AI Assistant States
+  const [aiPrompt, setAiPrompt] = useState('');
+  const [aiLanguage, setAiLanguage] = useState<'ar' | 'en'>('ar');
+  const [isAiLoading, setIsAiLoading] = useState(false);
+  const [aiStatusMsg, setAiStatusMsg] = useState('');
+  const [activeAiHelper, setActiveAiHelper] = useState<string | null>(null);
+
   useEffect(() => {
     if (initialArticle) {
       setTitle(initialArticle.title || '');
@@ -66,7 +73,137 @@ export default function ArticleModal({
       setConsText('');
       setContent('');
     }
+    setAiPrompt('');
+    setAiStatusMsg('');
+    setIsAiLoading(false);
   }, [initialArticle, isOpen]);
+
+  const handleGenerateFullArticle = async () => {
+    if (!aiPrompt.trim()) {
+      alert('يرجى كتابة فكرة المقال أو اسم الأداة أولاً.');
+      return;
+    }
+
+    setIsAiLoading(true);
+    setAiStatusMsg('جاري الاتصال بـ Google Gemini لتوليد المقال بالكامل...');
+
+    try {
+      const res = await fetch('/api/ai/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'generate_article',
+          topic: aiPrompt.trim(),
+          language: aiLanguage,
+        }),
+      });
+
+      const resData = await res.json();
+      if (!res.ok || !resData.success) {
+        throw new Error(resData.error || 'فشل توليد المقال');
+      }
+
+      const generated = resData.data;
+      if (generated.title) setTitle(generated.title);
+      if (generated.slug) setSlug(generated.slug);
+      if (generated.excerpt) setExcerpt(generated.excerpt);
+      if (generated.category) setCategory(generated.category);
+      if (generated.readTime) setReadTime(generated.readTime);
+      if (generated.rating) setRating(generated.rating);
+      if (Array.isArray(generated.tags)) setTags(generated.tags.join(', '));
+      if (Array.isArray(generated.pros)) setProsText(generated.pros.join('\n'));
+      if (Array.isArray(generated.cons)) setConsText(generated.cons.join('\n'));
+      if (generated.content) setContent(generated.content);
+
+      setAiStatusMsg('✨ تم توليد المقال وتعبئة جميع الحقول بنجاح!');
+      setTimeout(() => setAiStatusMsg(''), 4000);
+    } catch (err: any) {
+      alert('خطأ أثناء التوليد: ' + err.message);
+      setAiStatusMsg('');
+    } finally {
+      setIsAiLoading(false);
+    }
+  };
+
+  const handleGenerateExcerpt = async () => {
+    if (!content.trim()) {
+      alert('يرجى كتابة محتوى في المقال أولاً لتلخيصه.');
+      return;
+    }
+    setActiveAiHelper('excerpt');
+    try {
+      const res = await fetch('/api/ai/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'generate_excerpt',
+          contextData: content,
+        }),
+      });
+      const data = await res.json();
+      if (data.success && data.data?.excerpt) {
+        setExcerpt(data.data.excerpt);
+      }
+    } catch (e: any) {
+      alert('خطأ: ' + e.message);
+    } finally {
+      setActiveAiHelper(null);
+    }
+  };
+
+  const handleExtractProsCons = async () => {
+    if (!content.trim()) {
+      alert('يرجى كتابة محتوى المقال أولاً لاستخراج الإيجابيات والسلبيات.');
+      return;
+    }
+    setActiveAiHelper('pros_cons');
+    try {
+      const res = await fetch('/api/ai/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'extract_pros_cons',
+          contextData: content,
+        }),
+      });
+      const data = await res.json();
+      if (data.success && data.data) {
+        if (Array.isArray(data.data.pros)) setProsText(data.data.pros.join('\n'));
+        if (Array.isArray(data.data.cons)) setConsText(data.data.cons.join('\n'));
+      }
+    } catch (e: any) {
+      alert('خطأ: ' + e.message);
+    } finally {
+      setActiveAiHelper(null);
+    }
+  };
+
+  const handleSuggestTags = async () => {
+    if (!title.trim() && !content.trim()) {
+      alert('يرجى كتابة العنوان أو المحتوى لاقتراح الوسوم.');
+      return;
+    }
+    setActiveAiHelper('tags');
+    try {
+      const res = await fetch('/api/ai/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'suggest_tags',
+          topic: title,
+          contextData: content,
+        }),
+      });
+      const data = await res.json();
+      if (data.success && Array.isArray(data.data?.tags)) {
+        setTags(data.data.tags.join(', '));
+      }
+    } catch (e: any) {
+      alert('خطأ: ' + e.message);
+    } finally {
+      setActiveAiHelper(null);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -201,6 +338,128 @@ export default function ArticleModal({
               </div>
             ) : (
               <>
+                {/* ─── Google Gemini AI Writer Banner ─── */}
+                <div
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(168, 85, 247, 0.08) 100%)',
+                    border: '1px solid rgba(129, 140, 248, 0.35)',
+                    borderRadius: '12px',
+                    padding: '16px 20px',
+                    marginBottom: '20px',
+                    boxShadow: '0 4px 15px -3px rgba(99, 102, 241, 0.05)',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px', flexWrap: 'wrap', gap: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontSize: '1.25rem' }}>✨</span>
+                      <div>
+                        <strong style={{ fontSize: '0.95rem', color: '#312e81' }}>
+                          Google Gemini AI Co-Writer
+                        </strong>
+                        <span style={{ fontSize: '0.75rem', background: '#e0e7ff', color: '#4338ca', padding: '2px 8px', borderRadius: '12px', marginLeft: '8px', fontWeight: 600 }}>
+                          PRO MODEL ACTIVE
+                        </span>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ fontSize: '0.8rem', color: 'var(--admin-text-muted)' }}>اللغة:</span>
+                      <button
+                        type="button"
+                        onClick={() => setAiLanguage('ar')}
+                        style={{
+                          padding: '3px 10px',
+                          fontSize: '0.75rem',
+                          borderRadius: '6px',
+                          border: aiLanguage === 'ar' ? '1px solid #4f46e5' : '1px solid #cbd5e1',
+                          background: aiLanguage === 'ar' ? '#4f46e5' : '#ffffff',
+                          color: aiLanguage === 'ar' ? '#ffffff' : '#475569',
+                          cursor: 'pointer',
+                          fontWeight: 600,
+                        }}
+                      >
+                        🇸🇦 العربية
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setAiLanguage('en')}
+                        style={{
+                          padding: '3px 10px',
+                          fontSize: '0.75rem',
+                          borderRadius: '6px',
+                          border: aiLanguage === 'en' ? '1px solid #4f46e5' : '1px solid #cbd5e1',
+                          background: aiLanguage === 'en' ? '#4f46e5' : '#ffffff',
+                          color: aiLanguage === 'en' ? '#ffffff' : '#475569',
+                          cursor: 'pointer',
+                          fontWeight: 600,
+                        }}
+                      >
+                        🇺🇸 English
+                      </button>
+                    </div>
+                  </div>
+
+                  <p style={{ margin: '0 0 10px', fontSize: '0.82rem', color: '#475569', lineHeight: 1.4 }}>
+                    اكتب فكرة المقال، أو عنوان أداة تريد مراجعتها، وسيقوم الذكاء الاصطناعي بتوليد المقال بالكامل مع الهيكل، العناوين، الإيجابيات والسلبيات، والوسوم:
+                  </p>
+
+                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                    <input
+                      type="text"
+                      className="form-input"
+                      style={{ flex: '1 1 300px', background: '#ffffff', borderColor: '#c7d2fe' }}
+                      value={aiPrompt}
+                      onChange={(e) => setAiPrompt(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          handleGenerateFullArticle();
+                        }
+                      }}
+                      placeholder="مثال: مراجعة لأداة Devin للبرمجة الذاتية وهل تستبدل المبرمجين..."
+                      disabled={isAiLoading}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleGenerateFullArticle}
+                      disabled={isAiLoading}
+                      style={{
+                        background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: '8px',
+                        padding: '8px 18px',
+                        fontSize: '0.875rem',
+                        fontWeight: 600,
+                        cursor: isAiLoading ? 'not-allowed' : 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        boxShadow: '0 2px 8px rgba(79, 70, 229, 0.3)',
+                        opacity: isAiLoading ? 0.7 : 1,
+                      }}
+                    >
+                      {isAiLoading ? '⏳ جاري التوليد...' : '🚀 توليد المقال بالكامل'}
+                    </button>
+                  </div>
+
+                  {aiStatusMsg && (
+                    <div
+                      style={{
+                        marginTop: '10px',
+                        padding: '6px 12px',
+                        background: aiStatusMsg.includes('✨') ? '#ecfdf5' : '#eff6ff',
+                        color: aiStatusMsg.includes('✨') ? '#065f46' : '#1e40af',
+                        borderRadius: '6px',
+                        fontSize: '0.8rem',
+                        fontWeight: 500,
+                      }}
+                    >
+                      {aiStatusMsg}
+                    </div>
+                  )}
+                </div>
+
                 <div className="form-row">
                   <div className="form-group">
                     <label className="form-label">Article Title *</label>
@@ -227,7 +486,18 @@ export default function ArticleModal({
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label">Excerpt / Summary *</label>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                    <label className="form-label" style={{ margin: 0 }}>Excerpt / Summary *</label>
+                    <button
+                      type="button"
+                      onClick={handleGenerateExcerpt}
+                      disabled={activeAiHelper === 'excerpt'}
+                      className="btn-admin btn-admin-outline"
+                      style={{ padding: '2px 8px', fontSize: '0.75rem', borderColor: '#a5b4fc', color: '#4338ca' }}
+                    >
+                      {activeAiHelper === 'excerpt' ? '⏳ جاري التلخيص...' : '✨ تلخيص من المحتوى بالـ AI'}
+                    </button>
+                  </div>
                   <textarea
                     className="form-textarea"
                     style={{ minHeight: '60px' }}
@@ -314,6 +584,23 @@ export default function ArticleModal({
                   </div>
                 </div>
 
+                <div style={{ marginBottom: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                    <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--admin-text-main)' }}>
+                      المزايا والعيوب (Pros & Cons)
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleExtractProsCons}
+                      disabled={activeAiHelper === 'pros_cons'}
+                      className="btn-admin btn-admin-outline"
+                      style={{ padding: '2px 8px', fontSize: '0.75rem', borderColor: '#a5b4fc', color: '#4338ca' }}
+                    >
+                      {activeAiHelper === 'pros_cons' ? '⏳ جاري الاستخراج...' : '✨ استخراج من المحتوى بالـ AI'}
+                    </button>
+                  </div>
+                </div>
+
                 <div className="form-row">
                   <div className="form-group">
                     <label className="form-label">Pros (One per line)</label>
@@ -338,7 +625,18 @@ export default function ArticleModal({
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label">Tags (comma-separated)</label>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                    <label className="form-label" style={{ margin: 0 }}>Tags (comma-separated)</label>
+                    <button
+                      type="button"
+                      onClick={handleSuggestTags}
+                      disabled={activeAiHelper === 'tags'}
+                      className="btn-admin btn-admin-outline"
+                      style={{ padding: '2px 8px', fontSize: '0.75rem', borderColor: '#a5b4fc', color: '#4338ca' }}
+                    >
+                      {activeAiHelper === 'tags' ? '⏳ جاري الاقتراح...' : '✨ اقتراح وسوم بالـ AI'}
+                    </button>
+                  </div>
                   <input
                     type="text"
                     className="form-input"

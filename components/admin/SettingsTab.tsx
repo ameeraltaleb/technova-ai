@@ -21,6 +21,33 @@ export default function SettingsTab({
   const [savedMessage, setSavedMessage] = useState(false);
   const [fbSavedMessage, setFbSavedMessage] = useState(false);
 
+  // Gemini AI Status & Test
+  const [aiTestLoading, setAiTestLoading] = useState(false);
+  const [aiTestResult, setAiTestResult] = useState<{ success?: boolean; msg?: string } | null>(null);
+
+  const handleTestGemini = async () => {
+    setAiTestLoading(true);
+    setAiTestResult(null);
+    try {
+      const res = await fetch('/api/ai/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'test_connection' }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setAiTestResult({ success: true, msg: '✅ الاتصال ناجح ومؤكد! المحرك جاهز لتوليد المقالات والأخبار.' });
+      } else {
+        setAiTestResult({ success: false, msg: `❌ خطأ في الاتصال: ${data.error || 'فشل التحقق'}` });
+      }
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      setAiTestResult({ success: false, msg: `❌ خطأ في الشبكة: ${errorMsg}` });
+    } finally {
+      setAiTestLoading(false);
+    }
+  };
+
   const handleSubmitSettings = (e: React.FormEvent) => {
     e.preventDefault();
     onSaveSettings(form);
@@ -318,6 +345,81 @@ export default function SettingsTab({
           </button>
         </div>
       </form>
+
+      {/* ─── Google Gemini AI Engine Settings & Diagnostics ─── */}
+      <div className="admin-panel" style={{ padding: '24px', border: '1px solid rgba(129, 140, 248, 0.3)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span style={{ fontSize: '1.5rem' }}>✨</span>
+            <div>
+              <h2 className="admin-panel__title" style={{ margin: 0 }}>
+                Google Gemini AI Configuration
+              </h2>
+              <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: 'var(--admin-text-muted)' }}>
+                Powering one-click article writing, auto-summarization, and breaking news generation
+              </p>
+            </div>
+          </div>
+          <span className="badge-pill badge-pill-primary" style={{ background: '#e0e7ff', color: '#4338ca', fontWeight: 700 }}>
+            Active Model: Gemini 3.5 Flash
+          </span>
+        </div>
+
+        <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '10px', border: '1px solid #e2e8f0', marginBottom: '20px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
+            <div>
+              <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#1e293b' }}>
+                حالة الاتصال بمحرك الذكاء الاصطناعي (API Key Status)
+              </div>
+              <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '2px' }}>
+                المفتاح محفوظ بأمان داخل متغيرات البيئة السحابية (<code style={{ background: '#e2e8f0', padding: '2px 6px', borderRadius: '4px' }}>GEMINI_API_KEY</code>).
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleTestGemini}
+              disabled={aiTestLoading}
+              className="btn-admin btn-admin-primary"
+              style={{ padding: '8px 16px', fontSize: '0.85rem' }}
+            >
+              {aiTestLoading ? '⏳ جاري فحص الاتصال...' : '⚡ فحص وتأكيد الاتصال (Test API)'}
+            </button>
+          </div>
+
+          {aiTestResult && (
+            <div
+              style={{
+                marginTop: '12px',
+                padding: '10px 14px',
+                borderRadius: '8px',
+                fontSize: '0.85rem',
+                fontWeight: 600,
+                background: aiTestResult.success ? '#ecfdf5' : '#fef2f2',
+                color: aiTestResult.success ? '#065f46' : '#991b1b',
+                border: `1px solid ${aiTestResult.success ? '#a7f3d0' : '#fecaca'}`,
+              }}
+            >
+              {aiTestResult.msg}
+            </div>
+          )}
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px' }}>
+          <div style={{ padding: '12px 16px', background: 'var(--admin-card-bg, #ffffff)', border: '1px solid var(--admin-border, #e2e8f0)', borderRadius: '8px' }}>
+            <div style={{ fontSize: '0.8rem', color: 'var(--admin-text-muted)' }}>السرعة ووقت الاستجابة</div>
+            <div style={{ fontSize: '1rem', fontWeight: 700, color: '#10b981', marginTop: '4px' }}>فائق السرعة (Ultra-Fast)</div>
+          </div>
+          <div style={{ padding: '12px 16px', background: 'var(--admin-card-bg, #ffffff)', border: '1px solid var(--admin-border, #e2e8f0)', borderRadius: '8px' }}>
+            <div style={{ fontSize: '0.8rem', color: 'var(--admin-text-muted)' }}>اللغات المدعومة</div>
+            <div style={{ fontSize: '1rem', fontWeight: 700, color: '#6366f1', marginTop: '4px' }}>العربية 🇸🇦 & الإنجليزية 🇺🇸</div>
+          </div>
+          <div style={{ padding: '12px 16px', background: 'var(--admin-card-bg, #ffffff)', border: '1px solid var(--admin-border, #e2e8f0)', borderRadius: '8px' }}>
+            <div style={{ fontSize: '0.8rem', color: 'var(--admin-text-muted)' }}>الميزات المدمجة</div>
+            <div style={{ fontSize: '1rem', fontWeight: 700, color: '#8b5cf6', marginTop: '4px' }}>مقالات، أخبار، وسوم، تلخيص</div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
