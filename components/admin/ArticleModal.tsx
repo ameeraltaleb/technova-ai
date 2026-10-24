@@ -250,6 +250,8 @@ export default function ArticleModal({
         avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(authorName)}&background=random`,
       },
       date: initialArticle?.date || new Date().toISOString().split('T')[0],
+      createdAt: (initialArticle as any)?.createdAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
       readTime,
       rating: Number(rating),
       featured,

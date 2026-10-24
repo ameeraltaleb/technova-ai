@@ -3,6 +3,40 @@ import { collection, getDocs, doc, getDoc, query, orderBy } from 'firebase/fires
 import { ARTICLES, TOOLS, NEWS, CATEGORIES } from './data';
 import { ArticleItem, ToolItem, NewsItem } from './admin-store';
 
+export function getArticleTimestamp(
+  article: ArticleItem & { updatedAt?: any; createdAt?: any }
+): number {
+  if (article.updatedAt) {
+    if (typeof article.updatedAt.toMillis === 'function') return article.updatedAt.toMillis();
+    if (typeof article.updatedAt.seconds === 'number') return article.updatedAt.seconds * 1000;
+    if (article.updatedAt.timestampValue) {
+      const t = new Date(article.updatedAt.timestampValue).getTime();
+      if (!isNaN(t) && t > 0) return t;
+    }
+    const t = new Date(article.updatedAt).getTime();
+    if (!isNaN(t) && t > 0) return t;
+  }
+  if (article.createdAt) {
+    if (typeof article.createdAt.toMillis === 'function') return article.createdAt.toMillis();
+    if (typeof article.createdAt.seconds === 'number') return article.createdAt.seconds * 1000;
+    if (article.createdAt.timestampValue) {
+      const t = new Date(article.createdAt.timestampValue).getTime();
+      if (!isNaN(t) && t > 0) return t;
+    }
+    const t = new Date(article.createdAt).getTime();
+    if (!isNaN(t) && t > 0) return t;
+  }
+  if (article.date) {
+    const t = new Date(article.date).getTime();
+    if (!isNaN(t) && t > 0) return t;
+  }
+  return 0;
+}
+
+export function sortArticlesByNewest<T extends ArticleItem>(articles: T[]): T[] {
+  return [...articles].sort((a, b) => getArticleTimestamp(b) - getArticleTimestamp(a));
+}
+
 export async function getLiveArticles(): Promise<ArticleItem[]> {
   try {
     const colRef = collection(db, 'articles');
@@ -14,13 +48,13 @@ export async function getLiveArticles(): Promise<ArticleItem[]> {
       const remainingStatic = (ARTICLES as unknown as ArticleItem[]).filter(
         (a) => !firestoreIds.has(a.id)
       );
-      // Return firestore articles first, followed by static articles
-      return [...firestoreArticles, ...remainingStatic];
+      // Return firestore articles merged with static, always sorted by newest publication
+      return sortArticlesByNewest([...firestoreArticles, ...remainingStatic]);
     }
   } catch (error) {
     console.warn('getLiveArticles fallback to static:', error);
   }
-  return ARTICLES as unknown as ArticleItem[];
+  return sortArticlesByNewest(ARTICLES as unknown as ArticleItem[]);
 }
 
 export async function getLiveArticleById(id: string): Promise<ArticleItem | null> {

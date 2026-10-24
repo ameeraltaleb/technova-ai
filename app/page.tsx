@@ -13,14 +13,10 @@ export default async function Home() {
   const news = await getLiveNews();
   const categoriesWithCounts = getCategoriesWithCounts(articles);
 
-  const sortedArticles = [...articles].sort((a, b) => {
-    const timeA = a.date ? new Date(a.date).getTime() : 0;
-    const timeB = b.date ? new Date(b.date).getTime() : 0;
-    return timeB - timeA;
-  });
-
-  const featuredArticle = articles.find(a => a.featured) || sortedArticles[0];
-  const sideArticles = sortedArticles.filter(a => a.id !== featuredArticle?.id).slice(0, 3);
+  // Articles are already sorted newest-first by getLiveArticles()
+  const recentFeatured = articles.slice(0, 5).find(a => a.featured);
+  const featuredArticle = recentFeatured || articles[0];
+  const sideArticles = articles.filter(a => a.id !== featuredArticle?.id).slice(0, 3);
   const topTools = tools.slice(0, 4);
   const trendingNews = news.slice(0, 3);
   const latestArticles = articles

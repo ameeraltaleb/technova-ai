@@ -14,6 +14,8 @@ export interface ArticleItem {
     role?: string;
   };
   date: string;
+  createdAt?: any;
+  updatedAt?: any;
   readTime: string;
   rating: number;
   featured: boolean;
@@ -150,8 +152,7 @@ export const AdminStore = {
     const index = articles.findIndex((a) => a.id === article.id);
     let updated: ArticleItem[];
     if (index >= 0) {
-      updated = [...articles];
-      updated[index] = article;
+      updated = [article, ...articles.filter((a) => a.id !== article.id)];
     } else {
       updated = [article, ...articles];
     }

@@ -38,7 +38,15 @@ export const FirebaseService = {
   async saveArticle(article: ArticleItem): Promise<void> {
     try {
       const docRef = doc(db, 'articles', article.id);
-      await setDoc(docRef, { ...article, updatedAt: serverTimestamp() }, { merge: true });
+      await setDoc(
+        docRef,
+        {
+          ...article,
+          updatedAt: serverTimestamp(),
+          createdAt: (article as any).createdAt || serverTimestamp(),
+        },
+        { merge: true }
+      );
     } catch (error) {
       console.error('Firestore saveArticle error:', error);
       throw error;
