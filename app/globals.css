@@ -3292,3 +3292,196 @@ input, textarea, select {
   }
 }
 
+/* ==========================================================================
+   OpenAI-Style Clean Studio Light Mode Overrides
+   ========================================================================== */
+
+[data-theme="light"] {
+  color-scheme: light;
+}
+
+[data-theme="light"] .bento-hero {
+  background: linear-gradient(180deg, #F8FAFC 0%, #FFFFFF 100%);
+}
+
+[data-theme="light"] .hero__glow {
+  opacity: 0.08;
+}
+
+[data-theme="light"] .hero__grid-overlay {
+  opacity: 0.3;
+}
+
+[data-theme="light"] .bento-hero__title {
+  color: #0F172A;
+}
+
+[data-theme="light"] .bento-hero__desc {
+  color: #475569;
+}
+
+[data-theme="light"] .hero__search {
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .hero__search:focus-within {
+  border-color: #4F46E5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+[data-theme="light"] .hero__search-input {
+  color: #0F172A;
+}
+
+[data-theme="light"] .hero__search-input::placeholder {
+  color: #94A3B8;
+}
+
+[data-theme="light"] .bento-lead {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="light"] .bento-lead:hover {
+  border-color: rgba(79, 70, 229, 0.5);
+  box-shadow: 0 20px 40px -10px rgba(79, 70, 229, 0.2);
+}
+
+[data-theme="light"] .bento-side {
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 30px -5px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .bento-side__header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .bento-side__label {
+  color: #4F46E5;
+}
+
+[data-theme="light"] .bento-side__link {
+  color: #64748B;
+}
+
+[data-theme="light"] .bento-side__link:hover {
+  color: #4F46E5;
+}
+
+[data-theme="light"] .bento-side-card {
+  background: #F8FAFC;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .bento-side-card:hover {
+  background: #FFFFFF;
+  border-color: rgba(79, 70, 229, 0.35);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .bento-side-card__cat {
+  color: #4F46E5;
+}
+
+[data-theme="light"] .bento-side-card__title {
+  color: #0F172A;
+}
+
+[data-theme="light"] .bento-side-card:hover .bento-side-card__title {
+  color: #4F46E5;
+}
+
+[data-theme="light"] .bento-side-card__meta {
+  color: #64748B;
+}
+
+[data-theme="light"] .bento-stats {
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 6px 24px -5px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .bento-stat-label {
+  color: #64748B;
+}
+
+[data-theme="light"] .navbar.scrolled {
+  background: rgba(255, 255, 255, 0.9);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .navbar__link {
+  color: #475569;
+}
+
+[data-theme="light"] .navbar__link:hover {
+  color: #0F172A;
+}
+
+[data-theme="light"] .article-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .article-card:hover {
+  border-color: rgba(79, 70, 229, 0.35);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+  background: #FFFFFF;
+}
+
+[data-theme="light"] .article-card__title {
+  color: #0F172A;
+}
+
+[data-theme="light"] .article-card:hover .article-card__title {
+  color: #4F46E5;
+}
+
+[data-theme="light"] .article-card__excerpt {
+  color: #64748B;
+}
+
+[data-theme="light"] .article-card__meta {
+  color: #64748B;
+}
+
+[data-theme="light"] .category-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .category-card:hover {
+  background: #F8FAFC;
+  border-color: rgba(79, 70, 229, 0.35);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .category-card__name {
+  color: #0F172A;
+}
+
+[data-theme="light"] .category-card__count {
+  color: #64748B;
+}
+
+[data-theme="light"] .news-card {
+  background: #FFFFFF !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;
+}
+
+[data-theme="light"] .news-card h3 {
+  color: #0F172A !important;
+}
+
+[data-theme="light"] .news-card p {
+  color: #475569 !important;
+}
+
+
