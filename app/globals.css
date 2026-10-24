@@ -228,63 +228,210 @@ input, textarea, select {
   font-size: var(--fs-xl);
 }
 
-/* ---- Mobile Menu ---- */
+/* ---- Mobile Menu Overlay & Slide-in Drawer ---- */
 .mobile-menu {
-  display: none;
+  display: block;
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--bg-overlay);
-  backdrop-filter: blur(20px);
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   z-index: var(--z-modal);
   opacity: 0;
   visibility: hidden;
-  transition: all var(--transition-base);
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  pointer-events: none;
 }
 
 .mobile-menu.active {
   opacity: 1;
   visibility: visible;
+  pointer-events: auto;
 }
 
-.mobile-menu__inner {
+.mobile-drawer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  max-width: 380px;
+  background: var(--bg-secondary);
+  border-left: 1px solid var(--border-card);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  gap: var(--space-6);
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+  overflow-y: auto;
 }
 
-.mobile-menu__close {
-  position: absolute;
-  top: var(--space-6);
-  right: var(--space-6);
-  width: 44px;
-  height: 44px;
+.mobile-menu.active .mobile-drawer {
+  transform: translateX(0);
+}
+
+.mobile-drawer__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-5) var(--space-6);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.mobile-drawer__close {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-card);
+  color: var(--text-primary);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--fs-2xl);
-  color: var(--text-secondary);
-  border-radius: var(--radius-md);
+  font-size: var(--fs-base);
+  transition: all 0.2s ease;
+  cursor: pointer;
 }
 
-.mobile-menu__link {
-  font-family: var(--font-display);
-  font-size: var(--fs-2xl);
-  font-weight: var(--fw-semibold);
-  color: var(--text-primary);
-  padding: var(--space-3) var(--space-8);
-  border-radius: var(--radius-lg);
-  transition: all var(--transition-fast);
-}
-
-.mobile-menu__link:hover {
-  background: rgba(108, 92, 231, 0.15);
+.mobile-drawer__close:hover {
+  background: rgba(255, 255, 255, 0.1);
   color: var(--color-accent);
+}
+
+.mobile-drawer__theme-btn {
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-card);
+  color: var(--text-primary);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s ease;
+}
+
+.mobile-drawer__theme-btn:hover {
+  background: rgba(99, 102, 241, 0.15);
+  border-color: var(--color-primary-light);
+}
+
+.mobile-drawer__search {
+  padding: var(--space-4) var(--space-6) 0 var(--space-6);
+}
+
+.mobile-drawer__search-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  color: var(--text-tertiary);
+  font-size: var(--fs-sm);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.mobile-drawer__search-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--text-primary);
+}
+
+.mobile-drawer__kbd {
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-sm);
+  color: var(--color-primary-light);
+  font-family: var(--font-mono);
+}
+
+.mobile-drawer__content {
+  padding: var(--space-6);
+  flex: 1;
+}
+
+.mobile-drawer__section-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  margin-bottom: var(--space-3);
+}
+
+.mobile-drawer__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mobile-drawer__link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: var(--fs-base);
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.mobile-drawer__link:hover {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--color-primary-light);
+  transform: translateX(4px);
+}
+
+.mobile-drawer__link-icon {
+  font-size: 1.15rem;
+  width: 24px;
+  text-align: center;
+}
+
+.mobile-drawer__categories {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.mobile-drawer__cat-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  color: var(--text-secondary);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.mobile-drawer__cat-chip:hover {
+  background: rgba(99, 102, 241, 0.12);
+  color: var(--text-primary);
+  border-color: var(--color-primary-light);
+}
+
+.mobile-drawer__footer {
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid var(--border-subtle);
+  background: rgba(0, 0, 0, 0.1);
+  font-size: 0.72rem;
+  color: var(--text-tertiary);
+  text-align: center;
 }
 
 /* ============================================
@@ -2851,7 +2998,7 @@ input, textarea, select {
 /* Bento Hero Container */
 .bento-hero {
   position: relative;
-  padding: var(--space-10) 0 var(--space-12) 0;
+  padding: calc(75px + var(--space-8)) 0 var(--space-12) 0;
   overflow: hidden;
 }
 
@@ -3272,7 +3419,7 @@ input, textarea, select {
 
 @media (max-width: 768px) {
   .bento-hero {
-    padding: var(--space-6) 0 var(--space-8) 0;
+    padding: calc(70px + var(--space-6)) 0 var(--space-8) 0;
   }
   .bento-lead {
     min-height: 380px;

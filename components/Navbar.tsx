@@ -10,17 +10,29 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      setIsScrolled(window.scrollY > 40);
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
-    
-    // Theme
+
+    // Theme initialization
     const saved = localStorage.getItem('technova-theme') || 'dark';
     setTheme(saved);
     document.documentElement.setAttribute('data-theme', saved);
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Prevent background scroll when mobile drawer is open
+  useEffect(() => {
+    if (isMobileOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMobileOpen]);
 
   const toggleTheme = () => {
     const next = theme === 'dark' ? 'light' : 'dark';
@@ -61,30 +73,125 @@ export default function Navbar() {
             <button className="navbar__theme-btn" onClick={toggleTheme} aria-label="Toggle theme">
               {theme === 'dark' ? '☀️' : '🌙'}
             </button>
-            <button className="navbar__mobile-toggle" onClick={() => setIsMobileOpen(true)} aria-label="Menu">☰</button>
+            <button
+              className="navbar__mobile-toggle"
+              onClick={() => setIsMobileOpen(true)}
+              aria-label="Open navigation menu"
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="4" y1="6" x2="20" y2="6"></line>
+                <line x1="4" y1="12" x2="20" y2="12"></line>
+                <line x1="4" y1="18" x2="20" y2="18"></line>
+              </svg>
+            </button>
           </div>
         </div>
       </nav>
 
-      {/* Mobile Menu */}
-      <div className={`mobile-menu ${isMobileOpen ? 'active' : ''}`}>
-        <button className="mobile-menu__close" onClick={() => setIsMobileOpen(false)}>✕</button>
-        <div className="mobile-menu__inner">
-          <button
-            className="mobile-menu__link"
-            style={{ background: 'none', border: 'none', cursor: 'pointer', textAlign: 'center', width: '100%', color: 'var(--color-primary-light)' }}
-            onClick={() => {
-              setIsMobileOpen(false);
-              window.dispatchEvent(new CustomEvent('open-search'));
-            }}
-          >
-            🔍 Search Tools & Articles
-          </button>
-          <Link href="/" className="mobile-menu__link" onClick={() => setIsMobileOpen(false)}>Home</Link>
-          <Link href="/category" className="mobile-menu__link" onClick={() => setIsMobileOpen(false)}>All Articles</Link>
-          <Link href="/tools" className="mobile-menu__link" onClick={() => setIsMobileOpen(false)}>Tools Directory</Link>
-          <Link href="/news" className="mobile-menu__link" onClick={() => setIsMobileOpen(false)}>News</Link>
-          <Link href="/about" className="mobile-menu__link" onClick={() => setIsMobileOpen(false)}>About</Link>
+      {/* Modern Slide-in Mobile Drawer */}
+      <div
+        className={`mobile-menu ${isMobileOpen ? 'active' : ''}`}
+        onClick={() => setIsMobileOpen(false)}
+      >
+        <div
+          className="mobile-drawer"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Drawer Top Bar */}
+          <div className="mobile-drawer__header">
+            <Link href="/" className="navbar__logo" onClick={() => setIsMobileOpen(false)}>
+              <img src="/logo.png" alt="TechNova AI" className="navbar__logo-img" width={32} height={32} />
+              <span style={{ fontSize: 'var(--fs-lg)' }}>TechNova AI</span>
+            </Link>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <button
+                className="mobile-drawer__theme-btn"
+                onClick={toggleTheme}
+                aria-label="Toggle theme"
+              >
+                {theme === 'dark' ? '☀️ Light' : '🌙 Dark'}
+              </button>
+              <button
+                className="mobile-drawer__close"
+                onClick={() => setIsMobileOpen(false)}
+                aria-label="Close menu"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+
+          {/* Quick Search Trigger */}
+          <div className="mobile-drawer__search">
+            <button
+              type="button"
+              className="mobile-drawer__search-btn"
+              onClick={() => {
+                setIsMobileOpen(false);
+                window.dispatchEvent(new CustomEvent('open-search'));
+              }}
+            >
+              <span>🔍 Search articles, tools...</span>
+              <kbd className="mobile-drawer__kbd">Search</kbd>
+            </button>
+          </div>
+
+          {/* Navigation Links */}
+          <div className="mobile-drawer__content">
+            <div className="mobile-drawer__section-label">Main Navigation</div>
+            <nav className="mobile-drawer__nav">
+              <Link href="/" className="mobile-drawer__link" onClick={() => setIsMobileOpen(false)}>
+                <span className="mobile-drawer__link-icon">🏠</span>
+                <span>Home</span>
+              </Link>
+              <Link href="/category" className="mobile-drawer__link" onClick={() => setIsMobileOpen(false)}>
+                <span className="mobile-drawer__link-icon">📚</span>
+                <span>All Articles & Reviews</span>
+              </Link>
+              <Link href="/tools" className="mobile-drawer__link" onClick={() => setIsMobileOpen(false)}>
+                <span className="mobile-drawer__link-icon">⚡</span>
+                <span>Tools Directory</span>
+              </Link>
+              <Link href="/news" className="mobile-drawer__link" onClick={() => setIsMobileOpen(false)}>
+                <span className="mobile-drawer__link-icon">📰</span>
+                <span>Tech News</span>
+              </Link>
+              <Link href="/about" className="mobile-drawer__link" onClick={() => setIsMobileOpen(false)}>
+                <span className="mobile-drawer__link-icon">ℹ️</span>
+                <span>About Us</span>
+              </Link>
+            </nav>
+
+            {/* Popular Topics / Categories */}
+            <div className="mobile-drawer__section-label" style={{ marginTop: 'var(--space-6)' }}>
+              Explore Topics
+            </div>
+            <div className="mobile-drawer__categories">
+              <Link href="/category/ai-tools" className="mobile-drawer__cat-chip" onClick={() => setIsMobileOpen(false)}>
+                <span>🤖</span> AI Tools
+              </Link>
+              <Link href="/category/dev-tools" className="mobile-drawer__cat-chip" onClick={() => setIsMobileOpen(false)}>
+                <span>💻</span> Dev Tools
+              </Link>
+              <Link href="/category/productivity" className="mobile-drawer__cat-chip" onClick={() => setIsMobileOpen(false)}>
+                <span>⚡</span> Productivity
+              </Link>
+              <Link href="/category/design" className="mobile-drawer__cat-chip" onClick={() => setIsMobileOpen(false)}>
+                <span>🎨</span> Design
+              </Link>
+              <Link href="/category/security" className="mobile-drawer__cat-chip" onClick={() => setIsMobileOpen(false)}>
+                <span>🛡️</span> Security
+              </Link>
+              <Link href="/category/cloud" className="mobile-drawer__cat-chip" onClick={() => setIsMobileOpen(false)}>
+                <span>☁️</span> Cloud & SaaS
+              </Link>
+            </div>
+          </div>
+
+          {/* Drawer Bottom Bar */}
+          <div className="mobile-drawer__footer">
+            <span>TechNova AI • Modern Tech Reviews & Directory</span>
+          </div>
         </div>
       </div>
     </>
