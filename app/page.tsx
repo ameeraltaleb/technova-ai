@@ -40,10 +40,6 @@ export default async function Home() {
           {/* Header row: Title + Search */}
           <div className="bento-hero__top">
             <div className="bento-hero__intro">
-              <div className="hero__badge">
-                <span className="hero__badge-dot"></span>
-                The Future of Tech Reviews 2026
-              </div>
               <h1 className="bento-hero__title">
                 Discover, Compare & Master <br />
                 <span className="hero__title-gradient">The Best AI & Tech Tools</span>
