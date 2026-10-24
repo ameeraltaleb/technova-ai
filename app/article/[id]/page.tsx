@@ -7,7 +7,7 @@ import ShareButtons from '@/components/ShareButtons';
 import Newsletter from '@/components/Newsletter';
 
 export const dynamicParams = true;
-export const revalidate = 0;
+export const revalidate = 60;
 
 export function generateStaticParams() {
   return [];

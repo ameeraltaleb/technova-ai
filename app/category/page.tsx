@@ -1,8 +1,7 @@
 import { getLiveArticles, getCategoriesWithCounts } from '@/lib/public-data';
 import Link from 'next/link';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 60;
 
 export const metadata = {
   title: 'All Categories — TechNova AI',

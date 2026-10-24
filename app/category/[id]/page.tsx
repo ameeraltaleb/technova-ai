@@ -3,8 +3,7 @@ import { getLiveArticles } from '@/lib/public-data';
 import { getArticleImage } from '@/lib/utils';
 import Link from 'next/link';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 60;
 
 export function generateStaticParams() {
   return CATEGORIES.map((cat) => ({

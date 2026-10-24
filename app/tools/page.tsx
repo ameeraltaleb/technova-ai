@@ -2,7 +2,7 @@ import { getLiveTools } from '@/lib/public-data';
 import Link from 'next/link';
 import ToolsDirectoryClient from '@/components/ToolsDirectoryClient';
 
-export const revalidate = 0;
+export const revalidate = 60;
 
 export const metadata = {
   title: 'AI Tools Directory & Software Reviews — TechNova AI',

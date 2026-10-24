@@ -4,8 +4,7 @@ import { getArticleImage } from '@/lib/utils';
 import Newsletter from '@/components/Newsletter';
 import HeroSearchTrigger from '@/components/HeroSearchTrigger';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 60; // Incremental Static Regeneration (revalidates every 60 seconds)
 
 export default async function Home() {
   const articles = await getLiveArticles();
@@ -60,6 +59,7 @@ export default async function Home() {
                     alt={featuredArticle.title}
                     className="bento-lead__image"
                     loading="eager"
+                    decoding="async"
                   />
                   <div className="bento-lead__overlay"></div>
                 </div>
@@ -122,6 +122,9 @@ export default async function Home() {
                         alt={a.title}
                         className="bento-side-card__thumb"
                         loading="lazy"
+                        decoding="async"
+                        width={90}
+                        height={75}
                       />
                     </div>
                     <div className="bento-side-card__content">
@@ -261,7 +264,15 @@ export default async function Home() {
             {latestArticles.map(a => (
               <Link key={a.id} href={`/article/${a.id}`} className="article-card">
                 <div className="article-card__image-container">
-                  <img src={getArticleImage(a)} alt={a.title} className="article-card__image" loading="lazy" />
+                  <img
+                    src={getArticleImage(a)}
+                    alt={a.title}
+                    className="article-card__image"
+                    loading="lazy"
+                    decoding="async"
+                    width={380}
+                    height={200}
+                  />
                   <div className="article-card__category">{a.category}</div>
                 </div>
                 <div className="article-card__content">

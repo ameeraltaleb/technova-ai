@@ -1,7 +1,7 @@
 import { getLiveNews } from '@/lib/public-data';
 import Link from 'next/link';
 
-export const revalidate = 0;
+export const revalidate = 60;
 
 export const metadata = {
   title: 'Tech News Bites — TechNova AI',
