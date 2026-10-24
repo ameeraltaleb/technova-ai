@@ -68,3 +68,16 @@ export async function getLiveNews(): Promise<NewsItem[]> {
   }
   return NEWS as NewsItem[];
 }
+
+export function getCategoriesWithCounts(articles: ArticleItem[]) {
+  const counts: Record<string, number> = {};
+  for (const art of articles) {
+    if (art.category) {
+      counts[art.category] = (counts[art.category] || 0) + 1;
+    }
+  }
+  return CATEGORIES.map((cat) => ({
+    ...cat,
+    count: counts[cat.id] || 0,
+  }));
+}

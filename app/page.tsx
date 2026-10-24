@@ -1,16 +1,17 @@
 import Link from 'next/link';
-import { CATEGORIES } from '@/lib/data';
-import { getLiveArticles, getLiveTools, getLiveNews } from '@/lib/public-data';
+import { getLiveArticles, getLiveTools, getLiveNews, getCategoriesWithCounts } from '@/lib/public-data';
 import { getArticleImage } from '@/lib/utils';
 import Newsletter from '@/components/Newsletter';
 import HeroSearchTrigger from '@/components/HeroSearchTrigger';
 
+export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export default async function Home() {
   const articles = await getLiveArticles();
   const tools = await getLiveTools();
   const news = await getLiveNews();
+  const categoriesWithCounts = getCategoriesWithCounts(articles);
 
   const sortedArticles = [...articles].sort((a, b) => {
     const timeA = a.date ? new Date(a.date).getTime() : 0;
@@ -204,7 +205,7 @@ export default async function Home() {
             </div>
           </div>
           <div className="categories-grid">
-            {CATEGORIES.map(cat => (
+            {categoriesWithCounts.map(cat => (
               <Link key={cat.id} href={`/category/${cat.id}`} className="category-card">
                 <div className={`category-card__icon ${cat.iconClass}`}>{cat.icon}</div>
                 <div className="category-card__info">

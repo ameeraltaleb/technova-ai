@@ -1,12 +1,18 @@
-import { CATEGORIES } from '@/lib/data';
+import { getLiveArticles, getCategoriesWithCounts } from '@/lib/public-data';
 import Link from 'next/link';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export const metadata = {
   title: 'All Categories — TechNova AI',
   description: 'Browse all article categories on TechNova AI — AI Tools, Dev Tools, Productivity, Design, Security, Cloud, and more.',
 };
 
-export default function AllCategoriesPage() {
+export default async function AllCategoriesPage() {
+  const articles = await getLiveArticles();
+  const categories = getCategoriesWithCounts(articles);
+
   return (
     <>
       <section className="category-hero">
@@ -17,14 +23,14 @@ export default function AllCategoriesPage() {
           </div>
           <h1 className="category-hero__title">All Categories</h1>
           <p className="category-hero__description">Browse all topics covered on TechNova AI</p>
-          <p className="category-hero__count">{CATEGORIES.length} categories</p>
+          <p className="category-hero__count">{articles.length} articles across {categories.length} categories</p>
         </div>
       </section>
 
       <section className="section">
         <div className="container">
           <div className="categories-grid">
-            {CATEGORIES.map(cat => (
+            {categories.map(cat => (
               <Link key={cat.id} href={`/category/${cat.id}`} className="category-card">
                 <div className={`category-card__icon ${cat.iconClass}`}>{cat.icon}</div>
                 <div className="category-card__info">

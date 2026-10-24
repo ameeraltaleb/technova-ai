@@ -3,6 +3,7 @@ import { getLiveArticles } from '@/lib/public-data';
 import { getArticleImage } from '@/lib/utils';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export function generateStaticParams() {
@@ -17,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   if (!cat) return { title: 'Category Not Found' };
   return {
     title: `${cat.name} — TechNova AI`,
-    description: `Browse all ${cat.count} articles related to ${cat.name} on TechNova AI.`,
+    description: `Browse comprehensive reviews, guides, and articles related to ${cat.name} on TechNova AI.`,
   };
 }
 
