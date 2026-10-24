@@ -19,126 +19,184 @@ export default async function Home() {
     return timeB - timeA;
   });
 
-  const latestThree = sortedArticles.slice(0, 3);
-  const featuredArticle = articles.find(a => a.featured) || articles[0];
+  const featuredArticle = articles.find(a => a.featured) || sortedArticles[0];
+  const sideArticles = sortedArticles.filter(a => a.id !== featuredArticle?.id).slice(0, 3);
+  const trendingBarArticles = sortedArticles.slice(0, 5);
   const topTools = tools.slice(0, 4);
   const trendingNews = news.slice(0, 3);
-  const latestArticles = articles.filter(a => !a.featured).slice(0, 12);
+  const latestArticles = articles
+    .filter(a => a.id !== featuredArticle?.id && !sideArticles.some(s => s.id === a.id))
+    .slice(0, 12);
 
   return (
     <>
-      <section className="hero">
+      {/* ── Trending Ticker Bar ── */}
+      {trendingBarArticles.length > 0 && (
+        <section className="trending-ticker">
+          <div className="container">
+            <div className="trending-ticker__inner">
+              <div className="trending-ticker__badge">
+                <span className="trending-ticker__pulse"></span>
+                <span>🔥 TRENDING NOW</span>
+              </div>
+              <div className="trending-ticker__items">
+                {trendingBarArticles.map((item, idx) => (
+                  <Link key={item.id} href={`/article/${item.id}`} className="trending-ticker__link">
+                    <span className="trending-ticker__cat">#{item.category}</span>
+                    <span className="trending-ticker__title">{item.title}</span>
+                    {idx < trendingBarArticles.length - 1 && <span className="trending-ticker__sep">•</span>}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── Magazine Bento Hero ── */}
+      <section className="bento-hero">
         <div className="hero__bg"></div>
         <div className="hero__glow hero__glow--purple"></div>
         <div className="hero__glow hero__glow--cyan"></div>
         <div className="hero__grid-overlay"></div>
 
         <div className="container">
-          <div className="hero__content">
-            <div className="hero__badge">
-              <span className="hero__badge-dot"></span>
-              The Future of Tech Reviews
+          {/* Header row: Title + Search */}
+          <div className="bento-hero__top">
+            <div className="bento-hero__intro">
+              <div className="hero__badge">
+                <span className="hero__badge-dot"></span>
+                The Future of Tech Reviews 2026
+              </div>
+              <h1 className="bento-hero__title">
+                Discover, Compare & Master <br />
+                <span className="hero__title-gradient">The Best AI & Tech Tools</span>
+              </h1>
+              <p className="bento-hero__desc">
+                In-depth reviews, head-to-head comparisons, and unbiased guides designed to elevate your workflow and productivity.
+              </p>
             </div>
-
-            <h1 className="hero__title">
-              Discover the Best
-              <span className="hero__title-gradient">AI & Tech Tools</span>
-              for 2026
-            </h1>
-
-            <p className="hero__description">
-              In-depth reviews, head-to-head comparisons, and expert guides to help you choose the right tools — and master them.
-            </p>
-
-            <HeroSearchTrigger />
-
-            <div className="hero__stats">
-              <div className="hero__stat">
-                <span className="hero__stat-number">{articles.length}+</span>
-                <span className="hero__stat-label">Reviews</span>
-              </div>
-              <div className="hero__stat">
-                <span className="hero__stat-number">{tools.length * 30}+</span>
-                <span className="hero__stat-label">Tools Tested</span>
-              </div>
-              <div className="hero__stat">
-                <span className="hero__stat-number">100K+</span>
-                <span className="hero__stat-label">Monthly Readers</span>
-              </div>
+            <div className="bento-hero__search-wrap">
+              <HeroSearchTrigger />
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* ── Latest Articles (Top 3) ── */}
-      <section className="section">
-        <div className="container">
-          <div className="section__header">
-            <div>
-              <div className="section__label">// Fresh Releases</div>
-              <h2 className="section__title">Latest Articles</h2>
-            </div>
-            <Link href="/category" className="section__link">View All Articles →</Link>
-          </div>
-
-          <div className="cards-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
-            {latestThree.map(a => (
-              <Link key={a.id} href={`/article/${a.id}`} className="article-card">
-                <div className="article-card__image-container">
-                  <img src={getArticleImage(a)} alt={a.title} className="article-card__image" loading="lazy" />
-                  <div className="article-card__category">{a.category}</div>
+          {/* Bento Grid */}
+          <div className="bento-grid">
+            {/* Lead Story (Left / Main) */}
+            {featuredArticle && (
+              <Link href={`/article/${featuredArticle.id}`} className="bento-lead">
+                <div className="bento-lead__image-wrap">
+                  <img
+                    src={getArticleImage(featuredArticle)}
+                    alt={featuredArticle.title}
+                    className="bento-lead__image"
+                    loading="eager"
+                  />
+                  <div className="bento-lead__overlay"></div>
                 </div>
-                <div className="article-card__content">
-                  <div className="article-card__meta">
-                    <div className="article-card__author">
-                      <img src={a.author.avatar} alt={a.author.name} className="article-card__author-avatar" />
-                      <span>{a.author.name}</span>
-                    </div>
-                    <span>{a.date}</span>
-                    <span>•</span>
-                    <span>{a.readTime}</span>
+
+                <div className="bento-lead__content">
+                  <div className="bento-lead__badges">
+                    <span className="bento-badge bento-badge--featured">
+                      <span>⚡</span> EDITOR&apos;S CHOICE
+                    </span>
+                    <span className="bento-badge bento-badge--cat">
+                      #{featuredArticle.category}
+                    </span>
                   </div>
-                  <h3 className="article-card__title">{a.title}</h3>
-                  <p className="article-card__excerpt">{a.excerpt}</p>
+
+                  <h2 className="bento-lead__title">{featuredArticle.title}</h2>
+                  <p className="bento-lead__excerpt">{featuredArticle.excerpt}</p>
+
+                  <div className="bento-lead__footer">
+                    <div className="bento-lead__author">
+                      <img
+                        src={featuredArticle.author?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80'}
+                        alt={featuredArticle.author?.name || 'Author'}
+                        className="bento-lead__avatar"
+                      />
+                      <div>
+                        <div className="bento-lead__author-name">{featuredArticle.author?.name || 'TechNova Team'}</div>
+                        <div className="bento-lead__meta">
+                          <span>{featuredArticle.date}</span>
+                          <span>•</span>
+                          <span>⏱️ {featuredArticle.readTime}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <span className="bento-lead__cta">
+                      Read Full Review →
+                    </span>
+                  </div>
                 </div>
               </Link>
-            ))}
-          </div>
-        </div>
-      </section>
+            )}
 
-      {/* ── Editor's Pick ── */}
-      <section className="section section--alt">
-        <div className="container">
-          <div className="section__header">
-            <div>
-              <div className="section__label">// Featured Review</div>
-              <h2 className="section__title">Editor&apos;s Pick</h2>
+            {/* Side Stack (Right / Latest) */}
+            <div className="bento-side">
+              <div className="bento-side__header">
+                <div className="bento-side__label">
+                  <span className="bento-side__dot"></span>
+                  <span>LATEST STORIES</span>
+                </div>
+                <Link href="/category" className="bento-side__link">
+                  View All →
+                </Link>
+              </div>
+
+              <div className="bento-side__list">
+                {sideArticles.map(a => (
+                  <Link key={a.id} href={`/article/${a.id}`} className="bento-side-card">
+                    <div className="bento-side-card__thumb-wrap">
+                      <img
+                        src={getArticleImage(a)}
+                        alt={a.title}
+                        className="bento-side-card__thumb"
+                        loading="lazy"
+                      />
+                    </div>
+                    <div className="bento-side-card__content">
+                      <span className="bento-side-card__cat">#{a.category}</span>
+                      <h3 className="bento-side-card__title">{a.title}</h3>
+                      <div className="bento-side-card__meta">
+                        <span>{a.date}</span>
+                        <span>•</span>
+                        <span>⏱️ {a.readTime}</span>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
-          {featuredArticle && (
-            <Link href={`/article/${featuredArticle.id}`} className="article-card article-card--featured">
-              <div className="article-card__image-container">
-                <img src={getArticleImage(featuredArticle)} alt={featuredArticle.title} className="article-card__image" loading="eager" />
-                <div className="article-card__category">{featuredArticle.category}</div>
-              </div>
-              <div className="article-card__content">
-                <div className="article-card__meta">
-                  <div className="article-card__author">
-                    <img src={featuredArticle.author.avatar} alt={featuredArticle.author.name} className="article-card__author-avatar" />
-                    <span>{featuredArticle.author.name}</span>
-                  </div>
-                  <span>{featuredArticle.date}</span>
-                  <span>{featuredArticle.readTime}</span>
-                </div>
-                <h3 className="article-card__title">{featuredArticle.title}</h3>
-                <p className="article-card__excerpt">{featuredArticle.excerpt}</p>
-              </div>
-            </Link>
-          )}
+
+          {/* Sleek Stats Strip */}
+          <div className="bento-stats">
+            <div className="bento-stat-item">
+              <span className="bento-stat-value">{articles.length}+</span>
+              <span className="bento-stat-label">In-Depth Reviews</span>
+            </div>
+            <div className="bento-stat-divider"></div>
+            <div className="bento-stat-item">
+              <span className="bento-stat-value">{tools.length * 30}+</span>
+              <span className="bento-stat-label">AI Tools Tested</span>
+            </div>
+            <div className="bento-stat-divider"></div>
+            <div className="bento-stat-item">
+              <span className="bento-stat-value">100K+</span>
+              <span className="bento-stat-label">Monthly Tech Readers</span>
+            </div>
+            <div className="bento-stat-divider"></div>
+            <div className="bento-stat-item">
+              <span className="bento-stat-value">100%</span>
+              <span className="bento-stat-label">Independent & Unbiased</span>
+            </div>
+          </div>
         </div>
       </section>
 
+      {/* ── Top AI Tools Directory ── */}
       <section className="section section--alt">
         <div className="container">
           <div className="section__header">
@@ -171,6 +229,7 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* ── Breaking Tech News ── */}
       <section className="section">
         <div className="container">
           <div className="section__header">
@@ -195,6 +254,7 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* ── Browse by Topic ── */}
       <section className="section section--alt">
         <div className="container">
           <div className="section__header">
@@ -219,6 +279,7 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* ── All Reviews & Guides Library ── */}
       <section className="section">
         <div className="container">
           <div className="section__header">
@@ -238,8 +299,8 @@ export default async function Home() {
                 <div className="article-card__content">
                   <div className="article-card__meta">
                     <div className="article-card__author">
-                      <img src={a.author.avatar} alt={a.author.name} className="article-card__author-avatar" />
-                      <span>{a.author.name}</span>
+                      <img src={a.author?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80'} alt={a.author?.name || 'Author'} className="article-card__author-avatar" />
+                      <span>{a.author?.name || 'TechNova Team'}</span>
                     </div>
                     <span>{a.readTime}</span>
                   </div>
