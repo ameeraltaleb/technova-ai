@@ -18,7 +18,47 @@ export const CATEGORIES = [
     "icon": "🤖",
     "iconClass": "category-card__icon--ai",
     "description": "Discover the latest artificial intelligence tools that are transforming how we work, create, and innovate.",
-    "count": 7
+    "count": 0
+  },
+  {
+    "id": "machine-learning",
+    "name": "Machine Learning",
+    "icon": "🧠",
+    "iconClass": "category-card__icon--ml",
+    "description": "Deep dives into neural networks, foundation models, machine learning algorithms, and AI research.",
+    "count": 0
+  },
+  {
+    "id": "deep-dives",
+    "name": "Deep Dives",
+    "icon": "🔬",
+    "iconClass": "category-card__icon--deepdives",
+    "description": "Comprehensive architectural breakdowns, technical investigations, and advanced tech analysis.",
+    "count": 0
+  },
+  {
+    "id": "tutorials",
+    "name": "Tutorials & Guides",
+    "icon": "📚",
+    "iconClass": "category-card__icon--tutorials",
+    "description": "Step-by-step guides, code walkthroughs, and practical how-to tutorials for AI and tech tools.",
+    "count": 0
+  },
+  {
+    "id": "reviews",
+    "name": "Reviews & Comparisons",
+    "icon": "⭐",
+    "iconClass": "category-card__icon--reviews",
+    "description": "In-depth reviews, hands-on testing, and head-to-head comparisons of the best tools.",
+    "count": 0
+  },
+  {
+    "id": "industry",
+    "name": "Tech Industry",
+    "icon": "🏛️",
+    "iconClass": "category-card__icon--industry",
+    "description": "Market trends, big tech movements, AI regulations, and strategic business analysis.",
+    "count": 0
   },
   {
     "id": "productivity",
@@ -26,7 +66,7 @@ export const CATEGORIES = [
     "icon": "⚡",
     "iconClass": "category-card__icon--productivity",
     "description": "Boost your efficiency with the best productivity apps, project management tools, and workflow automators.",
-    "count": 6
+    "count": 0
   },
   {
     "id": "dev-tools",
@@ -34,7 +74,7 @@ export const CATEGORIES = [
     "icon": "💻",
     "iconClass": "category-card__icon--dev",
     "description": "Essential developer tools, IDEs, frameworks, and utilities for modern software development.",
-    "count": 7
+    "count": 0
   },
   {
     "id": "design",
@@ -42,7 +82,7 @@ export const CATEGORIES = [
     "icon": "🎨",
     "iconClass": "category-card__icon--design",
     "description": "Creative design tools, UI/UX platforms, and visual collaboration software for designers.",
-    "count": 5
+    "count": 0
   },
   {
     "id": "security",
@@ -50,7 +90,7 @@ export const CATEGORIES = [
     "icon": "🛡️",
     "iconClass": "category-card__icon--security",
     "description": "Stay protected with the best security tools, VPNs, password managers, and privacy solutions.",
-    "count": 6
+    "count": 0
   },
   {
     "id": "cloud",
@@ -58,12 +98,12 @@ export const CATEGORIES = [
     "icon": "☁️",
     "iconClass": "category-card__icon--cloud",
     "description": "Cloud platforms, SaaS solutions, and infrastructure tools for businesses of all sizes.",
-    "count": 5
+    "count": 0
   },
   {
     "id": "technology",
     "name": "Technology",
-    "icon": "🔬",
+    "icon": "🌐",
     "iconClass": "category-card__icon--tech",
     "description": "Emerging technologies, industry trends, and deep dives into the tech shaping our future.",
     "count": 0

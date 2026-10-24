@@ -107,7 +107,10 @@ export default function ArticleModal({
       if (generated.title) setTitle(generated.title);
       if (generated.slug) setSlug(generated.slug);
       if (generated.excerpt) setExcerpt(generated.excerpt);
-      if (generated.category) setCategory(generated.category);
+      if (generated.category) {
+        const matchingCat = CATEGORIES.find((c) => c.id === generated.category);
+        setCategory(matchingCat ? matchingCat.id : 'ai-tools');
+      }
       if (generated.readTime) setReadTime(generated.readTime);
       if (generated.rating) setRating(generated.rating);
       if (Array.isArray(generated.tags)) setTags(generated.tags.join(', '));

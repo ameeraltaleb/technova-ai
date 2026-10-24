@@ -1006,6 +1006,46 @@ input, textarea, select {
   color: var(--color-accent-light);
 }
 
+.category-card__icon--ml {
+  background: rgba(168, 85, 247, 0.15);
+  color: #a855f7;
+}
+
+.category-card__icon--deepdives {
+  background: rgba(14, 165, 233, 0.15);
+  color: #0ea5e9;
+}
+
+.category-card__icon--tutorials {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+}
+
+.category-card__icon--reviews {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+}
+
+.category-card__icon--industry {
+  background: rgba(99, 102, 241, 0.15);
+  color: #6366f1;
+}
+
+.category-card__icon--tech {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+}
+
+.category-card__icon--programming {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+
+.category-card__icon--crypto {
+  background: rgba(234, 179, 8, 0.15);
+  color: #eab308;
+}
+
 .category-card__info {
   flex: 1;
   min-width: 0;

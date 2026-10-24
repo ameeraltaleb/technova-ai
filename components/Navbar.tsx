@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { CATEGORIES } from '@/lib/data';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -167,24 +168,16 @@ export default function Navbar() {
               Explore Topics
             </div>
             <div className="mobile-drawer__categories">
-              <Link href="/category/ai-tools" className="mobile-drawer__cat-chip" onClick={() => setIsMobileOpen(false)}>
-                <span>🤖</span> AI Tools
-              </Link>
-              <Link href="/category/dev-tools" className="mobile-drawer__cat-chip" onClick={() => setIsMobileOpen(false)}>
-                <span>💻</span> Dev Tools
-              </Link>
-              <Link href="/category/productivity" className="mobile-drawer__cat-chip" onClick={() => setIsMobileOpen(false)}>
-                <span>⚡</span> Productivity
-              </Link>
-              <Link href="/category/design" className="mobile-drawer__cat-chip" onClick={() => setIsMobileOpen(false)}>
-                <span>🎨</span> Design
-              </Link>
-              <Link href="/category/security" className="mobile-drawer__cat-chip" onClick={() => setIsMobileOpen(false)}>
-                <span>🛡️</span> Security
-              </Link>
-              <Link href="/category/cloud" className="mobile-drawer__cat-chip" onClick={() => setIsMobileOpen(false)}>
-                <span>☁️</span> Cloud & SaaS
-              </Link>
+              {CATEGORIES.map((cat) => (
+                <Link
+                  key={cat.id}
+                  href={`/category/${cat.id}`}
+                  className="mobile-drawer__cat-chip"
+                  onClick={() => setIsMobileOpen(false)}
+                >
+                  <span>{cat.icon}</span> {cat.name}
+                </Link>
+              ))}
             </div>
           </div>
 

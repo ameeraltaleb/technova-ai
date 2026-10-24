@@ -1,4 +1,10 @@
 import { NextResponse } from 'next/server';
+import { CATEGORIES } from '@/lib/data';
+
+const VALID_CATEGORY_IDS = CATEGORIES.map((c) => c.id);
+const VALID_CATEGORIES_PROMPT = CATEGORIES.map(
+  (c) => `- "${c.id}" (${c.name}: ${c.description})`
+).join('\n');
 
 const GEMINI_MODELS = [
   'gemini-3.5-flash',
@@ -131,20 +137,20 @@ export async function POST(req: Request) {
 Your task is to generate a comprehensive, in-depth blog article about: "${topic}".
 Language requirement: ${langPrompt}
 
-Valid Categories:
-- "ai-tools" (for AI software, IDEs, SaaS)
-- "machine-learning" (for algorithms, models, math)
-- "reviews" (for hands-on tool testing & comparisons)
-- "deep-dives" (for architecture, research, ethics)
-- "industry" (for tech market news, business)
-- "tutorials" (for how-to guides, code walkthroughs)
+CRITICAL INSTRUCTION FOR "category":
+You MUST select EXACTLY ONE category from this official registered list:
+${VALID_CATEGORIES_PROMPT}
+
+You are strictly FORBIDDEN from inventing new categories or outputting any category not in this list.
+The "category" field MUST be one of these exact string IDs:
+${JSON.stringify(VALID_CATEGORY_IDS)}
 
 Return ONLY a valid JSON object without any introductory or conversational text, adhering to this EXACT schema:
 {
   "title": "Catchy, SEO-optimized title",
   "slug": "english-url-friendly-slug-with-hyphens",
   "excerpt": "Engaging 2-sentence summary hook",
-  "category": "one of the valid categories above",
+  "category": "one of the exact valid category IDs above",
   "readTime": "e.g. 7 min read",
   "tags": ["tag1", "tag2", "tag3", "tag4"],
   "rating": 4.8,
@@ -162,6 +168,21 @@ Return ONLY a valid JSON object without any introductory or conversational text,
 
       const raw = await callGemini(prompt, apiKey, true);
       const parsed = extractJSON(raw);
+
+      // Enforce strict category validation and fallback
+      if (parsed && typeof parsed === 'object') {
+        const rawCat = String(parsed.category || '').toLowerCase().trim().replace(/[\s_]+/g, '-');
+        if (VALID_CATEGORY_IDS.includes(rawCat)) {
+          parsed.category = rawCat;
+        } else {
+          // Attempt exact slug match or fallback
+          const matched = VALID_CATEGORY_IDS.find(
+            (id) => rawCat.includes(id) || id.includes(rawCat)
+          );
+          parsed.category = matched || 'ai-tools';
+        }
+      }
+
       return NextResponse.json({ success: true, data: parsed });
     }
 
