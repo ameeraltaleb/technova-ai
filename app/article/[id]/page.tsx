@@ -19,13 +19,18 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   if (!article) return { title: 'Article Not Found' };
 
   const image = getArticleImage(article as any);
+  const articleUrl = `https://www.technova-ai.online/article/${article.id}`;
   return {
     title: article.title,
     description: article.excerpt,
+    alternates: {
+      canonical: articleUrl,
+    },
     openGraph: {
       title: article.title,
       description: article.excerpt,
       type: 'article',
+      url: articleUrl,
       publishedTime: article.date,
       authors: [article.author.name],
       images: image ? [{ url: image, width: 800, height: 450, alt: article.title }] : [],

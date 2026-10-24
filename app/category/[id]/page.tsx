@@ -16,9 +16,18 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const { id } = await params;
   const cat = CATEGORIES.find(c => c.id === id);
   if (!cat) return { title: 'Category Not Found' };
+  const catUrl = `https://www.technova-ai.online/category/${cat.id}`;
   return {
     title: `${cat.name} — TechNova AI`,
     description: `Browse comprehensive reviews, guides, and articles related to ${cat.name} on TechNova AI.`,
+    alternates: {
+      canonical: catUrl,
+    },
+    openGraph: {
+      title: `${cat.name} — TechNova AI`,
+      description: `Browse comprehensive reviews, guides, and articles related to ${cat.name} on TechNova AI.`,
+      url: catUrl,
+    },
   };
 }
 

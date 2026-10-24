@@ -14,6 +14,12 @@ export const metadata: Metadata = {
   authors: [{ name: 'TechNova AI Team' }],
   creator: 'TechNova AI',
   publisher: 'TechNova AI',
+  alternates: {
+    canonical: 'https://www.technova-ai.online',
+    types: {
+      'application/rss+xml': 'https://www.technova-ai.online/feed.xml',
+    },
+  },
   verification: {
     google: 'pz9GEGv-Bv4P9R1DSaF51xHj0bW2cBos1PNYkLTLtYQ',
   },
