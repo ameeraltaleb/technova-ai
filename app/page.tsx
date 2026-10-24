@@ -21,7 +21,6 @@ export default async function Home() {
 
   const featuredArticle = articles.find(a => a.featured) || sortedArticles[0];
   const sideArticles = sortedArticles.filter(a => a.id !== featuredArticle?.id).slice(0, 3);
-  const trendingBarArticles = sortedArticles.slice(0, 5);
   const topTools = tools.slice(0, 4);
   const trendingNews = news.slice(0, 3);
   const latestArticles = articles
@@ -30,29 +29,6 @@ export default async function Home() {
 
   return (
     <>
-      {/* ── Trending Ticker Bar ── */}
-      {trendingBarArticles.length > 0 && (
-        <section className="trending-ticker">
-          <div className="container">
-            <div className="trending-ticker__inner">
-              <div className="trending-ticker__badge">
-                <span className="trending-ticker__pulse"></span>
-                <span>🔥 TRENDING NOW</span>
-              </div>
-              <div className="trending-ticker__items">
-                {trendingBarArticles.map((item, idx) => (
-                  <Link key={item.id} href={`/article/${item.id}`} className="trending-ticker__link">
-                    <span className="trending-ticker__cat">#{item.category}</span>
-                    <span className="trending-ticker__title">{item.title}</span>
-                    {idx < trendingBarArticles.length - 1 && <span className="trending-ticker__sep">•</span>}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* ── Magazine Bento Hero ── */}
       <section className="bento-hero">
         <div className="hero__bg"></div>
