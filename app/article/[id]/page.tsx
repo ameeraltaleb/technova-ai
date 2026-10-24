@@ -299,15 +299,20 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
               )}
 
               {/* Rating if exists */}
-              {article.rating && (
-                <div className="ap-sidebar__card ap-rating-card">
-                  <h4 className="ap-sidebar__heading">Our Rating</h4>
-                  <div className="ap-rating-card__score">{article.rating}<span>/10</span></div>
-                  <div className="ap-rating-card__stars">
-                    {'★'.repeat(Math.round(article.rating / 2))}{'☆'.repeat(5 - Math.round(article.rating / 2))}
+              {article.rating && (() => {
+                const rawRating = Number(article.rating);
+                const normalizedRating = rawRating > 5 ? Number((rawRating / 2).toFixed(1)) : rawRating;
+                const roundedStars = Math.min(5, Math.max(0, Math.round(normalizedRating)));
+                return (
+                  <div className="ap-sidebar__card ap-rating-card">
+                    <h4 className="ap-sidebar__heading">Our Rating</h4>
+                    <div className="ap-rating-card__score">{normalizedRating}<span>/5</span></div>
+                    <div className="ap-rating-card__stars">
+                      {'★'.repeat(roundedStars)}{'☆'.repeat(5 - roundedStars)}
+                    </div>
                   </div>
-                </div>
-              )}
+                );
+              })()}
             </aside>
           </div>
         </div>
