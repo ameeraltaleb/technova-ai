@@ -308,28 +308,6 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
                   </div>
                 </div>
               )}
-
-              {/* Quick Pros/Cons sidebar */}
-              {article.pros && article.pros.length > 0 && (
-                <div className="ap-sidebar__card">
-                  <h4 className="ap-sidebar__heading" style={{ color: '#4ade80' }}>✅ Key Strengths</h4>
-                  <ul className="ap-sidebar__bullets ap-sidebar__bullets--pro">
-                    {article.pros.slice(0, 4).map((pro: string, i: number) => (
-                      <li key={i}>{pro}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              {article.cons && article.cons.length > 0 && (
-                <div className="ap-sidebar__card">
-                  <h4 className="ap-sidebar__heading" style={{ color: '#f87171' }}>⚠️ Drawbacks</h4>
-                  <ul className="ap-sidebar__bullets ap-sidebar__bullets--con">
-                    {article.cons.slice(0, 4).map((con: string, i: number) => (
-                      <li key={i}>{con}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
             </aside>
           </div>
         </div>
