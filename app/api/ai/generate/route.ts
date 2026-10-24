@@ -101,8 +101,46 @@ function extractJSON(text: string): any {
   }
 }
 
+async function verifyAdminAuth(req: Request): Promise<boolean> {
+  const authHeader = req.headers.get('authorization') || '';
+  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : '';
+
+  if (!token) {
+    return false;
+  }
+
+  try {
+    const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+    if (!apiKey) return false;
+
+    const res = await fetch(
+      `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken: token }),
+      }
+    );
+
+    if (!res.ok) return false;
+    const data = await res.json();
+    return Boolean(data.users && data.users.length > 0);
+  } catch (err) {
+    console.error('Failed to verify admin token:', err);
+    return false;
+  }
+}
+
 export async function POST(req: Request) {
   try {
+    const isAuthorized = await verifyAdminAuth(req);
+    if (!isAuthorized) {
+      return NextResponse.json(
+        { error: 'Unauthorized: Access to AI Generation API is restricted to authenticated administrators.' },
+        { status: 401 }
+      );
+    }
+
     const body = await req.json();
     const { action, topic, language = 'ar', contextData = '', customApiKey } = body;
 

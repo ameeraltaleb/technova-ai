@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { NewsItem } from '@/lib/admin-store';
+import { callAdminAiApi } from '@/lib/admin-api';
 
 interface NewsModalProps {
   isOpen: boolean;
@@ -62,14 +63,10 @@ export default function NewsModal({
     setAiStatusMsg('جاري صياغة الخبر بالذكاء الاصطناعي عبر Gemini...');
 
     try {
-      const res = await fetch('/api/ai/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'generate_news',
-          topic: aiPrompt.trim(),
-          language: aiLang,
-        }),
+      const res = await callAdminAiApi({
+        action: 'generate_news',
+        topic: aiPrompt.trim(),
+        language: aiLang,
       });
 
       const resData = await res.json();

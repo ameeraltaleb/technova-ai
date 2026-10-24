@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { SiteSettings, FirebaseConfig } from '@/lib/admin-store';
+import { callAdminAiApi } from '@/lib/admin-api';
 
 interface SettingsTabProps {
   settings: SiteSettings;
@@ -29,11 +30,7 @@ export default function SettingsTab({
     setAiTestLoading(true);
     setAiTestResult(null);
     try {
-      const res = await fetch('/api/ai/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'test_connection' }),
-      });
+      const res = await callAdminAiApi({ action: 'test_connection' });
       const data = await res.json();
       if (res.ok && data.success) {
         setAiTestResult({ success: true, msg: '✅ الاتصال ناجح ومؤكد! المحرك جاهز لتوليد المقالات والأخبار.' });

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { ArticleItem } from '@/lib/admin-store';
 import { CATEGORIES } from '@/lib/data';
+import { callAdminAiApi } from '@/lib/admin-api';
 
 interface ArticleModalProps {
   isOpen: boolean;
@@ -88,14 +89,10 @@ export default function ArticleModal({
     setAiStatusMsg('جاري الاتصال بـ Google Gemini لتوليد المقال بالكامل...');
 
     try {
-      const res = await fetch('/api/ai/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'generate_article',
-          topic: aiPrompt.trim(),
-          language: aiLanguage,
-        }),
+      const res = await callAdminAiApi({
+        action: 'generate_article',
+        topic: aiPrompt.trim(),
+        language: aiLanguage,
       });
 
       const resData = await res.json();
@@ -135,13 +132,9 @@ export default function ArticleModal({
     }
     setActiveAiHelper('excerpt');
     try {
-      const res = await fetch('/api/ai/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'generate_excerpt',
-          contextData: content,
-        }),
+      const res = await callAdminAiApi({
+        action: 'generate_excerpt',
+        contextData: content,
       });
       const data = await res.json();
       if (data.success && data.data?.excerpt) {
@@ -161,13 +154,9 @@ export default function ArticleModal({
     }
     setActiveAiHelper('pros_cons');
     try {
-      const res = await fetch('/api/ai/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'extract_pros_cons',
-          contextData: content,
-        }),
+      const res = await callAdminAiApi({
+        action: 'extract_pros_cons',
+        contextData: content,
       });
       const data = await res.json();
       if (data.success && data.data) {
@@ -188,14 +177,10 @@ export default function ArticleModal({
     }
     setActiveAiHelper('tags');
     try {
-      const res = await fetch('/api/ai/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'suggest_tags',
-          topic: title,
-          contextData: content,
-        }),
+      const res = await callAdminAiApi({
+        action: 'suggest_tags',
+        topic: title,
+        contextData: content,
       });
       const data = await res.json();
       if (data.success && Array.isArray(data.data?.tags)) {
