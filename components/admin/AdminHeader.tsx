@@ -8,6 +8,8 @@ interface AdminHeaderProps {
   newActionLabel?: string;
   isFirebaseConnected: boolean;
   userEmail?: string;
+  onSync?: () => void;
+  isSyncing?: boolean;
 }
 
 export default function AdminHeader({
@@ -16,6 +18,8 @@ export default function AdminHeader({
   newActionLabel,
   isFirebaseConnected,
   userEmail = 'admin@technova-ai.online',
+  onSync,
+  isSyncing = false,
 }: AdminHeaderProps) {
   const titles: Record<AdminTab, string> = {
     overview: 'Dashboard Overview',
@@ -38,6 +42,34 @@ export default function AdminHeader({
           <span className="firebase-badge__dot"></span>
           <span>{isFirebaseConnected ? 'Firebase Live' : 'Local Storage Mode'}</span>
         </div>
+
+        {onSync && (
+          <button
+            onClick={onSync}
+            disabled={isSyncing}
+            className="btn-admin btn-admin-outline"
+            style={{
+              padding: '6px 12px',
+              fontSize: '0.8rem',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              borderColor: '#c7d2fe',
+              color: '#4338ca',
+            }}
+            title="مزامنة فورية لكافة المقالات والبيانات من السيرفر"
+          >
+            <span
+              style={{
+                display: 'inline-block',
+                animation: isSyncing ? 'spin 0.8s linear infinite' : 'none',
+              }}
+            >
+              🔄
+            </span>
+            <span>{isSyncing ? 'جاري المزامنة...' : 'مزامنة السحاب'}</span>
+          </button>
+        )}
 
         {onNewAction && newActionLabel && (
           <button onClick={onNewAction} className="btn-admin btn-admin-primary">

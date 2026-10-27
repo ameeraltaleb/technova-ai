@@ -95,7 +95,7 @@ export interface FirebaseConfig {
   isConnected: boolean;
 }
 
-const STORAGE_KEYS = {
+export const STORAGE_KEYS = {
   ARTICLES: 'technova_admin_articles',
   TOOLS: 'technova_admin_tools',
   NEWS: 'technova_admin_news',
@@ -147,8 +147,8 @@ export const AdminStore = {
     return ARTICLES as unknown as ArticleItem[];
   },
 
-  async saveArticle(article: ArticleItem): Promise<ArticleItem[]> {
-    const articles = this.getArticles();
+  async saveArticle(article: ArticleItem, currentArticles?: ArticleItem[]): Promise<ArticleItem[]> {
+    const articles = currentArticles && currentArticles.length > 0 ? currentArticles : this.getArticles();
     const index = articles.findIndex((a) => a.id === article.id);
     let updated: ArticleItem[];
     if (index >= 0) {
@@ -164,14 +164,14 @@ export const AdminStore = {
     return updated;
   },
 
-  deleteArticle(id: string): ArticleItem[] {
-    const articles = this.getArticles();
+  async deleteArticle(id: string, currentArticles?: ArticleItem[]): Promise<ArticleItem[]> {
+    const articles = currentArticles && currentArticles.length > 0 ? currentArticles : this.getArticles();
     const updated = articles.filter((a) => a.id !== id);
     if (typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEYS.ARTICLES, JSON.stringify(updated));
     }
     // Async Firebase Firestore delete
-    FirebaseService.deleteArticle(id).catch((err) =>
+    await FirebaseService.deleteArticle(id).catch((err) =>
       console.warn('Background Firestore deleteArticle:', err)
     );
     return updated;
@@ -189,8 +189,8 @@ export const AdminStore = {
     return TOOLS as ToolItem[];
   },
 
-  saveTool(tool: ToolItem): ToolItem[] {
-    const tools = this.getTools();
+  saveTool(tool: ToolItem, currentTools?: ToolItem[]): ToolItem[] {
+    const tools = currentTools && currentTools.length > 0 ? currentTools : this.getTools();
     const index = tools.findIndex((t) => t.id === tool.id);
     let updated: ToolItem[];
     if (index >= 0) {
@@ -209,8 +209,8 @@ export const AdminStore = {
     return updated;
   },
 
-  deleteTool(id: string): ToolItem[] {
-    const tools = this.getTools();
+  deleteTool(id: string, currentTools?: ToolItem[]): ToolItem[] {
+    const tools = currentTools && currentTools.length > 0 ? currentTools : this.getTools();
     const updated = tools.filter((t) => t.id !== id);
     if (typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEYS.TOOLS, JSON.stringify(updated));
@@ -234,8 +234,8 @@ export const AdminStore = {
     return NEWS as NewsItem[];
   },
 
-  saveNews(item: NewsItem): NewsItem[] {
-    const news = this.getNews();
+  saveNews(item: NewsItem, currentNews?: NewsItem[]): NewsItem[] {
+    const news = currentNews && currentNews.length > 0 ? currentNews : this.getNews();
     const index = news.findIndex((n) => n.id === item.id);
     let updated: NewsItem[];
     if (index >= 0) {
@@ -254,8 +254,8 @@ export const AdminStore = {
     return updated;
   },
 
-  deleteNews(id: string): NewsItem[] {
-    const news = this.getNews();
+  deleteNews(id: string, currentNews?: NewsItem[]): NewsItem[] {
+    const news = currentNews && currentNews.length > 0 ? currentNews : this.getNews();
     const updated = news.filter((n) => n.id !== id);
     if (typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEYS.NEWS, JSON.stringify(updated));

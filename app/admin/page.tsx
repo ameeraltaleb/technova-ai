@@ -10,7 +10,10 @@ import {
   ToolSubmission,
   SiteSettings,
   FirebaseConfig,
+  STORAGE_KEYS,
 } from '@/lib/admin-store';
+import { getLiveArticles, getLiveTools, getLiveNews } from '@/lib/public-data';
+import { FirebaseService } from '@/lib/firebase-service';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import AdminSidebar, { AdminTab } from '@/components/admin/AdminSidebar';
@@ -38,6 +41,7 @@ export default function AdminPage() {
   const [firebaseConfig, setFirebaseConfig] = useState<FirebaseConfig>(AdminStore.getFirebaseConfig());
   const [userEmail, setUserEmail] = useState('admin@technova-ai.online');
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
 
   // Modals state
   const [articleModalOpen, setArticleModalOpen] = useState(false);
@@ -48,6 +52,62 @@ export default function AdminPage() {
 
   const [newsModalOpen, setNewsModalOpen] = useState(false);
   const [editingNews, setEditingNews] = useState<NewsItem | null>(null);
+
+  // Live Cloud Synchronization (cross-device: Mobile <-> Laptop)
+  const syncLiveData = async () => {
+    setIsSyncing(true);
+    try {
+      const [liveArticles, liveTools, liveNews, liveSubs, liveSubscribers] = await Promise.all([
+        getLiveArticles(),
+        getLiveTools(),
+        getLiveNews(),
+        FirebaseService.getSubmissions(),
+        FirebaseService.getSubscribers(),
+      ]);
+
+      if (liveArticles && liveArticles.length > 0) {
+        setArticles(liveArticles);
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(STORAGE_KEYS.ARTICLES, JSON.stringify(liveArticles));
+        }
+      }
+
+      if (liveTools && liveTools.length > 0) {
+        setTools(liveTools);
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(STORAGE_KEYS.TOOLS, JSON.stringify(liveTools));
+        }
+      }
+
+      if (liveNews && liveNews.length > 0) {
+        setNews(liveNews);
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(STORAGE_KEYS.NEWS, JSON.stringify(liveNews));
+        }
+      }
+
+      if (liveSubs && liveSubs.length > 0) {
+        setSubmissions(liveSubs);
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(STORAGE_KEYS.SUBMISSIONS, JSON.stringify(liveSubs));
+        }
+      }
+
+      if (liveSubscribers && liveSubscribers.length > 0) {
+        setSubscribers(liveSubscribers);
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(
+            STORAGE_KEYS.SUBSCRIBERS,
+            JSON.stringify(liveSubscribers.map((s) => s.email))
+          );
+        }
+      }
+    } catch (err) {
+      console.warn('Sync live data error:', err);
+    } finally {
+      setIsSyncing(false);
+    }
+  };
 
   useEffect(() => {
     // 1. Local Auth state check
@@ -70,6 +130,7 @@ export default function AdminPage() {
       }
     });
 
+    // 3. Fast initial render from local cache
     setArticles(AdminStore.getArticles());
     setTools(AdminStore.getTools());
     setNews(AdminStore.getNews());
@@ -80,6 +141,9 @@ export default function AdminPage() {
     if (typeof window !== 'undefined') {
       (window as any).syncToFirestore = () => AdminStore.syncToFirestore();
     }
+
+    // 4. Fetch live data from Firebase to guarantee cross-device sync (e.g. Mobile <-> Laptop)
+    syncLiveData();
 
     return () => unsubscribe();
   }, [router]);
@@ -114,12 +178,12 @@ export default function AdminPage() {
   };
 
   const handleSaveArticle = async (art: ArticleItem) => {
-    const updated = await AdminStore.saveArticle(art);
+    const updated = await AdminStore.saveArticle(art, articles);
     setArticles(updated);
   };
 
-  const handleDeleteArticle = (id: string) => {
-    const updated = AdminStore.deleteArticle(id);
+  const handleDeleteArticle = async (id: string) => {
+    const updated = await AdminStore.deleteArticle(id, articles);
     setArticles(updated);
   };
 
@@ -135,13 +199,13 @@ export default function AdminPage() {
   };
 
   const handleSaveTool = (tool: ToolItem) => {
-    const updated = AdminStore.saveTool(tool);
+    const updated = AdminStore.saveTool(tool, tools);
     setTools(updated);
     setToolModalOpen(false);
   };
 
   const handleDeleteTool = (id: string) => {
-    const updated = AdminStore.deleteTool(id);
+    const updated = AdminStore.deleteTool(id, tools);
     setTools(updated);
   };
 
@@ -182,13 +246,13 @@ export default function AdminPage() {
   };
 
   const handleSaveNews = (item: NewsItem) => {
-    const updated = AdminStore.saveNews(item);
+    const updated = AdminStore.saveNews(item, news);
     setNews(updated);
     setNewsModalOpen(false);
   };
 
   const handleDeleteNews = (id: string) => {
-    const updated = AdminStore.deleteNews(id);
+    const updated = AdminStore.deleteNews(id, news);
     setNews(updated);
   };
 
@@ -258,6 +322,8 @@ export default function AdminPage() {
           newActionLabel={headerNewActionLabel}
           isFirebaseConnected={firebaseConfig.isConnected}
           userEmail={userEmail}
+          onSync={syncLiveData}
+          isSyncing={isSyncing}
         />
 
         <div className="admin-content">
