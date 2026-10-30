@@ -55,6 +55,7 @@ export default function Navbar() {
             <Link href="/" className="navbar__link">Home</Link>
             <Link href="/category" className="navbar__link">All Articles</Link>
             <Link href="/tools" className="navbar__link">Tools Directory</Link>
+            <Link href="/models" className="navbar__link">AI Models</Link>
             <Link href="/news" className="navbar__link">News</Link>
             <Link href="/category/ai-tools" className="navbar__link">AI Tools</Link>
             <Link href="/category/dev-tools" className="navbar__link">Dev Tools</Link>
@@ -152,6 +153,10 @@ export default function Navbar() {
               <Link href="/tools" className="mobile-drawer__link" onClick={() => setIsMobileOpen(false)}>
                 <span className="mobile-drawer__link-icon">⚡</span>
                 <span>Tools Directory</span>
+              </Link>
+              <Link href="/models" className="mobile-drawer__link" onClick={() => setIsMobileOpen(false)}>
+                <span className="mobile-drawer__link-icon">🤗</span>
+                <span>AI Models Hub</span>
               </Link>
               <Link href="/news" className="mobile-drawer__link" onClick={() => setIsMobileOpen(false)}>
                 <span className="mobile-drawer__link-icon">📰</span>

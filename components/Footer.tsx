@@ -33,6 +33,7 @@ export default function Footer() {
             <h4 className="footer__heading">Categories</h4>
             <div className="footer__links">
               <Link href="/category/ai-tools" className="footer__link">AI Tools</Link>
+              <Link href="/models" className="footer__link">Open-Source Models</Link>
               <Link href="/category/dev-tools" className="footer__link">Dev Tools</Link>
               <Link href="/category/productivity" className="footer__link">Productivity</Link>
               <Link href="/category/design" className="footer__link">Design</Link>
