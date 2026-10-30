@@ -66,7 +66,7 @@ export default function EditorModelPicks() {
   ];
 
   return (
-    <div style={{ marginBottom: 'var(--space-12)' }}>
+    <div id="picks" style={{ marginBottom: 'var(--space-12)' }}>
       <div style={{ textAlign: 'left', marginBottom: 'var(--space-6)' }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(234, 179, 8, 0.12)', color: '#eab308', padding: '4px 10px', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 700, marginBottom: '8px' }}>
           <span>⭐ TechNova Editorial Curation</span>

@@ -107,6 +107,7 @@ export default function VramCalculator() {
 
   return (
     <div
+      id="calculator"
       style={{
         background: 'var(--bg-secondary)',
         border: '1px solid var(--border-card)',

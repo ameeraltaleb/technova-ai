@@ -43,7 +43,7 @@ export default function ModelsFaq() {
   };
 
   return (
-    <div style={{ marginBottom: 'var(--space-12)' }}>
+    <div id="faq" style={{ marginBottom: 'var(--space-12)' }}>
       <div style={{ textAlign: 'left', marginBottom: 'var(--space-6)' }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(99, 102, 241, 0.12)', color: 'var(--color-primary)', padding: '4px 10px', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 700, marginBottom: '8px' }}>
           <span>❓ Knowledge Hub</span>
