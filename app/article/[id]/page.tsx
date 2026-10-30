@@ -50,7 +50,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   };
 }
 
-function splitContentForInlineCard(html: string): { part1: string; part2: string } {
+function splitContentForInlineInserts(html: string): { part1: string; part2: string; part3: string } {
   // Find </p> tags to split nicely between paragraphs
   const pRegex = /<\/p>/gi;
   const matches: number[] = [];
@@ -59,22 +59,28 @@ function splitContentForInlineCard(html: string): { part1: string; part2: string
     matches.push(m.index + 4);
   }
 
-  // If there are at least 3 paragraphs, split around the 2nd paragraph
-  if (matches.length >= 3) {
-    const splitIndex = matches.length >= 6 ? matches[2] : matches[1];
+  // If 5 or more paragraphs: place Models Banner after paragraph 2, Related Card after paragraph 5
+  if (matches.length >= 5) {
     return {
-      part1: html.substring(0, splitIndex),
-      part2: html.substring(splitIndex),
+      part1: html.substring(0, matches[1]),
+      part2: html.substring(matches[1], matches[4]),
+      part3: html.substring(matches[4]),
+    };
+  } else if (matches.length >= 3) {
+    return {
+      part1: html.substring(0, matches[0]),
+      part2: html.substring(matches[0], matches[2]),
+      part3: html.substring(matches[2]),
     };
   } else if (matches.length === 2) {
-    const splitIndex = matches[0];
     return {
-      part1: html.substring(0, splitIndex),
-      part2: html.substring(splitIndex),
+      part1: html.substring(0, matches[0]),
+      part2: html.substring(matches[0]),
+      part3: '',
     };
   }
 
-  return { part1: html, part2: '' };
+  return { part1: html, part2: '', part3: '' };
 }
 
 export default async function ArticlePage({ params }: { params: Promise<{ id: string }> }) {
@@ -97,8 +103,10 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
   const categoryData = CATEGORIES.find(c => c.id === article.category);
   const categoryName = categoryData?.name || article.category;
 
-  // Split content around ~35-40% mark for the inline related article card
-  const { part1, part2 } = splitContentForInlineCard(qualifiedContent);
+  const isArabicArticle = /[\u0600-\u06FF]/.test(article.title + ' ' + (article.content || ''));
+
+  // Split content intelligently for inline banner and related article card
+  const { part1, part2, part3 } = splitContentForInlineInserts(qualifiedContent);
 
   // Smart Related Articles Algorithm (Tags similarity + Category match)
   const currentTags = (article.tags || []).map((t: string) => t.toLowerCase().trim());
@@ -268,55 +276,57 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
 
               <div className="article-content" dangerouslySetInnerHTML={{ __html: part1 }} />
 
-              {/* ── Inline "Read Next" Related Article Card ── */}
-              {inlineRelated && (
-                <div className="ap-inline-related" role="complementary" aria-label="Related Article">
-                  <div className="ap-inline-related__badge">
-                    <span>💡</span>
-                    <span>RECOMMENDED READ</span>
-                  </div>
-                  <Link href={`/article/${inlineRelated.id}`} className="ap-inline-related__link">
-                    <img
-                      src={getArticleImage(inlineRelated)}
-                      alt={inlineRelated.title}
-                      className="ap-inline-related__thumb"
-                      loading="lazy"
-                    />
-                    <div className="ap-inline-related__body">
-                      <h4 className="ap-inline-related__title">{inlineRelated.title}</h4>
-                      <div className="ap-inline-related__meta">
-                        <span className="ap-inline-related__cat">#{inlineRelated.category}</span>
-                        <span>•</span>
-                        <span>⏱️ {inlineRelated.readTime}</span>
-                      </div>
-                    </div>
-                    <span className="ap-inline-related__action">
-                      Read Article →
+              {/* ── Sleek Contextual Inline Models Link (Between Paragraphs) ── */}
+              <div className="ap-inline-banner" role="complementary" aria-label="Open-Source AI Models">
+                <Link href="/models" className="ap-inline-banner__link">
+                  <div className="ap-inline-banner__left">
+                    <span className="ap-inline-banner__icon">⚡</span>
+                    <span className="ap-inline-banner__badge">AI MODELS</span>
+                    <span className="ap-inline-banner__text">
+                      {isArabicArticle
+                        ? "أحدث نماذج الذكاء الاصطناعي مفتوحة المصدر — انقر للاطلاع"
+                        : "Latest Open-Source AI Models & GPU VRAM Specs — Click to Explore"}
                     </span>
-                  </Link>
-                </div>
-              )}
+                  </div>
+                  <span className="ap-inline-banner__action">
+                    {isArabicArticle ? "عرض ←" : "Explore →"}
+                  </span>
+                </Link>
+              </div>
 
               {part2 && <div className="article-content" dangerouslySetInnerHTML={{ __html: part2 }} />}
 
-              {/* ── Contextual AI Models Hub & VRAM Estimator Callout ── */}
-              <div className="ap-models-callout" role="complementary" aria-label="AI Models & VRAM Calculator">
-                <div className="ap-models-callout__icon">🧮</div>
-                <div className="ap-models-callout__content">
-                  <div className="ap-models-callout__badge">
-                    <span>⚡ RESEARCHER &amp; BUILDER TOOLBOX</span>
-                  </div>
-                  <h4 className="ap-models-callout__title">
-                    Planning to run open-source AI models locally or wondering if your GPU has enough VRAM?
-                  </h4>
-                  <p className="ap-models-callout__desc">
-                    Skip the trial and error before downloading massive checkpoints. Check exact GPU memory needs for 7B to 70B models and discover trending Hugging Face weights in our free{' '}
-                    <Link href="/models" className="ap-models-callout__link">
-                      Open-Source AI Models Hub &amp; VRAM Calculator →
+              {/* ── Inline "Read Next" Related Article Card ── */}
+              {inlineRelated && (part3 ? (
+                <>
+                  <div className="ap-inline-related" role="complementary" aria-label="Related Article">
+                    <div className="ap-inline-related__badge">
+                      <span>💡</span>
+                      <span>RECOMMENDED READ</span>
+                    </div>
+                    <Link href={`/article/${inlineRelated.id}`} className="ap-inline-related__link">
+                      <img
+                        src={getArticleImage(inlineRelated)}
+                        alt={inlineRelated.title}
+                        className="ap-inline-related__thumb"
+                        loading="lazy"
+                      />
+                      <div className="ap-inline-related__body">
+                        <h4 className="ap-inline-related__title">{inlineRelated.title}</h4>
+                        <div className="ap-inline-related__meta">
+                          <span className="ap-inline-related__cat">#{inlineRelated.category}</span>
+                          <span>•</span>
+                          <span>⏱️ {inlineRelated.readTime}</span>
+                        </div>
+                      </div>
+                      <span className="ap-inline-related__action">
+                        Read Article →
+                      </span>
                     </Link>
-                  </p>
-                </div>
-              </div>
+                  </div>
+                  <div className="article-content" dangerouslySetInnerHTML={{ __html: part3 }} />
+                </>
+              ) : null)}
 
               {/* Tags */}
               {article.tags && article.tags.length > 0 && (
