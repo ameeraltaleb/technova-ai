@@ -158,3 +158,40 @@ export function qualifyArticleContentLinks(
     return `<a${cleanAttrs}>`;
   });
 }
+
+/**
+ * Recursively removes all undefined properties from objects and arrays,
+ * while strictly preserving valid values such as false, 0, empty strings,
+ * empty arrays, null, Date objects, and Firestore FieldValues (e.g. serverTimestamp).
+ */
+export function removeUndefined<T>(data: T): T {
+  if (data === null || data === undefined) {
+    return data;
+  }
+
+  // Handle arrays
+  if (Array.isArray(data)) {
+    return data
+      .filter((item) => item !== undefined)
+      .map((item) => removeUndefined(item)) as unknown as T;
+  }
+
+  // Check if plain object (avoid mutating Dates, Regexps, Blobs, Firestore FieldValues, etc.)
+  if (typeof data === 'object') {
+    const proto = Object.getPrototypeOf(data);
+    const isPlain = proto === Object.prototype || proto === null;
+    if (!isPlain) {
+      return data;
+    }
+
+    const cleaned: Record<string, any> = {};
+    for (const [key, value] of Object.entries(data as Record<string, any>)) {
+      if (value !== undefined) {
+        cleaned[key] = removeUndefined(value);
+      }
+    }
+    return cleaned as T;
+  }
+
+  return data;
+}

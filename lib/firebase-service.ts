@@ -20,6 +20,7 @@ import {
   SiteSettings,
 } from './admin-store';
 import { ARTICLES, TOOLS, NEWS } from './data';
+import { removeUndefined } from './utils';
 
 export const FirebaseService = {
   // Articles
@@ -37,16 +38,17 @@ export const FirebaseService = {
 
   async saveArticle(article: ArticleItem): Promise<void> {
     try {
+      if (!article || !article.id) {
+        throw new Error('Article ID is required to save article.');
+      }
       const docRef = doc(db, 'articles', article.id);
-      await setDoc(
-        docRef,
-        {
-          ...article,
-          updatedAt: serverTimestamp(),
-          createdAt: (article as any).createdAt || serverTimestamp(),
-        },
-        { merge: true }
-      );
+      const rawPayload = {
+        ...article,
+        updatedAt: serverTimestamp(),
+        createdAt: (article as any).createdAt || serverTimestamp(),
+      };
+      const cleanedPayload = removeUndefined(rawPayload);
+      await setDoc(docRef, cleanedPayload, { merge: true });
     } catch (error) {
       console.error('Firestore saveArticle error:', error);
       throw error;
@@ -78,7 +80,8 @@ export const FirebaseService = {
   async saveTool(tool: ToolItem): Promise<void> {
     try {
       const docRef = doc(db, 'tools', tool.id);
-      await setDoc(docRef, { ...tool, updatedAt: serverTimestamp() }, { merge: true });
+      const cleanedPayload = removeUndefined({ ...tool, updatedAt: serverTimestamp() });
+      await setDoc(docRef, cleanedPayload, { merge: true });
     } catch (error) {
       console.error('Firestore saveTool error:', error);
       throw error;
@@ -110,7 +113,8 @@ export const FirebaseService = {
   async saveNews(item: NewsItem): Promise<void> {
     try {
       const docRef = doc(db, 'news', item.id);
-      await setDoc(docRef, { ...item, updatedAt: serverTimestamp() }, { merge: true });
+      const cleanedPayload = removeUndefined({ ...item, updatedAt: serverTimestamp() });
+      await setDoc(docRef, cleanedPayload, { merge: true });
     } catch (error) {
       console.error('Firestore saveNews error:', error);
       throw error;
@@ -143,7 +147,8 @@ export const FirebaseService = {
     try {
       const id = `${submission.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${Date.now()}`;
       const docRef = doc(db, 'submissions', id);
-      await setDoc(docRef, { ...submission, createdAt: serverTimestamp() });
+      const cleanedPayload = removeUndefined({ ...submission, createdAt: serverTimestamp() });
+      await setDoc(docRef, cleanedPayload);
     } catch (error) {
       console.error('Firestore saveSubmission error:', error);
     }
@@ -199,7 +204,8 @@ export const FirebaseService = {
   async saveSettings(settings: SiteSettings): Promise<void> {
     try {
       const docRef = doc(db, 'settings', 'site');
-      await setDoc(docRef, { ...settings, updatedAt: serverTimestamp() }, { merge: true });
+      const cleanedPayload = removeUndefined({ ...settings, updatedAt: serverTimestamp() });
+      await setDoc(docRef, cleanedPayload, { merge: true });
     } catch (error) {
       console.error('Firestore saveSettings error:', error);
       throw error;
@@ -215,10 +221,11 @@ export const FirebaseService = {
     // Articles
     for (const art of ARTICLES) {
       try {
-        await setDoc(doc(db, 'articles', art.id), {
+        const cleaned = removeUndefined({
           ...art,
           updatedAt: serverTimestamp(),
         });
+        await setDoc(doc(db, 'articles', art.id), cleaned);
         artCount++;
       } catch (e) {
         console.error('Seed article error:', e);
@@ -228,10 +235,11 @@ export const FirebaseService = {
     // Tools
     for (const tool of TOOLS) {
       try {
-        await setDoc(doc(db, 'tools', tool.id), {
+        const cleaned = removeUndefined({
           ...tool,
           updatedAt: serverTimestamp(),
         });
+        await setDoc(doc(db, 'tools', tool.id), cleaned);
         toolCount++;
       } catch (e) {
         console.error('Seed tool error:', e);
@@ -241,10 +249,11 @@ export const FirebaseService = {
     // News
     for (const item of NEWS) {
       try {
-        await setDoc(doc(db, 'news', item.id), {
+        const cleaned = removeUndefined({
           ...item,
           updatedAt: serverTimestamp(),
         });
+        await setDoc(doc(db, 'news', item.id), cleaned);
         newsCount++;
       } catch (e) {
         console.error('Seed news error:', e);

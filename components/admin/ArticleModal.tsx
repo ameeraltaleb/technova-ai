@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { ArticleItem } from '@/lib/admin-store';
 import { CATEGORIES } from '@/lib/data';
 import { callAdminAiApi } from '@/lib/admin-api';
+import { removeUndefined } from '@/lib/utils';
 
 interface ArticleModalProps {
   isOpen: boolean;
@@ -226,7 +227,42 @@ export default function ArticleModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title || !slug) return;
+
+    const cleanTitle = title.trim();
+    const cleanSlug = slug
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+    const cleanExcerpt = excerpt.trim();
+    const cleanContent = content.trim();
+
+    // Separate validation for each required field with clear messages
+    if (!cleanTitle) {
+      setSaveError('يرجى إدخال عنوان المقال (Article Title مطلوب).');
+      setActiveTab('edit');
+      return;
+    }
+    if (!cleanSlug) {
+      setSaveError('يرجى إدخال معرّف الرابط للمقال (URL Slug مطلوب).');
+      setActiveTab('edit');
+      return;
+    }
+    if (!cleanExcerpt) {
+      setSaveError('يرجى إدخال ملخص المقال (Excerpt / Summary مطلوب).');
+      setActiveTab('edit');
+      return;
+    }
+    if (!cleanContent) {
+      setSaveError('يرجى كتابة محتوى المقال (Article Content مطلوب).');
+      setActiveTab('edit');
+      return;
+    }
+    if (!category) {
+      setSaveError('يرجى اختيار تصنيف المقال (Category مطلوب).');
+      setActiveTab('edit');
+      return;
+    }
 
     setIsSaving(true);
     setSaveError(null);
@@ -237,44 +273,65 @@ export default function ArticleModal({
     const parsedTags = tags.split(',').map((t) => t.trim()).filter(Boolean);
 
     // Auto-format plain text into paragraphs if no HTML tags were used
-    let formattedContent = content;
-    if (content && !content.includes('<') && !content.includes('>')) {
-      formattedContent = content
+    let formattedContent = cleanContent;
+    if (!cleanContent.includes('<') && !cleanContent.includes('>')) {
+      formattedContent = cleanContent
         .split('\n\n')
         .filter((block) => block.trim())
         .map((block) => `<p>${block.replace(/\n/g, '<br/>')}</p>`)
         .join('\n\n');
     }
 
-    const articleItem: ArticleItem = {
-      id: slug,
-      title,
-      excerpt,
+    const cleanAuthor = authorName.trim() || 'TechNova AI Team';
+
+    const rawArticleItem: ArticleItem = {
+      id: cleanSlug,
+      title: cleanTitle,
+      excerpt: cleanExcerpt,
       category,
       author: {
-        name: authorName,
-        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(authorName)}&background=random`,
+        name: cleanAuthor,
+        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(cleanAuthor)}&background=random`,
       },
       date: initialArticle?.date || new Date().toISOString().split('T')[0],
-      createdAt: (initialArticle as any)?.createdAt || new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      readTime,
-      rating: Number(rating),
-      featured,
+      readTime: readTime.trim() || '6 min read',
+      rating: Number(rating) || 4.8,
+      featured: Boolean(featured),
       tags: parsedTags,
-      image,
+      image: image.trim(),
       content: formattedContent,
-      pros,
-      cons,
-      affiliateUrl,
-      isSponsored,
-      sponsorName: isSponsored ? sponsorName.trim() : undefined,
-      sponsorUrl: isSponsored ? sponsorUrl.trim() : undefined,
+      isSponsored: Boolean(isSponsored),
       ratingBreakdown: {
-        overall: Number(rating),
-        label: rating >= 4.8 ? 'Exceptional' : rating >= 4.5 ? 'Excellent' : 'Very Good',
+        overall: Number(rating) || 4.8,
+        label: Number(rating) >= 4.8 ? 'Exceptional' : Number(rating) >= 4.5 ? 'Excellent' : 'Very Good',
       },
     };
+
+    // Attach optional fields strictly when provided and valid
+    if (initialArticle?.createdAt) {
+      rawArticleItem.createdAt = initialArticle.createdAt;
+    }
+    if (pros.length > 0) {
+      rawArticleItem.pros = pros;
+    }
+    if (cons.length > 0) {
+      rawArticleItem.cons = cons;
+    }
+    if (affiliateUrl && affiliateUrl.trim()) {
+      rawArticleItem.affiliateUrl = affiliateUrl.trim();
+    }
+    if (initialArticle?.pricingInfo && initialArticle.pricingInfo.trim()) {
+      rawArticleItem.pricingInfo = initialArticle.pricingInfo.trim();
+    }
+    if (isSponsored && sponsorName && sponsorName.trim()) {
+      rawArticleItem.sponsorName = sponsorName.trim();
+    }
+    if (isSponsored && sponsorUrl && sponsorUrl.trim()) {
+      rawArticleItem.sponsorUrl = sponsorUrl.trim();
+    }
+
+    const articleItem = removeUndefined(rawArticleItem);
 
     try {
       await onSave(articleItem);
