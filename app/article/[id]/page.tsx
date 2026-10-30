@@ -1,7 +1,8 @@
 import { CATEGORIES } from '@/lib/data';
 import { getLiveArticleById, getLiveArticles } from '@/lib/public-data';
-import { getArticleImage, parseTOC, injectHeadingIds } from '@/lib/utils';
+import { getArticleImage, parseTOC, injectHeadingIds, qualifyArticleContentLinks } from '@/lib/utils';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import ReadingProgress from '@/components/ReadingProgress';
 import ShareButtons from '@/components/ShareButtons';
 import Newsletter from '@/components/Newsletter';
@@ -16,12 +17,15 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const article = await getLiveArticleById(id);
-  if (!article) return { title: 'Article Not Found' };
+  if (!article) {
+    notFound();
+  }
 
   const image = getArticleImage(article as any);
   const articleUrl = `https://www.technova-ai.online/article/${article.id}`;
+  const cleanTitle = article.title.replace(/\s*[—–-]\s*TechNova AI\s*$/i, '');
   return {
-    title: article.title,
+    title: cleanTitle,
     description: article.excerpt,
     alternates: {
       canonical: articleUrl,
@@ -76,24 +80,23 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
   const article = await getLiveArticleById(id);
 
   if (!article) {
-    return (
-      <div className="container" style={{ padding: 'var(--space-12) 0', textAlign: 'center', minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ fontSize: '4rem', marginBottom: 'var(--space-4)', opacity: 0.3 }}>📄</div>
-        <h1 style={{ fontSize: 'var(--fs-3xl)', marginBottom: 'var(--space-4)' }}>Article not found</h1>
-        <Link href="/" className="ap-back-btn">← Back to Home</Link>
-      </div>
-    );
+    notFound();
   }
 
   const allArticles = await getLiveArticles();
   const articleImage = getArticleImage(article as any);
   const toc = parseTOC(article.content);
   const contentWithIds = injectHeadingIds(article.content);
+  const qualifiedContent = qualifyArticleContentLinks(contentWithIds, {
+    isSponsored: article.isSponsored,
+    sponsorUrl: article.sponsorUrl,
+    affiliateUrl: article.affiliateUrl,
+  });
   const categoryData = CATEGORIES.find(c => c.id === article.category);
   const categoryName = categoryData?.name || article.category;
 
   // Split content around ~35-40% mark for the inline related article card
-  const { part1, part2 } = splitContentForInlineCard(contentWithIds);
+  const { part1, part2 } = splitContentForInlineCard(qualifiedContent);
 
   // Smart Related Articles Algorithm (Tags similarity + Category match)
   const currentTags = (article.tags || []).map((t: string) => t.toLowerCase().trim());
@@ -158,10 +161,17 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
               <span className="ap-breadcrumb__current">Article</span>
             </nav>
 
-            <Link href={`/category/${article.category}`} className="ap-category-badge">
-              {categoryData?.icon && <span>{categoryData.icon}</span>}
-              {categoryName}
-            </Link>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap', marginBottom: 'var(--space-5)' }}>
+              <Link href={`/category/${article.category}`} className="ap-category-badge" style={{ marginBottom: 0 }}>
+                {categoryData?.icon && <span>{categoryData.icon}</span>}
+                {categoryName}
+              </Link>
+              {article.isSponsored && (
+                <span className="ap-badge-sponsored">
+                  ⭐ Sponsored Review
+                </span>
+              )}
+            </div>
 
             <h1 className="ap-hero__title">{article.title}</h1>
             <p className="ap-hero__excerpt">{article.excerpt}</p>
@@ -195,6 +205,39 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
 
             {/* Main Content */}
             <article className="ap-main">
+              {/* Sponsored Content / Paid Partnership Reader Disclosure */}
+              {article.isSponsored && (
+                <div className="ap-sponsored-disclosure" role="note" aria-label="Sponsored Content Disclosure">
+                  <div className="ap-sponsored-disclosure__header">
+                    <span className="ap-sponsored-disclosure__badge">SPONSORED REVIEW / PAID PARTNERSHIP</span>
+                  </div>
+                  <p className="ap-sponsored-disclosure__text">
+                    This article is part of a commercial partnership or dedicated review{article.sponsorName ? ` for ${article.sponsorName}` : ''}. TechNova AI maintains strict editorial guidelines and honest, independent testing standards.
+                  </p>
+                </div>
+              )}
+
+              {/* Dedicated Sponsor CTA Card */}
+              {article.isSponsored && (article.sponsorUrl || article.affiliateUrl) && (
+                <div className="ap-sponsor-card">
+                  <div className="ap-sponsor-card__content">
+                    <div className="ap-sponsor-card__tag">Commercial Partner / Official Link</div>
+                    <h4 className="ap-sponsor-card__title">{article.sponsorName || article.title}</h4>
+                    <p className="ap-sponsor-card__desc">
+                      Visit the official product page to explore features, documentation, and pricing plans.
+                    </p>
+                  </div>
+                  <a
+                    href={article.sponsorUrl || article.affiliateUrl}
+                    target="_blank"
+                    rel="noopener noreferrer nofollow sponsored"
+                    className="ap-sponsor-card__btn"
+                  >
+                    Visit {article.sponsorName || 'Website'} ↗
+                  </a>
+                </div>
+              )}
+
               {/* Pros/Cons inline */}
               {article.pros && article.pros.length > 0 && article.cons && article.cons.length > 0 && (
                 <div className="ap-verdict">
@@ -318,6 +361,27 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
                   </div>
                 );
               })()}
+
+              {/* Dedicated Sponsor Partner in Sidebar */}
+              {article.isSponsored && (article.sponsorUrl || article.affiliateUrl) && (
+                <div className="ap-sidebar__card" style={{ borderColor: 'rgba(245, 158, 11, 0.35)' }}>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#fbbf24', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>
+                    SPONSORED PARTNER
+                  </div>
+                  <h4 style={{ fontSize: '0.95rem', fontWeight: 700, margin: '0 0 8px' }}>
+                    {article.sponsorName || 'Official Product'}
+                  </h4>
+                  <a
+                    href={article.sponsorUrl || article.affiliateUrl}
+                    target="_blank"
+                    rel="noopener noreferrer nofollow sponsored"
+                    className="btn btn--primary"
+                    style={{ display: 'block', textAlign: 'center', fontSize: '0.8rem', padding: '8px 12px' }}
+                  >
+                    Visit Website ↗
+                  </a>
+                </div>
+              )}
             </aside>
           </div>
         </div>

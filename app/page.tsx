@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getLiveArticles, getLiveTools, getLiveNews, getCategoriesWithCounts } from '@/lib/public-data';
 import { getArticleImage } from '@/lib/utils';
@@ -5,6 +6,12 @@ import Newsletter from '@/components/Newsletter';
 import HeroSearchTrigger from '@/components/HeroSearchTrigger';
 
 export const revalidate = 60; // Incremental Static Regeneration (revalidates every 60 seconds)
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: 'https://www.technova-ai.online/',
+  },
+};
 
 export default async function Home() {
   const articles = await getLiveArticles();
@@ -146,17 +153,17 @@ export default async function Home() {
           <div className="bento-stats">
             <div className="bento-stat-item">
               <span className="bento-stat-value">{articles.length}+</span>
-              <span className="bento-stat-label">In-Depth Reviews</span>
+              <span className="bento-stat-label">Articles & Guides</span>
             </div>
             <div className="bento-stat-divider"></div>
             <div className="bento-stat-item">
-              <span className="bento-stat-value">{tools.length * 30}+</span>
-              <span className="bento-stat-label">AI Tools Tested</span>
+              <span className="bento-stat-value">{tools.length}</span>
+              <span className="bento-stat-label">Curated AI Tools</span>
             </div>
             <div className="bento-stat-divider"></div>
             <div className="bento-stat-item">
-              <span className="bento-stat-value">100K+</span>
-              <span className="bento-stat-label">Monthly Tech Readers</span>
+              <span className="bento-stat-value">Explore</span>
+              <span className="bento-stat-label">AI Tools & Tech Guides</span>
             </div>
             <div className="bento-stat-divider"></div>
             <div className="bento-stat-item">
@@ -178,24 +185,37 @@ export default async function Home() {
             <Link href="/tools" className="section__link">View All Tools →</Link>
           </div>
           <div className="cards-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
-            {topTools.map(tool => (
-              <a key={tool.id} href={tool.url} target="_blank" rel="noopener noreferrer" className="article-card" style={{ display: 'flex', flexDirection: 'column' }}>
-                <div style={{ padding: 'var(--space-6)', background: 'rgba(255,255,255,0.02)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem', height: '120px' }}>
-                  {tool.icon}
-                </div>
-                <div className="article-card__content" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <div className="article-card__meta">
-                    <span className="article-card__tag">{tool.category}</span>
-                    <span>⭐ {tool.rating}</span>
+            {topTools.map(tool => {
+              const isSponsored = Boolean(tool.isSponsored || tool.affiliateUrl);
+              const toolRel = isSponsored
+                ? 'noopener noreferrer nofollow sponsored'
+                : 'noopener noreferrer';
+              return (
+                <a
+                  key={tool.id}
+                  href={tool.affiliateUrl || tool.url}
+                  target="_blank"
+                  rel={toolRel}
+                  className="article-card"
+                  style={{ display: 'flex', flexDirection: 'column' }}
+                >
+                  <div style={{ padding: 'var(--space-6)', background: 'rgba(255,255,255,0.02)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem', height: '120px' }}>
+                    {tool.icon}
                   </div>
-                  <h3 className="article-card__title">{tool.name}</h3>
-                  <p className="article-card__excerpt" style={{ flex: 1 }}>{tool.description}</p>
-                  <div style={{ marginTop: 'var(--space-4)', fontSize: 'var(--text-sm)', color: 'var(--color-primary-light)', fontWeight: 600 }}>
-                    {tool.pricing} →
+                  <div className="article-card__content" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <div className="article-card__meta">
+                      <span className="article-card__tag">{tool.category}</span>
+                      <span>⭐ {tool.rating}</span>
+                    </div>
+                    <h3 className="article-card__title">{tool.name}</h3>
+                    <p className="article-card__excerpt" style={{ flex: 1 }}>{tool.description}</p>
+                    <div style={{ marginTop: 'var(--space-4)', fontSize: 'var(--text-sm)', color: 'var(--color-primary-light)', fontWeight: 600 }}>
+                      {tool.pricing} →
+                    </div>
                   </div>
-                </div>
-              </a>
-            ))}
+                </a>
+              );
+            })}
           </div>
         </div>
       </section>

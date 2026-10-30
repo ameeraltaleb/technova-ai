@@ -2,6 +2,7 @@ import { CATEGORIES } from '@/lib/data';
 import { getLiveArticles } from '@/lib/public-data';
 import { getArticleImage } from '@/lib/utils';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 
 export const revalidate = 60;
 
@@ -14,10 +15,12 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const cat = CATEGORIES.find(c => c.id === id);
-  if (!cat) return { title: 'Category Not Found' };
+  if (!cat) {
+    notFound();
+  }
   const catUrl = `https://www.technova-ai.online/category/${cat.id}`;
   return {
-    title: `${cat.name} — TechNova AI`,
+    title: cat.name,
     description: `Browse comprehensive reviews, guides, and articles related to ${cat.name} on TechNova AI.`,
     alternates: {
       canonical: catUrl,
@@ -33,17 +36,12 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 export default async function CategoryPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const category = CATEGORIES.find(c => c.id === id);
+  if (!category) {
+    notFound();
+  }
+
   const allArticles = await getLiveArticles();
   const articles = allArticles.filter(a => a.category === id);
-
-  if (!category) {
-    return (
-      <div className="container" style={{ padding: 'var(--space-12) 0', textAlign: 'center' }}>
-        <h1>Category not found</h1>
-        <Link href="/category" style={{ color: 'var(--text-link)', marginTop: 'var(--space-4)', display: 'inline-block' }}>← Browse All Categories</Link>
-      </div>
-    );
-  }
 
   return (
     <>

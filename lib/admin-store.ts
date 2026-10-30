@@ -30,6 +30,9 @@ export interface ArticleItem {
   };
   affiliateUrl?: string;
   pricingInfo?: string;
+  isSponsored?: boolean;
+  sponsorName?: string;
+  sponsorUrl?: string;
 }
 
 export interface ToolItem {
@@ -62,7 +65,7 @@ export interface ToolSubmission {
   category: string;
   email: string;
   description: string;
-  tier: 'featured' | 'review' | 'free';
+  tier?: 'featured' | 'review' | 'free' | 'standard';
   date: string;
   status?: 'pending' | 'approved' | 'rejected';
 }
@@ -114,7 +117,7 @@ const DEFAULT_SETTINGS: SiteSettings = {
   adsenseClientId: 'ca-pub-8381284855782594',
   analyticsId: 'G-0RXE2K2K6P',
   announcementEnabled: true,
-  announcementText: '🔥 Explore the Top 30 Curated AI Tools for 2026 — Tested & Benchmarked',
+  announcementText: '🔥 Explore Curated AI Tools for 2026 — Directory & Practical Guides',
   announcementLink: '/tools',
   announcementBadge: 'NEW',
   affiliateDisclosure: 'TechNova AI is reader-supported. When you purchase through links on our site, we may earn an affiliate commission at no extra cost to you.',

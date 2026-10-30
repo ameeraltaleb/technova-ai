@@ -8,7 +8,6 @@ interface SubmitToolModalProps {
 }
 
 export default function SubmitToolModal({ isOpen, onClose }: SubmitToolModalProps) {
-  const [tier, setTier] = useState<'featured' | 'review' | 'free'>('featured');
   const [name, setName] = useState('');
   const [url, setUrl] = useState('');
   const [category, setCategory] = useState('ai-tools');
@@ -33,7 +32,7 @@ export default function SubmitToolModal({ isOpen, onClose }: SubmitToolModalProp
           category,
           email,
           description,
-          tier,
+          tier: 'free' as const,
           date: new Date().toISOString(),
         };
         submissions.push(item);
@@ -114,15 +113,7 @@ export default function SubmitToolModal({ isOpen, onClose }: SubmitToolModalProp
               Submission Received!
             </h3>
             <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: 'var(--space-6)' }}>
-              {tier === 'featured' || tier === 'review' ? (
-                <>
-                  Thank you for submitting <strong>{name}</strong> for the <strong>{tier === 'featured' ? 'Featured Placement ($49)' : 'Dedicated Review ($149)'}</strong> package! Our editorial team will review your tool and send your placement confirmation and invoice to <strong>{email}</strong> within 2 hours.
-                </>
-              ) : (
-                <>
-                  Thank you for submitting <strong>{name}</strong>! Your tool has been added to our editorial review queue.
-                </>
-              )}
+              Thank you for submitting <strong>{name}</strong>! Your tool has been added to our editorial review queue. Our team evaluates every submission according to utility, quality, and independent editorial standards.
             </p>
             <button
               onClick={handleReset}
@@ -142,88 +133,32 @@ export default function SubmitToolModal({ isOpen, onClose }: SubmitToolModalProp
           </div>
         ) : (
           <>
-            <div style={{ marginBottom: 'var(--space-6)' }}>
+            <div style={{ marginBottom: 'var(--space-4)' }}>
               <div style={{ display: 'inline-block', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-primary-light)', marginBottom: '4px' }}>
-                // Promote Your AI Product
+                // Suggest an AI Tool
               </div>
               <h2 style={{ fontSize: 'var(--fs-2xl)', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
-                Feature Your Tool on TechNova AI
+                Submit a Tool for Editorial Review
               </h2>
               <p style={{ color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)', marginTop: '6px', lineHeight: 1.5 }}>
-                Put your software in front of thousands of developers, founders, and AI enthusiasts.
+                Recommend an AI tool or software for inclusion in the TechNova directory. Every submission is evaluated independently.
               </p>
             </div>
 
-            {/* Pricing Tiers Selection */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--space-2)', marginBottom: 'var(--space-6)' }}>
-              <div
-                onClick={() => setTier('featured')}
-                style={{
-                  padding: '12px 10px',
-                  borderRadius: 'var(--radius-md)',
-                  border: tier === 'featured' ? '2px solid var(--color-primary)' : '1px solid var(--border-card)',
-                  background: tier === 'featured' ? 'rgba(108, 92, 231, 0.12)' : 'var(--bg-secondary)',
-                  cursor: 'pointer',
-                  textAlign: 'center',
-                  transition: 'all 0.2s ease',
-                  position: 'relative',
-                }}
-              >
-                <span
-                  style={{
-                    position: 'absolute',
-                    top: '-9px',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    background: '#00cec9',
-                    color: '#000',
-                    fontSize: '0.65rem',
-                    fontWeight: 800,
-                    padding: '1px 6px',
-                    borderRadius: '4px',
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  Popular
-                </span>
-                <div style={{ fontWeight: 700, fontSize: '0.85rem' }}>Featured</div>
-                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--color-primary-light)', margin: '4px 0' }}>$49</div>
-                <div style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)' }}>24h Fast Track + Top Badge</div>
-              </div>
-
-              <div
-                onClick={() => setTier('review')}
-                style={{
-                  padding: '12px 10px',
-                  borderRadius: 'var(--radius-md)',
-                  border: tier === 'review' ? '2px solid var(--color-primary)' : '1px solid var(--border-card)',
-                  background: tier === 'review' ? 'rgba(108, 92, 231, 0.12)' : 'var(--bg-secondary)',
-                  cursor: 'pointer',
-                  textAlign: 'center',
-                  transition: 'all 0.2s ease',
-                }}
-              >
-                <div style={{ fontWeight: 700, fontSize: '0.85rem' }}>Full Review</div>
-                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--color-primary-light)', margin: '4px 0' }}>$149</div>
-                <div style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)' }}>1,500+ Word Dedicated Article</div>
-              </div>
-
-              <div
-                onClick={() => setTier('free')}
-                style={{
-                  padding: '12px 10px',
-                  borderRadius: 'var(--radius-md)',
-                  border: tier === 'free' ? '2px solid var(--color-primary)' : '1px solid var(--border-card)',
-                  background: tier === 'free' ? 'rgba(108, 92, 231, 0.12)' : 'var(--bg-secondary)',
-                  cursor: 'pointer',
-                  textAlign: 'center',
-                  transition: 'all 0.2s ease',
-                }}
-              >
-                <div style={{ fontWeight: 700, fontSize: '0.85rem' }}>Standard</div>
-                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', margin: '4px 0' }}>$0</div>
-                <div style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)' }}>Normal Review Queue</div>
-              </div>
+            {/* Editorial Policy Callout */}
+            <div
+              style={{
+                background: 'rgba(108, 92, 231, 0.08)',
+                border: '1px solid rgba(108, 92, 231, 0.25)',
+                borderRadius: 'var(--radius-md)',
+                padding: '10px 14px',
+                marginBottom: 'var(--space-5)',
+                fontSize: '0.8rem',
+                color: 'var(--text-secondary)',
+                lineHeight: 1.5,
+              }}
+            >
+              ⚖️ <strong>Editorial Policy:</strong> TechNova AI operates on independent editorial standards. Submissions are reviewed for merit without pay-for-placement or sponsored ranking fees. Submission does not guarantee listing.
             </div>
 
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
@@ -366,11 +301,11 @@ export default function SubmitToolModal({ isOpen, onClose }: SubmitToolModalProp
                   opacity: loading ? 0.7 : 1,
                 }}
               >
-                {loading ? 'Submitting...' : tier === 'free' ? 'Submit for Review' : `Proceed with ${tier === 'featured' ? 'Featured ($49)' : 'Full Review ($149)'}`}
+                {loading ? 'Submitting...' : 'Submit for Editorial Review'}
               </button>
 
               <div style={{ textAlign: 'center', fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>
-                🔒 Zero spam. We never share your email. Invoices processed securely.
+                🔒 Zero spam. We never share your email. Free submission without fee-for-placement.
               </div>
             </form>
           </>

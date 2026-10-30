@@ -5,8 +5,11 @@ import ToolsDirectoryClient from '@/components/ToolsDirectoryClient';
 export const revalidate = 60;
 
 export const metadata = {
-  title: 'AI Tools Directory & Software Reviews — TechNova AI',
+  title: 'AI Tools Directory & Software Reviews',
   description: 'Explore the curated directory of the best AI tools, developer software, and productivity platforms in 2026.',
+  alternates: {
+    canonical: 'https://www.technova-ai.online/tools',
+  },
 };
 
 export default async function ToolsPage() {
@@ -21,7 +24,7 @@ export default async function ToolsPage() {
           </div>
           <div className="category-hero__icon" style={{ background: 'rgba(232, 67, 147, 0.15)', color: 'var(--color-secondary)' }}>⚡</div>
           <h1 className="category-hero__title">AI Tools Directory</h1>
-          <p className="category-hero__description">The ultimate curated directory of top-tier AI software, tested and benchmarked.</p>
+          <p className="category-hero__description">A curated directory of top-tier AI tools, developer software, and productivity platforms.</p>
           <p className="category-hero__count">{tools.length} tools available</p>
         </div>
       </section>

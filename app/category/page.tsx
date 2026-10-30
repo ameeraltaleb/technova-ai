@@ -4,8 +4,11 @@ import Link from 'next/link';
 export const revalidate = 60;
 
 export const metadata = {
-  title: 'All Categories — TechNova AI',
+  title: 'All Categories & Topics',
   description: 'Browse all article categories on TechNova AI — AI Tools, Dev Tools, Productivity, Design, Security, Cloud, and more.',
+  alternates: {
+    canonical: 'https://www.technova-ai.online/category',
+  },
 };
 
 export default async function AllCategoriesPage() {

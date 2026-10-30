@@ -85,8 +85,8 @@ export default function SubmissionsTab({
                       </a>
                     </td>
                     <td>
-                      <span className={`badge-pill ${sub.tier === 'featured' ? 'badge-pill-primary' : 'badge-pill-warning'}`}>
-                        {sub.tier.toUpperCase()}
+                      <span className={`badge-pill ${sub.tier === 'featured' || sub.tier === 'review' ? 'badge-pill-warning' : 'badge-pill-primary'}`}>
+                        {sub.tier === 'featured' ? 'LEGACY ($49)' : sub.tier === 'review' ? 'LEGACY ($149)' : 'STANDARD'}
                       </span>
                     </td>
                     <td>
@@ -110,22 +110,47 @@ export default function SubmissionsTab({
                     </td>
                     <td style={{ textAlign: 'right' }}>
                       {status === 'pending' ? (
-                        <div style={{ display: 'inline-flex', gap: '6px' }}>
-                          <button
-                            onClick={() => onApprove(sub, i)}
-                            className="btn-admin btn-admin-primary"
-                            style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-                          >
-                            ✓ Approve
-                          </button>
-                          <button
-                            onClick={() => onReject(i)}
-                            className="btn-admin btn-admin-danger"
-                            style={{ padding: '4px 8px', fontSize: '0.75rem' }}
-                          >
-                            ✕
-                          </button>
-                        </div>
+                        sub.tier === 'featured' || sub.tier === 'review' ? (
+                          <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
+                            <span style={{ fontSize: '0.7rem', color: '#f59e0b', fontWeight: 600 }}>
+                              ⚠️ Legacy Paid Request
+                            </span>
+                            <div style={{ display: 'inline-flex', gap: '6px' }}>
+                              <button
+                                onClick={() => onApprove(sub, i)}
+                                className="btn-admin btn-admin-outline"
+                                style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                                title="Approve as standard directory listing without paid promotion"
+                              >
+                                ✓ Approve (Editorial)
+                              </button>
+                              <button
+                                onClick={() => onReject(i)}
+                                className="btn-admin btn-admin-danger"
+                                style={{ padding: '4px 8px', fontSize: '0.75rem' }}
+                              >
+                                ✕ Reject
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div style={{ display: 'inline-flex', gap: '6px' }}>
+                            <button
+                              onClick={() => onApprove(sub, i)}
+                              className="btn-admin btn-admin-primary"
+                              style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                            >
+                              ✓ Approve
+                            </button>
+                            <button
+                              onClick={() => onReject(i)}
+                              className="btn-admin btn-admin-danger"
+                              style={{ padding: '4px 8px', fontSize: '0.75rem' }}
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        )
                       ) : (
                         <span style={{ fontSize: '0.75rem', color: 'var(--admin-text-dim)' }}>
                           Processed

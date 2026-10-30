@@ -82,7 +82,7 @@ export default function ToolModal({
       pricing,
       rating: Number(rating),
       icon,
-      isSponsored,
+      isSponsored: initialTool?.isSponsored ? Boolean(isSponsored) : false,
     };
 
     onSave(toolItem);
@@ -207,16 +207,13 @@ export default function ToolModal({
                   onChange={(e) => setRating(Number(e.target.value))}
                 />
               </div>
-              <div className="form-group" style={{ display: 'flex', alignItems: 'center', paddingTop: '24px' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.875rem' }}>
-                  <input
-                    type="checkbox"
-                    checked={isSponsored}
-                    onChange={(e) => setIsSponsored(e.target.checked)}
-                  />
-                  <span>Mark as Sponsored / Featured Tool</span>
-                </label>
-              </div>
+              {initialTool?.isSponsored ? (
+                <div className="form-group" style={{ display: 'flex', alignItems: 'center', paddingTop: '24px' }}>
+                  <span style={{ fontSize: '0.8rem', color: '#fbbf24', background: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.3)', padding: '4px 10px', borderRadius: '6px' }}>
+                    ⭐ Legacy Sponsored Tool (Active)
+                  </span>
+                </div>
+              ) : null}
             </div>
           </div>
 

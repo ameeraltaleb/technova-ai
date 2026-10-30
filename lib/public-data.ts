@@ -48,13 +48,25 @@ export async function getLiveArticles(): Promise<ArticleItem[]> {
       const remainingStatic = (ARTICLES as unknown as ArticleItem[]).filter(
         (a) => !firestoreIds.has(a.id)
       );
-      // Return firestore articles merged with static, always sorted by newest publication
-      return sortArticlesByNewest([...firestoreArticles, ...remainingStatic]);
+      const combined = [...firestoreArticles, ...remainingStatic];
+      const uniqueMap = new Map<string, ArticleItem>();
+      for (const art of combined) {
+        if (art.id && !uniqueMap.has(art.id)) {
+          uniqueMap.set(art.id, art);
+        }
+      }
+      return sortArticlesByNewest(Array.from(uniqueMap.values()));
     }
   } catch (error) {
     console.warn('getLiveArticles fallback to static:', error);
   }
-  return sortArticlesByNewest(ARTICLES as unknown as ArticleItem[]);
+  const uniqueMap = new Map<string, ArticleItem>();
+  for (const art of (ARTICLES as unknown as ArticleItem[])) {
+    if (art.id && !uniqueMap.has(art.id)) {
+      uniqueMap.set(art.id, art);
+    }
+  }
+  return sortArticlesByNewest(Array.from(uniqueMap.values()));
 }
 
 export async function getLiveArticleById(id: string): Promise<ArticleItem | null> {

@@ -2,8 +2,11 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy — TechNova AI',
+  title: 'Privacy Policy',
   description: 'Read about how TechNova AI collects, uses, and protects your personal data.',
+  alternates: {
+    canonical: 'https://www.technova-ai.online/privacy',
+  },
 };
 
 export default function PrivacyPage() {

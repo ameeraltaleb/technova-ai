@@ -36,7 +36,7 @@ export default function Newsletter() {
           <div className="newsletter__icon">⚡</div>
           <h2 className="newsletter__title">Stay Ahead in the AI Revolution</h2>
           <p className="newsletter__text">
-            Join 12,000+ engineers, designers, and tech leaders receiving our weekly curated breakdown of the most powerful new AI tools and breaking tech news.
+            Get AI tools, tech news, and practical guides in your inbox with our weekly curated breakdown of the most powerful new software and tech trends.
           </p>
 
           {status === 'success' ? (

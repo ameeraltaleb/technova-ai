@@ -2,7 +2,9 @@ import Link from 'next/link';
 
 export default function NotFound() {
   return (
-    <section className="section" style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <>
+      <title>Page Not Found — TechNova AI</title>
+      <section className="section" style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div className="container" style={{ textAlign: 'center', maxWidth: '600px' }}>
         <div style={{ fontSize: '6rem', marginBottom: 'var(--space-4)', opacity: 0.3 }}>🔍</div>
         <h1 style={{
@@ -41,5 +43,6 @@ export default function NotFound() {
         </div>
       </div>
     </section>
+    </>
   );
 }

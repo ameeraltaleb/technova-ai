@@ -15,7 +15,6 @@ export const metadata: Metadata = {
   creator: 'TechNova AI',
   publisher: 'TechNova AI',
   alternates: {
-    canonical: 'https://www.technova-ai.online',
     types: {
       'application/rss+xml': 'https://www.technova-ai.online/feed.xml',
     },

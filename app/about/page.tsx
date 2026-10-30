@@ -2,8 +2,11 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'About Us — TechNova AI',
+  title: 'About Us',
   description: 'Learn about TechNova AI, our mission, and the team behind honest, in-depth tech reviews.',
+  alternates: {
+    canonical: 'https://www.technova-ai.online/about',
+  },
 };
 
 export default function AboutPage() {

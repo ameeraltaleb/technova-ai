@@ -2,8 +2,11 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Terms of Service — TechNova AI',
+  title: 'Terms of Service',
   description: 'Read the Terms of Service for using the TechNova AI website.',
+  alternates: {
+    canonical: 'https://www.technova-ai.online/terms',
+  },
 };
 
 export default function TermsPage() {

@@ -56,3 +56,105 @@ export function injectHeadingIds(htmlContent: string): string {
     return `<h2${attrs} id="${id}">${inner}</h2>`;
   });
 }
+
+/**
+ * Qualifies links inside article HTML content:
+ * - If the article is sponsored (`isSponsored: true`), links pointing to the sponsor's URL or domain
+ *   are qualified with `rel="noopener noreferrer nofollow sponsored"`.
+ * - Other editorial links to outside sources retain standard `rel="noopener noreferrer"` without `sponsored`.
+ * - If not sponsored, standard editorial links remain normal without sponsored or nofollow.
+ */
+export function qualifyArticleContentLinks(
+  htmlContent: string,
+  options?: { isSponsored?: boolean; sponsorUrl?: string; affiliateUrl?: string }
+): string {
+  if (!htmlContent) return '';
+
+  const isSponsored = Boolean(options?.isSponsored);
+  const targetUrls: string[] = [];
+  const targetHostnames: string[] = [];
+
+  const addTarget = (rawUrl?: string) => {
+    if (!rawUrl) return;
+    const trimmed = rawUrl.trim();
+    if (!trimmed) return;
+    targetUrls.push(trimmed.toLowerCase());
+    try {
+      const parsed = new URL(trimmed.startsWith('http') ? trimmed : `https://${trimmed}`);
+      const host = parsed.hostname.toLowerCase().replace(/^www\./, '');
+      if (host) targetHostnames.push(host);
+    } catch {
+      // ignore
+    }
+  };
+
+  if (isSponsored) {
+    addTarget(options?.sponsorUrl);
+    addTarget(options?.affiliateUrl);
+  }
+
+  return htmlContent.replace(/<a\b([^>]*)>/gi, (match, attrs) => {
+    const hrefMatch = attrs.match(/\bhref=(["'])(.*?)\1/i);
+    if (!hrefMatch) return match;
+
+    const href = hrefMatch[2].trim();
+    // Ignore internal anchor hashes or relative paths
+    if (href.startsWith('#') || href.startsWith('/')) {
+      return match;
+    }
+
+    let isLinkToSponsor = false;
+    if (isSponsored && (targetUrls.length > 0 || targetHostnames.length > 0)) {
+      const hrefLower = href.toLowerCase();
+      if (targetUrls.some((u) => hrefLower.startsWith(u) || u.startsWith(hrefLower))) {
+        isLinkToSponsor = true;
+      } else {
+        try {
+          const parsed = new URL(href);
+          const parsedHost = parsed.hostname.toLowerCase().replace(/^www\./, '');
+          if (targetHostnames.some((h) => parsedHost === h || parsedHost.endsWith(`.${h}`))) {
+            isLinkToSponsor = true;
+          }
+        } catch {
+          // ignore
+        }
+      }
+    }
+
+    // Extract existing rel attribute if any
+    const relMatch = attrs.match(/\brel=(["'])(.*?)\1/i);
+    const targetMatch = attrs.match(/\btarget=(["'])(.*?)\1/i);
+
+    let cleanAttrs = attrs;
+
+    if (isLinkToSponsor) {
+      if (relMatch) {
+        cleanAttrs = cleanAttrs.replace(relMatch[0], 'rel="noopener noreferrer nofollow sponsored"');
+      } else {
+        cleanAttrs += ' rel="noopener noreferrer nofollow sponsored"';
+      }
+      if (!targetMatch) {
+        cleanAttrs += ' target="_blank"';
+      }
+    } else {
+      if (!relMatch) {
+        cleanAttrs += ' rel="noopener noreferrer"';
+      } else {
+        // Strip out 'sponsored' if it was mistakenly attached to a non-commercial editorial link
+        const existingRel = relMatch[2];
+        if (existingRel.toLowerCase().includes('sponsored')) {
+          const cleanedRel = existingRel
+            .replace(/\bsponsored\b/gi, '')
+            .replace(/\s+/g, ' ')
+            .trim();
+          cleanAttrs = cleanAttrs.replace(relMatch[0], `rel="${cleanedRel || 'noopener noreferrer'}"`);
+        }
+      }
+      if (!targetMatch) {
+        cleanAttrs += ' target="_blank"';
+      }
+    }
+
+    return `<a${cleanAttrs}>`;
+  });
+}

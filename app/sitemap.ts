@@ -43,5 +43,40 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     };
   });
 
-  return [...staticPages, ...articlePages, ...categoryPages];
+  const allEntries = [...staticPages, ...articlePages, ...categoryPages];
+
+  // Defensive deduplication across the entire combined sitemap
+  const urlMap = new Map<string, MetadataRoute.Sitemap[number]>();
+
+  for (const entry of allEntries) {
+    if (!entry || !entry.url) continue;
+
+    // Normalize URL: trim whitespace and trailing slashes (except root domain)
+    let normalizedUrl = entry.url.trim();
+    if (normalizedUrl !== baseUrl && normalizedUrl.endsWith('/')) {
+      normalizedUrl = normalizedUrl.slice(0, -1);
+    }
+
+    const currentEntry = { ...entry, url: normalizedUrl };
+
+    if (!urlMap.has(normalizedUrl)) {
+      urlMap.set(normalizedUrl, currentEntry);
+    } else {
+      // Conflict resolution: preserve the entry with the most recent lastModified
+      const existing = urlMap.get(normalizedUrl)!;
+      const existingTime = existing.lastModified ? new Date(existing.lastModified).getTime() : 0;
+      const newTime = currentEntry.lastModified ? new Date(currentEntry.lastModified).getTime() : 0;
+
+      if (newTime > existingTime) {
+        urlMap.set(normalizedUrl, currentEntry);
+      } else if (newTime === existingTime) {
+        // Tie-breaker: keep the higher priority entry
+        if ((currentEntry.priority ?? 0) > (existing.priority ?? 0)) {
+          urlMap.set(normalizedUrl, currentEntry);
+        }
+      }
+    }
+  }
+
+  return Array.from(urlMap.values());
 }

@@ -30,6 +30,9 @@ export default function ArticleModal({
   const [tags, setTags] = useState('AI, Tools, Review');
   const [image, setImage] = useState('');
   const [affiliateUrl, setAffiliateUrl] = useState('');
+  const [isSponsored, setIsSponsored] = useState(false);
+  const [sponsorName, setSponsorName] = useState('');
+  const [sponsorUrl, setSponsorUrl] = useState('');
   const [prosText, setProsText] = useState('');
   const [consText, setConsText] = useState('');
   const [content, setContent] = useState('');
@@ -59,6 +62,9 @@ export default function ArticleModal({
       setTags((initialArticle.tags || []).join(', '));
       setImage(initialArticle.image || '');
       setAffiliateUrl(initialArticle.affiliateUrl || '');
+      setIsSponsored(Boolean(initialArticle.isSponsored));
+      setSponsorName(initialArticle.sponsorName || '');
+      setSponsorUrl(initialArticle.sponsorUrl || '');
       setProsText((initialArticle.pros || []).join('\n'));
       setConsText((initialArticle.cons || []).join('\n'));
       setContent(initialArticle.content || '');
@@ -72,6 +78,9 @@ export default function ArticleModal({
       setRating(4.8);
       setReadTime('6 min read');
       setFeatured(false);
+      setIsSponsored(false);
+      setSponsorName('');
+      setSponsorUrl('');
       setTags('');
       setImage('');
       setAffiliateUrl('');
@@ -258,6 +267,9 @@ export default function ArticleModal({
       pros,
       cons,
       affiliateUrl,
+      isSponsored,
+      sponsorName: isSponsored ? sponsorName.trim() : undefined,
+      sponsorUrl: isSponsored ? sponsorUrl.trim() : undefined,
       ratingBreakdown: {
         overall: Number(rating),
         label: rating >= 4.8 ? 'Exceptional' : rating >= 4.5 ? 'Excellent' : 'Very Good',
@@ -667,6 +679,47 @@ export default function ArticleModal({
                     <span>Highlight as Featured Article on Homepage</span>
                   </label>
                 </div>
+
+                {initialArticle?.isSponsored && (
+                  <div
+                    style={{
+                      margin: '12px 0 16px',
+                      padding: '12px 14px',
+                      borderRadius: '8px',
+                      background: 'rgba(245, 158, 11, 0.08)',
+                      border: '1px solid rgba(245, 158, 11, 0.4)',
+                    }}
+                  >
+                    <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#fbbf24', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span>⭐ Legacy Sponsored Article Disclosure (Preserved)</span>
+                    </div>
+                    <p style={{ fontSize: '0.75rem', color: 'var(--admin-text-muted)', margin: '4px 0 10px' }}>
+                      This historical article has active sponsored disclosure. New paid reviews have been discontinued per TechNova editorial policy.
+                    </p>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                      <div>
+                        <label className="form-label" style={{ fontSize: '0.75rem' }}>Sponsor / Product Name</label>
+                        <input
+                          type="text"
+                          className="form-input"
+                          value={sponsorName}
+                          onChange={(e) => setSponsorName(e.target.value)}
+                          placeholder="e.g. Synthesia AI"
+                        />
+                      </div>
+                      <div>
+                        <label className="form-label" style={{ fontSize: '0.75rem' }}>Client Target URL (rel=&quot;sponsored&quot;)</label>
+                        <input
+                          type="url"
+                          className="form-input"
+                          value={sponsorUrl}
+                          onChange={(e) => setSponsorUrl(e.target.value)}
+                          placeholder="https://client-tool.com"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 <div className="form-group">
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>

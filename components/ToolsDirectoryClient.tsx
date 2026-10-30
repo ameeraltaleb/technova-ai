@@ -12,6 +12,8 @@ interface Tool {
   pricing: string;
   rating: number;
   icon: string;
+  isSponsored?: boolean;
+  affiliateUrl?: string;
 }
 
 interface ToolsDirectoryClientProps {
@@ -46,11 +48,11 @@ export default function ToolsDirectoryClient({ initialTools }: ToolsDirectoryCli
     <>
       <SubmitToolModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
 
-      {/* Monetization / Sponsor Banner */}
+      {/* Editorial Tool Submission Banner */}
       <div
         style={{
-          background: 'linear-gradient(90deg, rgba(108, 92, 231, 0.15) 0%, rgba(0, 206, 201, 0.1) 100%)',
-          border: '1px solid rgba(108, 92, 231, 0.3)',
+          background: 'var(--bg-secondary)',
+          border: '1px solid var(--border-card)',
           borderRadius: 'var(--radius-xl)',
           padding: 'var(--space-4) var(--space-6)',
           display: 'flex',
@@ -62,13 +64,13 @@ export default function ToolsDirectoryClient({ initialTools }: ToolsDirectoryCli
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <span style={{ fontSize: '1.75rem' }}>🚀</span>
+          <span style={{ fontSize: '1.75rem' }}>💡</span>
           <div>
             <div style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--text-primary)' }}>
-              Are you an AI founder or developer?
+              Have an AI tool or software to recommend?
             </div>
             <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
-              Promote your software, get a verified dofollow backlink, and reach thousands of daily readers.
+              Submit tools for editorial review and inclusion in our independent directory.
             </div>
           </div>
         </div>
@@ -90,7 +92,7 @@ export default function ToolsDirectoryClient({ initialTools }: ToolsDirectoryCli
           onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-2px)')}
           onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
         >
-          + Submit & Feature Your Tool
+          + Submit Tool for Review
         </button>
       </div>
 
@@ -157,45 +159,25 @@ export default function ToolsDirectoryClient({ initialTools }: ToolsDirectoryCli
             No tools found matching your criteria.
           </div>
         ) : (
-          filteredTools.map((tool, index) => {
-            const isFeatured = index < 3; // First 3 tools highlighted as Featured
+          filteredTools.map((tool) => {
+            const isSponsored = Boolean(tool.isSponsored || tool.affiliateUrl);
+            const toolRel = isSponsored
+              ? 'noopener noreferrer nofollow sponsored'
+              : 'noopener noreferrer';
             return (
               <a
                 key={tool.id}
                 id={tool.id}
-                href={tool.url}
+                href={tool.affiliateUrl || tool.url}
                 target="_blank"
-                rel="noopener noreferrer"
+                rel={toolRel}
                 className="article-card"
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
                   position: 'relative',
-                  border: isFeatured ? '1px solid rgba(0, 206, 201, 0.4)' : undefined,
-                  boxShadow: isFeatured ? '0 4px 20px rgba(0, 206, 201, 0.1)' : undefined,
                 }}
               >
-                {isFeatured && (
-                  <span
-                    style={{
-                      position: 'absolute',
-                      top: '12px',
-                      right: '12px',
-                      background: 'rgba(0, 206, 201, 0.15)',
-                      border: '1px solid #00cec9',
-                      color: '#00cec9',
-                      fontSize: '0.65rem',
-                      fontWeight: 800,
-                      padding: '2px 8px',
-                      borderRadius: '4px',
-                      letterSpacing: '0.05em',
-                      textTransform: 'uppercase',
-                      zIndex: 2,
-                    }}
-                  >
-                    Featured
-                  </span>
-                )}
                 <div
                   style={{
                     padding: 'var(--space-6)',

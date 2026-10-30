@@ -217,10 +217,10 @@ export default function AdminPage() {
       description: sub.description,
       url: sub.url,
       category: sub.category,
-      pricing: sub.tier === 'featured' ? 'Paid (/mo)' : 'Freemium',
+      pricing: 'Freemium',
       rating: 4.8,
       icon: '✨',
-      isSponsored: sub.tier === 'featured',
+      isSponsored: false,
     };
     const updatedTools = AdminStore.saveTool(newTool);
     setTools(updatedTools);

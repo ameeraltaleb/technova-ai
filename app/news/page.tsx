@@ -4,8 +4,11 @@ import Link from 'next/link';
 export const revalidate = 60;
 
 export const metadata = {
-  title: 'Tech News Bites — TechNova AI',
+  title: 'Tech News Bites & Daily AI Updates',
   description: 'Quick, bite-sized updates on the latest in tech and AI.',
+  alternates: {
+    canonical: 'https://www.technova-ai.online/news',
+  },
 };
 
 export default async function NewsPage() {
