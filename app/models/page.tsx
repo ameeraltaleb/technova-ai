@@ -5,6 +5,7 @@ import ModelsDirectoryClient from '@/components/ModelsDirectoryClient';
 import VramCalculator from '@/components/VramCalculator';
 import EditorModelPicks from '@/components/EditorModelPicks';
 import ModelComparisonTable from '@/components/ModelComparisonTable';
+import ModelGlossary from '@/components/ModelGlossary';
 import ModelsFaq from '@/components/ModelsFaq';
 
 export const revalidate = 3600; // Revalidate every hour via Next.js ISR
@@ -24,6 +25,7 @@ export const metadata: Metadata = {
     'ollama models directory',
     'open weights commercial licenses',
     'gguf quantization guide',
+    'local AI benchmarks',
   ],
   alternates: {
     canonical: 'https://www.technova-ai.online/models',
@@ -128,190 +130,95 @@ export default async function ModelsPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Main Container with generous top spacing to prevent navbar collision */}
-      <main style={{ minHeight: '80vh', paddingTop: 'calc(var(--space-28) + 24px)', paddingBottom: 'var(--space-16)' }}>
-        {/* Hero Section */}
-        <div
-          className="container"
-          style={{
-            textAlign: 'center',
-            maxWidth: '880px',
-            margin: '0 auto var(--space-10)',
-          }}
-        >
-          {/* Breadcrumb Navigation */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px',
-              fontSize: '0.85rem',
-              color: 'var(--text-secondary)',
-              marginBottom: 'var(--space-4)',
-            }}
-          >
-            <Link href="/" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>
-              Home
-            </Link>
-            <span style={{ color: 'var(--text-tertiary)' }}>/</span>
-            <span style={{ color: 'var(--color-primary)', fontWeight: 600 }}>AI Models Hub</span>
+      <main style={{ minHeight: '80vh', paddingBottom: 'var(--space-16)' }}>
+        {/* Hero Section with Generous Fixed-Navbar Offset and Glowing Radial Backdrop */}
+        <section className="models-hero">
+          <div className="container models-hero__inner">
+            {/* Breadcrumb Navigation */}
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: '0.85rem',
+                color: 'var(--text-secondary)',
+                marginBottom: '16px',
+              }}
+            >
+              <Link href="/" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>
+                Home
+              </Link>
+              <span style={{ color: 'var(--text-tertiary)' }}>/</span>
+              <span style={{ color: 'var(--color-primary)', fontWeight: 600 }}>AI Models Hub</span>
+            </div>
+
+            {/* Glowing Hero Badge */}
+            <div>
+              <div className="models-hero__badge">
+                <span>⚡ Live Open-Source AI Intelligence & Radar</span>
+              </div>
+            </div>
+
+            {/* Primary H1 */}
+            <h1
+              style={{
+                fontSize: 'clamp(2.1rem, 4.5vw, 3.1rem)',
+                fontWeight: 900,
+                color: 'var(--text-primary)',
+                lineHeight: 1.15,
+                marginBottom: '16px',
+                letterSpacing: '-0.5px',
+              }}
+            >
+              Open-Source AI Models Hub & Hardware Estimator
+            </h1>
+
+            {/* Hero Lead Paragraph */}
+            <p
+              style={{
+                fontSize: '1.05rem',
+                color: 'var(--text-secondary)',
+                lineHeight: 1.6,
+                maxWidth: '720px',
+                margin: '0 auto 24px',
+              }}
+            >
+              Discover, benchmark, and deploy the world&apos;s leading open-weights language models, reasoning architectures, and vision checkpoints. Calculate exact GPU VRAM needs and run weights locally.
+            </p>
+
+            {/* Jump Navigation Pills */}
+            <div
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+                gap: '8px',
+              }}
+            >
+              <a href="#calculator" className="models-jump-pill models-jump-pill--active">
+                📊 VRAM Calculator
+              </a>
+              <a href="#picks" className="models-jump-pill">
+                ⭐ Editor&apos;s Choice
+              </a>
+              <a href="#comparison" className="models-jump-pill">
+                📋 Benchmark Matrix
+              </a>
+              <a href="#models-list" className="models-jump-pill">
+                🌐 Trending Models
+              </a>
+              <a href="#guide" className="models-jump-pill">
+                📖 Deployment Guide
+              </a>
+              <a href="#glossary" className="models-jump-pill">
+                📚 AI Glossary
+              </a>
+              <a href="#faq" className="models-jump-pill">
+                ❓ FAQs
+              </a>
+            </div>
           </div>
-
-          {/* Glowing Hero Badge */}
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '6px 16px',
-              borderRadius: '999px',
-              background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(168, 85, 247, 0.15) 100%)',
-              border: '1px solid rgba(99, 102, 241, 0.3)',
-              color: 'var(--color-primary)',
-              fontSize: '0.82rem',
-              fontWeight: 700,
-              marginBottom: 'var(--space-4)',
-              boxShadow: '0 4px 16px rgba(99, 102, 241, 0.12)',
-            }}
-          >
-            <span>⚡ Live Open-Source AI Intelligence & Radar</span>
-          </div>
-
-          {/* Primary H1 */}
-          <h1
-            style={{
-              fontSize: 'clamp(2.1rem, 4.5vw, 3rem)',
-              fontWeight: 900,
-              color: 'var(--text-primary)',
-              lineHeight: 1.15,
-              marginBottom: 'var(--space-4)',
-              letterSpacing: '-0.5px',
-            }}
-          >
-            Open-Source AI Models Hub & Hardware Estimator
-          </h1>
-
-          {/* Hero Lead Paragraph */}
-          <p
-            style={{
-              fontSize: '1.05rem',
-              color: 'var(--text-secondary)',
-              lineHeight: 1.6,
-              maxWidth: '720px',
-              margin: '0 auto var(--space-6)',
-            }}
-          >
-            Discover, benchmark, and deploy the world&apos;s leading open-weights language models, reasoning architectures, and vision checkpoints. Calculate exact GPU VRAM needs and run weights locally.
-          </p>
-
-          {/* Jump Navigation Pills */}
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              justifyContent: 'center',
-              gap: '8px',
-            }}
-          >
-            <a
-              href="#calculator"
-              style={{
-                fontSize: '0.8rem',
-                fontWeight: 600,
-                padding: '6px 14px',
-                borderRadius: '999px',
-                background: 'rgba(99, 102, 241, 0.1)',
-                border: '1px solid rgba(99, 102, 241, 0.25)',
-                color: 'var(--color-primary)',
-                textDecoration: 'none',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              📊 VRAM Calculator
-            </a>
-            <a
-              href="#picks"
-              style={{
-                fontSize: '0.8rem',
-                fontWeight: 600,
-                padding: '6px 14px',
-                borderRadius: '999px',
-                background: 'var(--bg-secondary)',
-                border: '1px solid var(--border-card)',
-                color: 'var(--text-secondary)',
-                textDecoration: 'none',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              ⭐ Editor&apos;s Choice
-            </a>
-            <a
-              href="#comparison"
-              style={{
-                fontSize: '0.8rem',
-                fontWeight: 600,
-                padding: '6px 14px',
-                borderRadius: '999px',
-                background: 'var(--bg-secondary)',
-                border: '1px solid var(--border-card)',
-                color: 'var(--text-secondary)',
-                textDecoration: 'none',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              📋 Benchmark Matrix
-            </a>
-            <a
-              href="#models-list"
-              style={{
-                fontSize: '0.8rem',
-                fontWeight: 600,
-                padding: '6px 14px',
-                borderRadius: '999px',
-                background: 'var(--bg-secondary)',
-                border: '1px solid var(--border-card)',
-                color: 'var(--text-secondary)',
-                textDecoration: 'none',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              🌐 Trending Models
-            </a>
-            <a
-              href="#guide"
-              style={{
-                fontSize: '0.8rem',
-                fontWeight: 600,
-                padding: '6px 14px',
-                borderRadius: '999px',
-                background: 'var(--bg-secondary)',
-                border: '1px solid var(--border-card)',
-                color: 'var(--text-secondary)',
-                textDecoration: 'none',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              📖 Deployment Guide
-            </a>
-            <a
-              href="#faq"
-              style={{
-                fontSize: '0.8rem',
-                fontWeight: 600,
-                padding: '6px 14px',
-                borderRadius: '999px',
-                background: 'var(--bg-secondary)',
-                border: '1px solid var(--border-card)',
-                color: 'var(--text-secondary)',
-                textDecoration: 'none',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              ❓ FAQs
-            </a>
-          </div>
-        </div>
+        </section>
 
         <div className="container">
           {/* 1. Editor's Curated Best-in-Class Picks */}
@@ -510,7 +417,10 @@ export default async function ModelsPage() {
             </div>
           </section>
 
-          {/* 6. Frequently Asked Questions with Schema Markup */}
+          {/* 6. Technical Glossary & Concepts (Massive SEO Value) */}
+          <ModelGlossary />
+
+          {/* 7. Frequently Asked Questions with Schema Markup */}
           <ModelsFaq />
         </div>
       </main>
