@@ -216,9 +216,14 @@ export default function Navbar() {
         >
           {/* Drawer Top Bar */}
           <div className="mobile-drawer__header">
-            <Link href="/" className="navbar__logo" onClick={() => setIsMobileOpen(false)}>
-              <img src="/logo.png" alt="TechNova AI" className="navbar__logo-img" width={32} height={32} />
-              <span style={{ fontSize: 'var(--fs-lg)' }}>TechNova AI</span>
+            <Link href="/" className="navbar__logo" onClick={() => setIsMobileOpen(false)} aria-label="TechNova AI">
+              <div className="navbar__brand-wordmark">
+                <span className="navbar__brand-title" style={{ fontSize: '1.15rem' }}>TECHNOVA</span>
+                <div className="navbar__brand-subline">
+                  <span className="navbar__brand-bar" style={{ width: '56px' }}></span>
+                  <span className="navbar__brand-badge">AI</span>
+                </div>
+              </div>
             </Link>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <button
