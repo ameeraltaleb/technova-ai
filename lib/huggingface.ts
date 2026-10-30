@@ -84,7 +84,6 @@ const FALLBACK_MODELS: HfModel[] = [
     lastModified: '2025-09-22T13:10:00.000Z',
   },
 ];
-
 /**
  * Fetch top trending models directly from Hugging Face public API.
  * Uses Next.js ISR (revalidate: 3600s = 1 hour) for blazing-fast cached responses.
@@ -175,4 +174,42 @@ export function getFriendlyTaskLabel(tag?: string): { label: string; group: stri
 
   return { label: tag.replace(/-/g, ' ').toUpperCase(), group: 'other', color: 'badge--gray' };
 }
+
+export interface FaqItem {
+  question: string;
+  answer: string;
+}
+
+export const FAQ_ITEMS: FaqItem[] = [
+  {
+    question: 'What is the difference between open-weights and true open-source AI?',
+    answer:
+      'True open-source (under OSI guidelines) provides the complete training code, original datasets, and architecture without restrictions. Most modern releases (like Meta Llama 3.3 or Mistral) are strictly "open-weights": the pre-trained neural network weights are publicly downloadable and self-hostable, but the raw training datasets and training pipelines are kept proprietary, often subject to acceptable-use licenses.',
+  },
+  {
+    question: 'How do I run Hugging Face models locally on my computer for free?',
+    answer:
+      'The easiest method for beginners and developers is using Ollama or LM Studio. Both tools allow you to download, quantize, and execute models like Llama 3 or Mistral directly on your CPU/GPU with a single command or GUI, operating 100% offline with zero subscription fees or data telemetry.',
+  },
+  {
+    question: 'What is model quantization (GGUF, AWQ, INT4) and does it hurt output quality?',
+    answer:
+      'Quantization reduces the precision of neural network weights from 16-bit floating point (FP16) to 8-bit, 4-bit, or even 2-bit integers. A 4-bit quantized model (e.g., GGUF Q4_K_M) reduces RAM and VRAM footprint by ~70% with negligible loss in reasoning ability (less than 1% perplexity difference in standard language benchmarks), enabling consumer GPUs to run models that previously required enterprise server racks.',
+  },
+  {
+    question: 'Can I use open-source models like Llama 3 and Mistral for commercial products?',
+    answer:
+      'Yes, with license-specific considerations. Models licensed under Apache 2.0 or MIT (such as Mistral 7B, Qwen 2.5, and DeepSeek) permit unrestricted commercial deployment, modification, and integration into proprietary SaaS products. Meta Llama 3.3 uses the Llama Community License, which allows free commercial use for products with fewer than 700 million monthly active users.',
+  },
+  {
+    question: 'How much GPU VRAM do I need to run a 70B parameter model?',
+    answer:
+      'At 16-bit unquantized precision, a 70B model requires ~140GB VRAM (two 80GB A100 GPUs). However, when quantized to 4-bit (GGUF Q4 or AWQ), the model fits within ~40GB to 48GB VRAM. This makes it runnable across two consumer RTX 3090/4090 GPUs (24GB each) or an Apple Mac with 64GB Unified Memory.',
+  },
+  {
+    question: 'What is the difference between Ollama, LM Studio, and vLLM?',
+    answer:
+      'Ollama is an intuitive terminal CLI and lightweight local daemon ideal for local development and script automation. LM Studio provides a rich visual chat UI with a built-in Hugging Face model search and downloader. vLLM is an enterprise-grade inference engine with PagedAttention designed for high-concurrency production deployments serving multiple users simultaneously.',
+  },
+];
 

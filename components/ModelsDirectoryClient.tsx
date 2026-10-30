@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { HfModel, formatMetric, getFriendlyTaskLabel } from '@/lib/huggingface';
+import ModelRunModal from '@/components/ModelRunModal';
 
 interface ModelsDirectoryClientProps {
   initialModels: HfModel[];
@@ -12,6 +13,8 @@ export default function ModelsDirectoryClient({ initialModels }: ModelsDirectory
   const [selectedGroup, setSelectedGroup] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'trending' | 'downloads' | 'likes' | 'recent'>('trending');
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [selectedRunModel, setSelectedRunModel] = useState<HfModel | null>(null);
+  const [isRunModalOpen, setIsRunModalOpen] = useState(false);
 
   const groups = [
     { id: 'all', name: 'All Tasks', icon: '🌐' },
@@ -522,13 +525,38 @@ export default function ModelsDirectoryClient({ initialModels }: ModelsDirectory
                     </div>
                   </div>
 
-                  {/* Actions: Copy ID & External Link */}
-                  <div style={{ display: 'flex', gap: '8px' }}>
+                  {/* Actions: Run Code, Copy ID & External Link */}
+                  <div style={{ display: 'flex', gap: '6px' }}>
+                    <button
+                      onClick={() => {
+                        setSelectedRunModel(model);
+                        setIsRunModalOpen(true);
+                      }}
+                      style={{
+                        padding: '8px 12px',
+                        borderRadius: 'var(--radius-md)',
+                        background: 'rgba(99, 102, 241, 0.12)',
+                        color: 'var(--color-primary)',
+                        border: '1px solid rgba(99, 102, 241, 0.25)',
+                        fontSize: '0.8rem',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '4px',
+                        transition: 'all 0.15s ease',
+                      }}
+                      title="Generate copy-paste code to run this model"
+                    >
+                      <span>⚡ Run</span>
+                    </button>
+
                     <button
                       onClick={() => handleCopyId(model.id)}
                       style={{
                         flex: '1',
-                        padding: '8px 12px',
+                        padding: '8px 10px',
                         borderRadius: 'var(--radius-md)',
                         background: isCopied ? 'rgba(34, 197, 94, 0.15)' : 'var(--bg-secondary)',
                         color: isCopied ? '#22c55e' : 'var(--text-primary)',
@@ -539,13 +567,13 @@ export default function ModelsDirectoryClient({ initialModels }: ModelsDirectory
                         display: 'inline-flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: '6px',
+                        gap: '4px',
                         transition: 'all 0.15s ease',
                       }}
                       title="Copy model identifier to clipboard"
                     >
                       <span>{isCopied ? '✓' : '📋'}</span>
-                      <span>{isCopied ? 'Copied!' : 'Copy ID'}</span>
+                      <span>{isCopied ? 'Copied' : 'Copy'}</span>
                     </button>
 
                     <a
@@ -553,7 +581,7 @@ export default function ModelsDirectoryClient({ initialModels }: ModelsDirectory
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{
-                        padding: '8px 14px',
+                        padding: '8px 12px',
                         borderRadius: 'var(--radius-md)',
                         background: 'var(--color-primary)',
                         color: '#ffffff',
@@ -566,7 +594,7 @@ export default function ModelsDirectoryClient({ initialModels }: ModelsDirectory
                         gap: '4px',
                       }}
                     >
-                      <span>Open</span>
+                      <span>HF</span>
                       <span style={{ fontSize: '0.75rem' }}>↗</span>
                     </a>
                   </div>
@@ -576,6 +604,16 @@ export default function ModelsDirectoryClient({ initialModels }: ModelsDirectory
           })}
         </div>
       )}
+
+      {/* Quick Run / Deployment Modal */}
+      <ModelRunModal
+        model={selectedRunModel}
+        isOpen={isRunModalOpen}
+        onClose={() => {
+          setIsRunModalOpen(false);
+          setSelectedRunModel(null);
+        }}
+      />
     </div>
   );
 }
