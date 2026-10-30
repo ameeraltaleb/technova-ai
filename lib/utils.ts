@@ -160,6 +160,28 @@ export function qualifyArticleContentLinks(
 }
 
 /**
+ * Ensures all <img> tags inside HTML content have a descriptive, non-empty alt attribute.
+ * Prevents search engine indexing errors and improves accessibility.
+ */
+export function ensureImageAlts(htmlContent: string, defaultAlt: string): string {
+  if (!htmlContent) return '';
+  const safeAlt = (defaultAlt || 'Article illustration')
+    .replace(/"/g, '&quot;')
+    .replace(/<[^>]*>/g, '')
+    .trim();
+
+  return htmlContent.replace(/<img\b([^>]*)>/gi, (match, attrs) => {
+    const altMatch = attrs.match(/\balt=(["'])(.*?)\1/i);
+    if (!altMatch) {
+      return `<img${attrs} alt="${safeAlt}">`;
+    } else if (!altMatch[2] || altMatch[2].trim() === '') {
+      return `<img${attrs.replace(altMatch[0], `alt="${safeAlt}"`)}>`;
+    }
+    return match;
+  });
+}
+
+/**
  * Recursively removes all undefined properties from objects and arrays,
  * while strictly preserving valid values such as false, 0, empty strings,
  * empty arrays, null, Date objects, and Firestore FieldValues (e.g. serverTimestamp).

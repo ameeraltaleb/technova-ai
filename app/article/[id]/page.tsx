@@ -1,6 +1,6 @@
 import { CATEGORIES } from '@/lib/data';
 import { getLiveArticleById, getLiveArticles } from '@/lib/public-data';
-import { getArticleImage, parseTOC, injectHeadingIds, qualifyArticleContentLinks, formatMetaDescription } from '@/lib/utils';
+import { getArticleImage, parseTOC, injectHeadingIds, qualifyArticleContentLinks, formatMetaDescription, ensureImageAlts } from '@/lib/utils';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import ReadingProgress from '@/components/ReadingProgress';
@@ -95,7 +95,8 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
   const articleImage = getArticleImage(article as any);
   const toc = parseTOC(article.content);
   const contentWithIds = injectHeadingIds(article.content);
-  const qualifiedContent = qualifyArticleContentLinks(contentWithIds, {
+  const contentWithAlts = ensureImageAlts(contentWithIds, article.title);
+  const qualifiedContent = qualifyArticleContentLinks(contentWithAlts, {
     isSponsored: article.isSponsored,
     sponsorUrl: article.sponsorUrl,
     affiliateUrl: article.affiliateUrl,
@@ -158,7 +159,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
       {/* ── Hero Section ── */}
       <section className="ap-hero">
         <div className="ap-hero__bg">
-          <img src={articleImage} alt="" className="ap-hero__bg-img" />
+          <img src={articleImage} alt={article.title} className="ap-hero__bg-img" />
           <div className="ap-hero__overlay" />
         </div>
         <div className="container container--narrow">
