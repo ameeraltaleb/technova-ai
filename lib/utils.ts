@@ -195,3 +195,35 @@ export function removeUndefined<T>(data: T): T {
 
   return data;
 }
+
+/**
+ * Formats and bounds an SEO meta description between 25 and 155 characters.
+ * Ensures search engine crawlers (Google, Bing) never truncate snippets awkwardly
+ * and prevents SEO audit flags for "Meta description too long or too short".
+ */
+export function formatMetaDescription(text: string | undefined | null, fallback = ''): string {
+  const raw = text && text.trim().length > 0 ? text : fallback;
+  const cleaned = (raw || '')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  if (!cleaned) {
+    return 'In-depth reviews, comparisons, and guides on the latest AI tools and technology.';
+  }
+
+  if (cleaned.length <= 155) {
+    if (cleaned.length < 25) {
+      const padded = `${cleaned} — In-depth guide and tech analysis on TechNova AI.`;
+      return padded.slice(0, 155);
+    }
+    return cleaned;
+  }
+
+  // Truncate cleanly at word boundary
+  const sliced = cleaned.slice(0, 152);
+  const lastSpace = sliced.lastIndexOf(' ');
+  const safeStr = lastSpace > 115 ? sliced.slice(0, lastSpace) : sliced;
+  return `${safeStr}...`;
+}
+

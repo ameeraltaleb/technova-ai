@@ -1,6 +1,6 @@
 import { CATEGORIES } from '@/lib/data';
 import { getLiveArticleById, getLiveArticles } from '@/lib/public-data';
-import { getArticleImage, parseTOC, injectHeadingIds, qualifyArticleContentLinks } from '@/lib/utils';
+import { getArticleImage, parseTOC, injectHeadingIds, qualifyArticleContentLinks, formatMetaDescription } from '@/lib/utils';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import ReadingProgress from '@/components/ReadingProgress';
@@ -24,15 +24,17 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const image = getArticleImage(article as any);
   const articleUrl = `https://www.technova-ai.online/article/${article.id}`;
   const cleanTitle = article.title.replace(/\s*[—–-]\s*TechNova AI\s*$/i, '');
+  const metaDescription = formatMetaDescription(article.excerpt, `${cleanTitle} — In-depth guide and tech analysis on TechNova AI.`);
+
   return {
     title: cleanTitle,
-    description: article.excerpt,
+    description: metaDescription,
     alternates: {
       canonical: articleUrl,
     },
     openGraph: {
       title: article.title,
-      description: article.excerpt,
+      description: metaDescription,
       type: 'article',
       url: articleUrl,
       publishedTime: article.date,
@@ -42,7 +44,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     twitter: {
       card: 'summary_large_image',
       title: article.title,
-      description: article.excerpt,
+      description: metaDescription,
       images: image ? [image] : [],
     },
   };

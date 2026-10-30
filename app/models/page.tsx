@@ -13,7 +13,7 @@ export const revalidate = 3600; // Revalidate every hour via Next.js ISR
 export const metadata: Metadata = {
   title: 'Open-Source AI Models Hub & VRAM Calculator',
   description:
-    'Track trending open-source AI models from Hugging Face, calculate GPU VRAM requirements, explore Editor’s Choice picks, and deploy weights locally with Ollama & Transformers.',
+    'Discover trending open-source AI models from Hugging Face, calculate GPU VRAM requirements, and deploy weights locally with Ollama and Transformers.',
   keywords: [
     'open source AI models',
     'hugging face trending models',
