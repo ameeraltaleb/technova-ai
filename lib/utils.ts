@@ -346,3 +346,77 @@ export function formatMetaDescription(text: string | undefined | null, fallback 
   return `${safeStr}...`;
 }
 
+/**
+ * Formats and bounds an SEO page title strictly under 70 characters (recommended: <= 65 chars).
+ * Prevents search engines (Google, Bing) from truncating titles with ellipsis in SERPs.
+ * Preserves core keywords, smartly formats subtitle colons, and avoids trailing conjunctions.
+ */
+export function formatMetaTitle(
+  rawTitle: string | undefined | null,
+  maxLen = 65,
+  siteBrand = 'TechNova AI'
+): string {
+  if (!rawTitle || !rawTitle.trim()) {
+    return 'TechNova AI — Discover & Compare The Best AI Tools';
+  }
+
+  // Remove existing brand or trailing dashes/pipes
+  let clean = rawTitle
+    .replace(/\s*[|—–-]\s*TechNova(\s*AI)?\s*$/i, '')
+    .trim();
+
+  // 1. If clean title + full site brand fits within maxLen
+  const fullWithBrand = `${clean} | ${siteBrand}`;
+  if (fullWithBrand.length <= maxLen) {
+    return fullWithBrand;
+  }
+
+  // 2. If clean title + short brand fits within maxLen
+  const shortBrand = siteBrand.replace(/\s*AI$/i, '').trim();
+  const fullWithShortBrand = `${clean} | ${shortBrand}`;
+  if (fullWithShortBrand.length <= maxLen) {
+    return fullWithShortBrand;
+  }
+
+  // 3. If clean title itself fits within maxLen, preserve full title context
+  if (clean.length <= maxLen) {
+    return clean;
+  }
+
+  // 4. If title has a colon/sub-title (e.g. "Main Topic: Detailed Subtitle"):
+  if (clean.includes(':')) {
+    const parts = clean.split(':');
+    const prefix = parts[0].trim();
+    if (prefix.length >= 20) {
+      const prefixWithBrand = `${prefix} | ${siteBrand}`;
+      if (prefixWithBrand.length <= maxLen) {
+        return prefixWithBrand;
+      }
+      if (prefix.length <= maxLen) {
+        return prefix;
+      }
+    }
+  }
+
+  // 5. Cleanly bound at word boundary to never cut mid-word
+  const words = clean.split(/\s+/);
+  let truncated = '';
+  for (const word of words) {
+    const candidate = truncated ? `${truncated} ${word}` : word;
+    if (candidate.length <= maxLen) {
+      truncated = candidate;
+    } else {
+      break;
+    }
+  }
+
+  // Strip trailing punctuation and dangling conjunctions/prepositions
+  truncated = truncated
+    .replace(/[,:;—–-]\s*$/, '')
+    .replace(/\b(and|or|the|to|in|of|for|with|a|an|by)\s*$/i, '')
+    .trim();
+
+  return truncated || clean.slice(0, maxLen);
+}
+
+

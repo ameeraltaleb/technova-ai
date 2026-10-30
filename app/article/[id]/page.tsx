@@ -1,6 +1,6 @@
 import { CATEGORIES } from '@/lib/data';
 import { getLiveArticleById, getLiveArticles } from '@/lib/public-data';
-import { getArticleImage, parseTOC, injectHeadingIds, qualifyArticleContentLinks, formatMetaDescription, ensureImageAlts } from '@/lib/utils';
+import { getArticleImage, parseTOC, injectHeadingIds, qualifyArticleContentLinks, formatMetaDescription, formatMetaTitle, ensureImageAlts } from '@/lib/utils';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import ReadingProgress from '@/components/ReadingProgress';
@@ -23,27 +23,29 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
   const image = getArticleImage(article as any);
   const articleUrl = `https://www.technova-ai.online/article/${article.id}`;
-  const cleanTitle = article.title.replace(/\s*[—–-]\s*TechNova AI\s*$/i, '');
-  const metaDescription = formatMetaDescription(article.excerpt, `${cleanTitle} — In-depth guide and tech analysis on TechNova AI.`);
+  const metaTitle = formatMetaTitle(article.title, 65, 'TechNova AI');
+  const metaDescription = formatMetaDescription(article.excerpt, `${metaTitle} — In-depth guide and tech analysis on TechNova AI.`);
 
   return {
-    title: cleanTitle,
+    title: {
+      absolute: metaTitle,
+    },
     description: metaDescription,
     alternates: {
       canonical: articleUrl,
     },
     openGraph: {
-      title: article.title,
+      title: metaTitle,
       description: metaDescription,
       type: 'article',
       url: articleUrl,
       publishedTime: article.date,
       authors: [article.author.name],
-      images: image ? [{ url: image, width: 800, height: 450, alt: article.title }] : [],
+      images: image ? [{ url: image, width: 800, height: 450, alt: metaTitle }] : [],
     },
     twitter: {
       card: 'summary_large_image',
-      title: article.title,
+      title: metaTitle,
       description: metaDescription,
       images: image ? [image] : [],
     },

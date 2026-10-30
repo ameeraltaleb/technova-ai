@@ -16,7 +16,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.technova-ai.online'),
   title: {
-    default: 'TechNova AI — Discover, Compare & Master the Best AI & Tech Tools',
+    default: 'TechNova AI — Discover & Compare The Best AI Tools',
     template: '%s — TechNova AI',
   },
   description: 'Your go-to source for in-depth reviews, comparisons, and guides on the latest AI tools, software, and digital productivity solutions.',
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: 'https://www.technova-ai.online',
     siteName: 'TechNova AI',
-    title: 'TechNova AI — Discover, Compare & Master the Best AI & Tech Tools',
+    title: 'TechNova AI — Discover & Compare The Best AI Tools',
     description: 'Your go-to source for in-depth reviews, comparisons, and guides on the latest AI tools, software, and digital productivity solutions.',
     images: [
       {

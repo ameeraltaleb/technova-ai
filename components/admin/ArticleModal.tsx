@@ -542,7 +542,18 @@ export default function ArticleModal({
 
                 <div className="form-row">
                   <div className="form-group">
-                    <label className="form-label">Article Title *</label>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                      <label className="form-label" style={{ margin: 0 }}>Article Title *</label>
+                      <span
+                        style={{
+                          fontSize: '0.75rem',
+                          fontWeight: 600,
+                          color: title.length > 65 ? '#ef4444' : title.length >= 40 ? '#10b981' : '#64748b',
+                        }}
+                      >
+                        SEO: {title.length}/65 chars {title.length > 65 ? '(Auto-truncated in meta)' : title.length >= 40 ? '✓ Ideal' : ''}
+                      </span>
+                    </div>
                     <input
                       type="text"
                       className="form-input"

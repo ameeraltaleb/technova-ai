@@ -228,9 +228,9 @@ Topic / Instructions: "${topic}"
 
 Return ONLY a valid JSON object without any conversational or Markdown code fences outside the JSON, adhering to this EXACT schema:
 {
-  "title": "Clear, informative, factual headline (naturally incorporating primary topic, no clickbait)",
+  "title": "Clear, informative, factual headline between 45 and 60 characters for optimal SEO (never exceed 65 characters, no clickbait)",
   "slug": "english-url-friendly-slug-with-hyphens",
-  "excerpt": "Compelling, factual 2-sentence summary hook suitable for SEO meta description",
+  "excerpt": "Compelling, factual 2-sentence summary between 80 and 150 characters suitable for SEO meta description",
   "category": "one of the exact valid category IDs above",
   "readTime": "e.g. 7 min read",
   "tags": ["Tag1", "Tag2", "Tag3", "Tag4"],
