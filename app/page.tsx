@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { getLiveArticles, getLiveTools, getLiveNews, getCategoriesWithCounts } from '@/lib/public-data';
 import { getArticleImage } from '@/lib/utils';
 import Newsletter from '@/components/Newsletter';
-import HeroSearchTrigger from '@/components/HeroSearchTrigger';
 
 export const revalidate = 60; // Incremental Static Regeneration (revalidates every 60 seconds)
 
@@ -51,7 +50,37 @@ export default async function Home() {
               </p>
             </div>
             <div className="bento-hero__search-wrap">
-              <HeroSearchTrigger />
+              <Link href="/models" className="hero-models-card">
+                <div className="hero-models-card__badge-row">
+                  <span className="hero-models-card__badge">
+                    <span className="hero-models-card__pulse"></span>
+                    LIVE RADAR
+                  </span>
+                  <span className="hero-models-card__tag">Hugging Face &amp; VRAM</span>
+                </div>
+
+                <div className="hero-models-card__body">
+                  <h3 className="hero-models-card__title">
+                    Open-Source AI Models Hub &amp; Hardware Estimator
+                  </h3>
+                  <p className="hero-models-card__text">
+                    Calculate GPU VRAM for 7B–70B weights, track trending Hugging Face checkpoints &amp; run models locally.
+                  </p>
+                </div>
+
+                <div className="hero-models-card__chips">
+                  <span className="hero-models-chip">Llama 3.3</span>
+                  <span className="hero-models-chip">DeepSeek-V3</span>
+                  <span className="hero-models-chip">Qwen 2.5</span>
+                  <span className="hero-models-chip">Mistral</span>
+                </div>
+
+                <div className="hero-models-card__footer">
+                  <span className="hero-models-card__cta">
+                    Launch Hub &amp; VRAM Calculator →
+                  </span>
+                </div>
+              </Link>
             </div>
           </div>
 
@@ -161,15 +190,80 @@ export default async function Home() {
               <span className="bento-stat-label">Curated AI Tools</span>
             </div>
             <div className="bento-stat-divider"></div>
-            <div className="bento-stat-item">
-              <span className="bento-stat-value">Explore</span>
-              <span className="bento-stat-label">AI Tools & Tech Guides</span>
-            </div>
+            <Link href="/models" className="bento-stat-item bento-stat-item--link">
+              <span className="bento-stat-value">40+ Models</span>
+              <span className="bento-stat-label">⚡ Live Weights &amp; VRAM Specs →</span>
+            </Link>
             <div className="bento-stat-divider"></div>
             <div className="bento-stat-item">
               <span className="bento-stat-value">100%</span>
-              <span className="bento-stat-label">Independent & Unbiased</span>
+              <span className="bento-stat-label">Independent &amp; Unbiased</span>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Open-Source AI Models & Hardware Radar ── */}
+      <section className="section models-feature-section">
+        <div className="container">
+          <div className="section__header">
+            <div>
+              <div className="section__label">// Interactive Engineering Suite</div>
+              <h2 className="section__title">Open-Source AI Models &amp; Hardware Hub</h2>
+            </div>
+            <Link href="/models" className="section__link">
+              Launch Full Directory &amp; Calculator →
+            </Link>
+          </div>
+
+          <div className="models-feature-grid">
+            {/* Feature 1: VRAM Calculator */}
+            <Link href="/models#calculator" className="models-feature-card">
+              <div className="models-feature-card__icon-wrap">
+                <span className="models-feature-card__icon">🧮</span>
+                <span className="models-feature-card__badge">Interactive</span>
+              </div>
+              <h3 className="models-feature-card__title">GPU VRAM Estimator</h3>
+              <p className="models-feature-card__desc">
+                Simulate exact GPU memory requirements for 4-bit, 8-bit, and 16-bit quantizations across 7B to 70B parameter models.
+              </p>
+              <div className="models-feature-card__meta">
+                <span>RTX 3060 / 4090 / Mac M-Series</span>
+                <span className="models-feature-card__arrow">→</span>
+              </div>
+            </Link>
+
+            {/* Feature 2: Trending Weights */}
+            <Link href="/models#trending" className="models-feature-card">
+              <div className="models-feature-card__icon-wrap">
+                <span className="models-feature-card__icon">🔥</span>
+                <span className="models-feature-card__badge">Live Hourly</span>
+              </div>
+              <h3 className="models-feature-card__title">Hugging Face Trends</h3>
+              <p className="models-feature-card__desc">
+                Track real-time downloads, community likes, and open commercial licenses for top trending open-weights releases.
+              </p>
+              <div className="models-feature-card__meta">
+                <span>Llama 3.3 • DeepSeek-V3 • Qwen</span>
+                <span className="models-feature-card__arrow">→</span>
+              </div>
+            </Link>
+
+            {/* Feature 3: Local Deployment */}
+            <Link href="/models#deployment" className="models-feature-card">
+              <div className="models-feature-card__icon-wrap">
+                <span className="models-feature-card__icon">💻</span>
+                <span className="models-feature-card__badge">Deploy Guide</span>
+              </div>
+              <h3 className="models-feature-card__title">Run Models 100% Offline</h3>
+              <p className="models-feature-card__desc">
+                Copy one-click terminal commands and Python snippets to run private weights locally using Ollama and Transformers.
+              </p>
+              <div className="models-feature-card__meta">
+                <span>Ollama • vLLM • Transformers</span>
+                <span className="models-feature-card__arrow">→</span>
+              </div>
+            </Link>
           </div>
         </div>
       </section>
