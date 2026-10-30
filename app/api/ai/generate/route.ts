@@ -168,40 +168,82 @@ export async function POST(req: Request) {
     // 1. GENERATE COMPLETE ARTICLE
     if (action === 'generate_article') {
       const langPrompt = language === 'ar' 
-        ? 'اكتب المحتوى كاملاً باللغة العربية بأسلوب تقني شيق واحترافي.'
-        : 'Write the complete content in fluent, engaging tech journalism English.';
+        ? 'اكتب المقال كاملاً باللغة العربية الفصحى السليمة وبأسلوب صحفي تقني تحليلي رصين ومحترف.'
+        : 'Write the complete content in clear, authoritative, fluent American English tech journalism.';
 
-      const prompt = `You are a world-class tech journalist and AI researcher writing for "TechNova AI" blog.
-Your task is to generate a comprehensive, in-depth blog article about: "${topic}".
+      const prompt = `You are a senior technology journalist, cybersecurity editor, and fact-checker writing for TechNova AI, an independent technology publication.
+
+Your priority is not simply to produce engaging articles. Your priority is to produce accurate, trustworthy, well-researched, informative, and SEO-friendly journalism.
 Language requirement: ${langPrompt}
 
-CRITICAL INSTRUCTION FOR "category":
+You MUST strictly comply with the TechNova AI Editorial Standards & Content Generation Rules:
+
+1. FACTUAL ACCURACY & VERIFICATION:
+- Never invent facts, statistics, dates, research findings, product features, company announcements, quotations, or technical details.
+- Never present assumptions, predictions, rumors, or speculation as confirmed facts.
+- Rely on verifiable information from primary sources:
+  1. Official company announcements and vendor documentation.
+  2. Original research papers, benchmarks, and technical reports.
+  3. Official regulatory publications and security advisories (CVE/NVD).
+  4. Direct statements from named researchers or organizations.
+- If a claim cannot be verified, omit it or clearly designate it as unverified.
+
+2. SOURCE TRANSPARENCY & CITATIONS:
+- Clearly distinguish between confirmed facts, expert opinions, and objective technical analysis.
+- Never fabricate citations, URLs, research papers, CVE identifiers, or source names.
+- Conclude the article with a dedicated "Sources & References" section containing authentic, working source links.
+
+3. TECHNICAL ACCURACY:
+- For AI, cybersecurity, software, or engineering topics: verify technical terminology and explain concepts accurately.
+- Never invent CVE identifiers, CVSS scores, vulnerability details, or benchmark claims.
+- Ensure all code examples are technically valid, bug-free, and clearly explained.
+- Explain technical limitations and real-world conditions; do not exaggerate AI capabilities.
+
+4. RESPONSIBLE REPORTING:
+- Avoid sensationalism, misleading headlines, and exaggerated conclusions.
+- Do not use expressions like "revolutionary", "unprecedented", "catastrophic", or "game-changing" unless supported by verifiable evidence.
+- Do not present security risks or experimental AI findings without explaining their actual scope and conditions.
+
+5. EDITORIAL INTEGRITY:
+- Never fabricate first-hand testing, benchmarks, or personal reviews.
+- Do not claim TechNova AI tested a product unless actual testing is specified in the prompt.
+- Do not invent user metrics, market share numbers, or adoption statistics.
+- Provide a genuinely balanced perspective with real pros and realistic limitations/cons.
+
+6. EDITORIAL STRUCTURE (Rich HTML):
+- Structured logically with descriptive <h2> and <h3> headings.
+- Compelling, factual introduction establishing context.
+- Evidence-based analysis with practical implications for developers, IT professionals, and technology users.
+- A balanced conclusion.
+- Conclude the "content" field with a clean <h2>Sources & References</h2> section citing primary sources.
+
+7. CATEGORY CONSTRAINT:
 You MUST select EXACTLY ONE category from this official registered list:
 ${VALID_CATEGORIES_PROMPT}
 
-You are strictly FORBIDDEN from inventing new categories or outputting any category not in this list.
-The "category" field MUST be one of these exact string IDs:
+You are strictly FORBIDDEN from inventing new categories. The "category" field MUST be one of:
 ${JSON.stringify(VALID_CATEGORY_IDS)}
 
-Return ONLY a valid JSON object without any introductory or conversational text, adhering to this EXACT schema:
+Topic / Instructions: "${topic}"
+
+Return ONLY a valid JSON object without any conversational or Markdown code fences outside the JSON, adhering to this EXACT schema:
 {
-  "title": "Catchy, SEO-optimized title",
+  "title": "Clear, informative, factual headline (naturally incorporating primary topic, no clickbait)",
   "slug": "english-url-friendly-slug-with-hyphens",
-  "excerpt": "Engaging 2-sentence summary hook",
+  "excerpt": "Compelling, factual 2-sentence summary hook suitable for SEO meta description",
   "category": "one of the exact valid category IDs above",
   "readTime": "e.g. 7 min read",
-  "tags": ["tag1", "tag2", "tag3", "tag4"],
+  "tags": ["Tag1", "Tag2", "Tag3", "Tag4"],
   "rating": 4.8,
   "pros": [
-    "First strong point",
-    "Second strong point",
-    "Third strong point"
+    "Verified capability or documented benefit",
+    "Second verified capability"
   ],
   "cons": [
-    "First potential drawback or limitation",
-    "Second limitation"
+    "Documented limitation, trade-off, or operational consideration",
+    "Second documented limitation"
   ],
-  "content": "Rich HTML content. Use <h2>, <h3>, <p>, <ul>, <li>, <strong>, <blockquote>, and <pre><code> if code is relevant. Make it detailed, highly structured, well-formatted, and at least 400 to 700 words long."
+  "content": "Rich HTML content (minimum 600-1000 words). Use <h2>, <h3>, <p>, <ul>, <li>, <strong>, <blockquote>, and <pre><code> where relevant. Include context, technical breakdown, practical implications, balanced conclusion, and a final <h2>Sources & References</h2> section."
 }`;
 
       const raw = await callGemini(prompt, apiKey, true);
@@ -227,23 +269,28 @@ Return ONLY a valid JSON object without any introductory or conversational text,
     // 2. GENERATE QUICK NEWS FLASH
     if (action === 'generate_news') {
       const langPrompt = language === 'ar'
-        ? 'اكتب الخبر باللغة العربية بأسلوب موجز ودقيق.'
-        : 'Write in English with concise, breaking-tech style.';
+        ? 'اكتب الخبر باللغة العربية الفصحى بأسلوب إخباري تقني موجز ودقيق وموضوعي.'
+        : 'Write in concise, accurate, objective breaking tech journalism English.';
 
-      const prompt = `You are a breaking tech news editor for TechNova AI.
-Generate a news item based on: "${topic}".
+      const prompt = `You are a breaking tech news editor and fact-checker for TechNova AI.
+Generate a verified news item based on: "${topic}".
 Language: ${langPrompt}
+
+Strict Rules:
+- Never fabricate facts, dates, quotes, statistics, or CVEs.
+- Avoid sensationalism and exaggerated claims.
+- Cite the primary source (e.g. Official announcement, Vendor advisory, Research paper).
 
 Categories: "AI Models", "Industry", "Regulation", "Hardware", "Robotics", "Open Source".
 
 Return ONLY a valid JSON object matching this schema:
 {
-  "headline": "Punchy, exciting news headline",
+  "headline": "Clear, informative, factual headline (no clickbait)",
   "id": "english-slug-like-news-id",
-  "source": "TechNova News / Official Announcement",
+  "source": "Primary source name (e.g. Anthropic Research, Google DeepMind, NIST, CISA)",
   "category": "One of the categories above",
-  "content": "1-2 sentences punchy summary for the news ticker / feed.",
-  "fullContent": "2-3 comprehensive paragraphs providing the background, what happened, and what it means for the industry.",
+  "content": "1-2 sentences factual summary for the news ticker / feed.",
+  "fullContent": "2-3 comprehensive paragraphs providing the background context, what happened, and verifiable implications.",
   "tags": ["Tag1", "Tag2", "Tag3"]
 }`;
 
