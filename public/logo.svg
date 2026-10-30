@@ -1,0 +1,10 @@
+<svg width="280" height="52" viewBox="0 0 280 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <text x="2" y="30" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="900" font-size="28" fill="#FFFFFF" letter-spacing="3.5">
+    TECHNOVA
+  </text>
+  <rect x="2" y="40" width="180" height="3.5" rx="1.75" fill="#0066FF"/>
+  <rect x="190" y="32" width="46" height="15" rx="3.5" fill="#0066FF"/>
+  <text x="213" y="43" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="900" font-size="9.5" fill="#FFFFFF" letter-spacing="1.2">
+    AI
+  </text>
+</svg>

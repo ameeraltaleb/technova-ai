@@ -6,9 +6,14 @@ export default function Footer() {
       <div className="container">
         <div className="footer__grid">
           <div>
-            <Link href="/" className="navbar__logo">
-              <img src="/logo.png" alt="TechNova AI" className="navbar__logo-img" width={36} height={36} />
-              <span>TechNova AI</span>
+            <Link href="/" className="navbar__logo" aria-label="TechNova AI">
+              <div className="navbar__brand-wordmark">
+                <span className="navbar__brand-title">TECHNOVA</span>
+                <div className="navbar__brand-subline">
+                  <span className="navbar__brand-bar"></span>
+                  <span className="navbar__brand-badge">AI</span>
+                </div>
+              </div>
             </Link>
             <p className="footer__brand-description">
               Your trusted source for honest, in-depth reviews of AI tools, software, and technology that shapes the future.

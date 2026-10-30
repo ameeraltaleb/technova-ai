@@ -68,9 +68,14 @@ export default function Navbar() {
     <>
       <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`} id="navbar">
         <div className="container navbar__inner">
-          <Link href="/" className="navbar__logo">
-            <img src="/logo.png" alt="TechNova AI" className="navbar__logo-img" width={36} height={36} />
-            <span>TechNova AI</span>
+          <Link href="/" className="navbar__logo" aria-label="TechNova AI">
+            <div className="navbar__brand-wordmark">
+              <span className="navbar__brand-title">TECHNOVA</span>
+              <div className="navbar__brand-subline">
+                <span className="navbar__brand-bar"></span>
+                <span className="navbar__brand-badge">AI</span>
+              </div>
+            </div>
           </Link>
 
           {/* Desktop Nav: Clean 5 Core Links with Dropdown for Categories */}
