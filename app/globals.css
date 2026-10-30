@@ -4400,3 +4400,113 @@ select {
 .models-feature-card:hover .models-feature-card__arrow {
   transform: translateX(4px);
 }
+
+
+/* ==========================================================================
+   Article Inline Callout: AI Models & VRAM Calculator
+   ========================================================================== */
+
+.ap-models-callout {
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-start;
+  background: linear-gradient(135deg, rgba(30, 27, 75, 0.45) 0%, rgba(15, 23, 42, 0.65) 100%);
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  border-left: 4px solid #6366F1;
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  margin: var(--space-8) 0 var(--space-6) 0;
+  box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.25);
+  transition: all var(--transition-normal);
+}
+
+.ap-models-callout:hover {
+  border-color: rgba(99, 102, 241, 0.6);
+  border-left-color: #818CF8;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px -6px rgba(99, 102, 241, 0.2);
+}
+
+.ap-models-callout__icon {
+  font-size: 1.85rem;
+  line-height: 1;
+  flex-shrink: 0;
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+}
+
+.ap-models-callout__content {
+  flex: 1;
+}
+
+.ap-models-callout__badge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-primary-light);
+  margin-bottom: var(--space-2);
+}
+
+.ap-models-callout__title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.4;
+  margin: 0 0 var(--space-2) 0;
+}
+
+.ap-models-callout__desc {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.ap-models-callout__link {
+  color: var(--color-primary-light);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  transition: color var(--transition-fast);
+}
+
+.ap-models-callout__link:hover {
+  color: #C7D2FE;
+}
+
+[data-theme="light"] .ap-models-callout {
+  background: linear-gradient(135deg, #EEF2FF 0%, #FFFFFF 100%);
+  border-color: rgba(99, 102, 241, 0.25);
+  border-left-color: #4F46E5;
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.08);
+}
+
+[data-theme="light"] .ap-models-callout__title {
+  color: #0F172A;
+}
+
+[data-theme="light"] .ap-models-callout__desc {
+  color: #334155;
+}
+
+[data-theme="light"] .ap-models-callout__link {
+  color: #4F46E5;
+}
+
+[data-theme="light"] .ap-models-callout__link:hover {
+  color: #3730A3;
+}
+
+@media (max-width: 640px) {
+  .ap-models-callout {
+    flex-direction: column;
+    padding: var(--space-4);
+  }
+}

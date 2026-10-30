@@ -299,6 +299,25 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
 
               {part2 && <div className="article-content" dangerouslySetInnerHTML={{ __html: part2 }} />}
 
+              {/* ── Contextual AI Models Hub & VRAM Estimator Callout ── */}
+              <div className="ap-models-callout" role="complementary" aria-label="AI Models & VRAM Calculator">
+                <div className="ap-models-callout__icon">🧮</div>
+                <div className="ap-models-callout__content">
+                  <div className="ap-models-callout__badge">
+                    <span>⚡ RESEARCHER &amp; BUILDER TOOLBOX</span>
+                  </div>
+                  <h4 className="ap-models-callout__title">
+                    Planning to run open-source AI models locally or wondering if your GPU has enough VRAM?
+                  </h4>
+                  <p className="ap-models-callout__desc">
+                    Skip the trial and error before downloading massive checkpoints. Check exact GPU memory needs for 7B to 70B models and discover trending Hugging Face weights in our free{' '}
+                    <Link href="/models" className="ap-models-callout__link">
+                      Open-Source AI Models Hub &amp; VRAM Calculator →
+                    </Link>
+                  </p>
+                </div>
+              </div>
+
               {/* Tags */}
               {article.tags && article.tags.length > 0 && (
                 <div className="ap-tags">
@@ -363,6 +382,29 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
                   </div>
                 );
               })()}
+
+              {/* Mini AI Models Hub Card in Sidebar */}
+              <div className="ap-sidebar__card" style={{ borderColor: 'rgba(99, 102, 241, 0.3)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                  <span style={{ fontSize: '1.25rem' }}>⚡</span>
+                  <span style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--color-primary-light)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    Hardware Estimator
+                  </span>
+                </div>
+                <h4 style={{ fontSize: '0.95rem', fontWeight: 700, margin: '0 0 6px', lineHeight: 1.35 }}>
+                  Calculate GPU VRAM for Open Weights
+                </h4>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: '0 0 12px', lineHeight: 1.4 }}>
+                  Check if your GPU or Mac can run Llama 3, DeepSeek, or Mistral locally.
+                </p>
+                <Link
+                  href="/models"
+                  className="btn btn--outline"
+                  style={{ display: 'block', textAlign: 'center', fontSize: '0.8rem', padding: '8px 12px' }}
+                >
+                  Launch VRAM Calculator →
+                </Link>
+              </div>
 
               {/* Dedicated Sponsor Partner in Sidebar */}
               {article.isSponsored && (article.sponsorUrl || article.affiliateUrl) && (
