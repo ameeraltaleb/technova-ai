@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getTrendingModels, FAQ_ITEMS } from '@/lib/huggingface';
+import { getLiveArticles } from '@/lib/public-data';
+import { getArticleImage } from '@/lib/utils';
 import ModelsDirectoryClient from '@/components/ModelsDirectoryClient';
 import VramCalculator from '@/components/VramCalculator';
 import EditorModelPicks from '@/components/EditorModelPicks';
@@ -47,7 +49,29 @@ export const metadata: Metadata = {
 };
 
 export default async function ModelsPage() {
-  const models = await getTrendingModels();
+  const [models, allArticles] = await Promise.all([
+    getTrendingModels(),
+    getLiveArticles(),
+  ]);
+
+  const relevantArticleIds = [
+    'local-llms-guide-2026',
+    'claude-3-opus-vs-gpt4-coding',
+    'github-copilot-vs-cursor',
+    'beginner-guide-machine-learning-python',
+  ];
+
+  const relatedArticles = allArticles.filter(a => relevantArticleIds.includes(a.id));
+  if (relatedArticles.length < 4) {
+    const aiArticles = allArticles.filter(
+      a => a.category === 'ai-tools' || a.category === 'machine-learning' || a.category === 'programming'
+    );
+    for (const art of aiArticles) {
+      if (!relatedArticles.some(r => r.id === art.id) && relatedArticles.length < 4) {
+        relatedArticles.push(art);
+      }
+    }
+  }
 
   // Structured Data (JSON-LD) for Google Rich Snippets & Knowledge Graph
   const jsonLd = {
@@ -422,6 +446,145 @@ export default async function ModelsPage() {
 
           {/* 7. Frequently Asked Questions with Schema Markup */}
           <ModelsFaq />
+
+          {/* 8. Practical Guide: How to Run These Models Locally */}
+          <section id="local-guide" className="models-local-guide" style={{ marginTop: 'var(--space-12)' }}>
+            <div className="section__header" style={{ marginBottom: 'var(--space-6)' }}>
+              <div>
+                <div className="section__label">// Practical Engineering Guide</div>
+                <h2 className="section__title" style={{ fontSize: 'clamp(1.5rem, 2.5vw, 2rem)' }}>
+                  How to Run These AI Models Locally to Unlock Their Full Power
+                </h2>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', marginTop: 'var(--space-2)', maxWidth: '780px', lineHeight: 1.6 }}>
+                  Running open-weights models on your own PC, workstation, or Mac gives you complete data privacy, eliminates monthly subscription fees, and allows offline reasoning without rate limits. Here is how to run and benefit from these models in 3 practical steps:
+                </p>
+              </div>
+            </div>
+
+            {/* Why Run Locally Benefit Cards */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 'var(--space-4)', marginBottom: 'var(--space-6)' }}>
+              <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-card)', borderRadius: 'var(--radius-lg)', padding: '18px' }}>
+                <div style={{ fontSize: '1.5rem', marginBottom: '8px' }}>🛡️</div>
+                <h4 style={{ fontSize: '0.95rem', fontWeight: 700, margin: '0 0 6px', color: 'var(--text-primary)' }}>100% Private &amp; Confidential</h4>
+                <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
+                  Your proprietary code, sensitive business data, and personal prompts stay strictly on your local disk and are never uploaded to external cloud servers.
+                </p>
+              </div>
+
+              <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-card)', borderRadius: 'var(--radius-lg)', padding: '18px' }}>
+                <div style={{ fontSize: '1.5rem', marginBottom: '8px' }}>💰</div>
+                <h4 style={{ fontSize: '0.95rem', fontWeight: 700, margin: '0 0 6px', color: 'var(--text-primary)' }}>Zero Subscription Fees</h4>
+                <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
+                  Eliminate recurring $20/month AI subscriptions and token billing. Once downloaded, you can run billions of tokens completely free forever.
+                </p>
+              </div>
+
+              <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-card)', borderRadius: 'var(--radius-lg)', padding: '18px' }}>
+                <div style={{ fontSize: '1.5rem', marginBottom: '8px' }}>⚡</div>
+                <h4 style={{ fontSize: '0.95rem', fontWeight: 700, margin: '0 0 6px', color: 'var(--text-primary)' }}>Offline &amp; Low Latency</h4>
+                <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
+                  Works seamlessly without any internet connection. Enjoy immediate token generation without cloud network queue delays or downtime.
+                </p>
+              </div>
+
+              <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-card)', borderRadius: 'var(--radius-lg)', padding: '18px' }}>
+                <div style={{ fontSize: '1.5rem', marginBottom: '8px' }}>🔧</div>
+                <h4 style={{ fontSize: '0.95rem', fontWeight: 700, margin: '0 0 6px', color: 'var(--text-primary)' }}>Unlimited Customization</h4>
+                <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
+                  Fine-tune parameters, adjust context windows, set custom system prompts, and connect models into your local IDE as private coding assistants.
+                </p>
+              </div>
+            </div>
+
+            {/* Step-by-Step Execution Workflow */}
+            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-card)', borderRadius: 'var(--radius-xl)', padding: 'var(--space-6)', marginBottom: 'var(--space-10)' }}>
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: 'var(--space-4)' }}>
+                3-Step Execution: How to Deploy and Run Today
+              </h3>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 'var(--space-6)' }}>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                    <span style={{ background: 'rgba(99, 102, 241, 0.15)', color: 'var(--color-primary-light)', padding: '2px 8px', borderRadius: '4px', fontWeight: 800, fontSize: '0.75rem' }}>STEP 1</span>
+                    <strong style={{ color: 'var(--text-primary)', fontSize: '0.9rem' }}>Install Local Engine</strong>
+                  </div>
+                  <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                    Download <strong>Ollama</strong> (macOS, Windows, Linux) or <strong>LM Studio</strong>. They manage GPU memory offloading, Apple Silicon Metal acceleration, and NVIDIA CUDA drivers automatically.
+                  </p>
+                </div>
+
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                    <span style={{ background: 'rgba(99, 102, 241, 0.15)', color: 'var(--color-primary-light)', padding: '2px 8px', borderRadius: '4px', fontWeight: 800, fontSize: '0.75rem' }}>STEP 2</span>
+                    <strong style={{ color: 'var(--text-primary)', fontSize: '0.9rem' }}>Pull &amp; Execute Weights</strong>
+                  </div>
+                  <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '6px' }}>
+                    Open your terminal and run your desired model checkpoint (e.g. 4-bit quantized Llama 3 or DeepSeek):
+                  </p>
+                  <pre style={{ background: 'rgba(0, 0, 0, 0.45)', padding: '8px 12px', borderRadius: 'var(--radius-sm)', fontSize: '0.78rem', color: '#34D399', overflowX: 'auto', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                    <code>ollama run llama3.3:8b</code>
+                  </pre>
+                </div>
+
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                    <span style={{ background: 'rgba(99, 102, 241, 0.15)', color: 'var(--color-primary-light)', padding: '2px 8px', borderRadius: '4px', fontWeight: 800, fontSize: '0.75rem' }}>STEP 3</span>
+                    <strong style={{ color: 'var(--text-primary)', fontSize: '0.9rem' }}>Connect to WebUI or IDE</strong>
+                  </div>
+                  <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                    Connect <strong>Open WebUI</strong> for a polished ChatGPT-like browser interface, or point <strong>Cursor / VS Code</strong> to <code>http://localhost:11434/v1</code> for zero-latency private coding.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* 9. Related Articles & Deep Dives (Contextual Internal Linking) */}
+          <section className="models-related-articles" style={{ marginTop: 'var(--space-8)', marginBottom: 'var(--space-12)' }}>
+            <div className="section__header" style={{ marginBottom: 'var(--space-6)' }}>
+              <div>
+                <div className="section__label">// From Our Blog &amp; Tech Guides</div>
+                <h2 className="section__title" style={{ fontSize: 'clamp(1.5rem, 2.5vw, 2rem)' }}>
+                  Related Articles &amp; Practical Guides
+                </h2>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', marginTop: 'var(--space-1)' }}>
+                  Explore in-depth hardware setups, prompt techniques, and AI development workflows.
+                </p>
+              </div>
+              <Link href="/category" className="section__link">View All Articles →</Link>
+            </div>
+
+            <div className="cards-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))' }}>
+              {relatedArticles.map(article => (
+                <Link key={article.id} href={`/article/${article.id}`} className="article-card" style={{ display: 'flex', flexDirection: 'column' }}>
+                  <div className="article-card__image-container">
+                    <img
+                      src={getArticleImage(article)}
+                      alt={article.title}
+                      className="article-card__image"
+                      loading="lazy"
+                    />
+                    <div className="article-card__category">{article.category}</div>
+                  </div>
+                  <div className="article-card__content" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <div className="article-card__meta">
+                      <span>⏱️ {article.readTime}</span>
+                      <span>{article.date}</span>
+                    </div>
+                    <h3 className="article-card__title" style={{ fontSize: '1.02rem', lineHeight: 1.35, marginBottom: '8px' }}>
+                      {article.title}
+                    </h3>
+                    <p className="article-card__excerpt" style={{ fontSize: '0.82rem', lineHeight: 1.45, flex: 1 }}>
+                      {article.excerpt}
+                    </p>
+                    <div style={{ marginTop: 'var(--space-3)', fontSize: '0.82rem', color: 'var(--color-primary-light)', fontWeight: 600 }}>
+                      Read Guide →
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
         </div>
       </main>
     </>
