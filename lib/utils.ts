@@ -12,7 +12,7 @@ const AI_IMAGES = [
   'https://images.unsplash.com/photo-1655720828018-edd2daec9349?w=800&h=450&fit=crop&q=80', // Generative landscape
   'https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?w=800&h=450&fit=crop&q=80', // Neon 3D neural cube
   'https://images.unsplash.com/photo-1674027444485-cec3da58eef4?w=800&h=450&fit=crop&q=80', // Deep learning stream
-  'https://images.unsplash.com/photo-1680795456475-47043818e690?w=800&h=450&fit=crop&q=80', // Generative sphere
+  'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&h=450&fit=crop&q=80', // Generative neural flow
   'https://images.unsplash.com/photo-1697577418970-95d99b5a55cf?w=800&h=450&fit=crop&q=80', // Machine intelligence
   'https://images.unsplash.com/photo-1531746790731-6c087fecd65a?w=800&h=450&fit=crop&q=80', // AI interface
 ];
@@ -116,6 +116,29 @@ const CATEGORY_IMAGE_POOLS: Record<string, string[]> = {
  * Returns the article's image URL, or a consistent domain-relevant placeholder
  * based on the article's specific category and unique ID hash.
  */
+
+/**
+ * Transforms an image URL (particularly Unsplash) to responsive target dimensions
+ * and compressed modern WebP delivery, drastically lowering payload weight.
+ */
+export function getOptimizedImageUrl(url: string, width = 400, height = 225): string {
+  if (!url) return url;
+  if (url.includes('images.unsplash.com')) {
+    try {
+      const u = new URL(url);
+      u.searchParams.set('w', String(width));
+      u.searchParams.set('h', String(height));
+      u.searchParams.set('fit', 'crop');
+      u.searchParams.set('q', '75');
+      u.searchParams.set('auto', 'format');
+      return u.toString();
+    } catch {
+      return url.replace(/w=\d+/, 'w=' + width).replace(/h=\d+/, 'h=' + height);
+    }
+  }
+  return url;
+}
+
 export function getArticleImage(article: { image?: string; id?: string; category?: string }): string {
   if (article.image && article.image.trim() !== '') return article.image;
 

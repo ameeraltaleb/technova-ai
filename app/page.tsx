@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getLiveArticles, getLiveTools, getLiveNews, getCategoriesWithCounts } from '@/lib/public-data';
-import { getArticleImage } from '@/lib/utils';
+import { getArticleImage, getOptimizedImageUrl } from '@/lib/utils';
 import Newsletter from '@/components/Newsletter';
 
 export const revalidate = 60; // Incremental Static Regeneration (revalidates every 60 seconds)
@@ -60,9 +60,9 @@ export default async function Home() {
                 </div>
 
                 <div className="hero-models-card__body">
-                  <h3 className="hero-models-card__title">
+                  <h2 className="hero-models-card__title">
                     Open-Source AI Models Hub &amp; Hardware Estimator
-                  </h3>
+                  </h2>
                   <p className="hero-models-card__text">
                     Calculate GPU VRAM for 7B–70B weights, track trending Hugging Face checkpoints &amp; run models locally.
                   </p>
@@ -91,7 +91,7 @@ export default async function Home() {
               <Link href={`/article/${featuredArticle.id}`} className="bento-lead">
                 <div className="bento-lead__image-wrap">
                   <img
-                    src={getArticleImage(featuredArticle)}
+                    src={getOptimizedImageUrl(getArticleImage(featuredArticle), 960, 540)}
                     alt={featuredArticle.title}
                     className="bento-lead__image"
                     loading="eager"
@@ -154,7 +154,7 @@ export default async function Home() {
                   <Link key={a.id} href={`/article/${a.id}`} className="bento-side-card">
                     <div className="bento-side-card__thumb-wrap">
                       <img
-                        src={getArticleImage(a)}
+                        src={getOptimizedImageUrl(getArticleImage(a), 240, 160)}
                         alt={a.title}
                         className="bento-side-card__thumb"
                         loading="lazy"
@@ -379,7 +379,7 @@ export default async function Home() {
               <Link key={a.id} href={`/article/${a.id}`} className="article-card">
                 <div className="article-card__image-container">
                   <img
-                    src={getArticleImage(a)}
+                    src={getOptimizedImageUrl(getArticleImage(a), 600, 340)}
                     alt={a.title}
                     className="article-card__image"
                     loading="lazy"

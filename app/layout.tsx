@@ -1,7 +1,26 @@
 import type { Metadata, Viewport } from 'next';
+import { Inter, Space_Grotesk, JetBrains_Mono } from 'next/font/google';
 import Script from 'next/script';
 import './globals.css';
 import LayoutShell from '@/components/LayoutShell';
+
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-space-grotesk',
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-jetbrains-mono',
+});
 
 export const viewport: Viewport = {
   themeColor: [
@@ -102,7 +121,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" data-theme="dark">
+    <html lang="en" data-theme="dark" className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`}>
       <head>
         <script
           type="application/ld+json"

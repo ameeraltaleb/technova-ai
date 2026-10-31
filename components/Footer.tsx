@@ -35,7 +35,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="footer__heading">Categories</h4>
+            <h3 className="footer__heading">Categories</h3>
             <div className="footer__links">
               <Link href="/category/ai-tools" className="footer__link">AI Tools</Link>
               <Link href="/models" className="footer__link">Open-Source Models</Link>
@@ -48,7 +48,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="footer__heading">Popular</h4>
+            <h3 className="footer__heading">Popular</h3>
             <div className="footer__links">
               <Link href="/article/claude-vs-chatgpt-2026" className="footer__link">Claude vs ChatGPT</Link>
               <Link href="/article/best-ai-code-editors-2026" className="footer__link">Best AI Code Editors</Link>
@@ -58,7 +58,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="footer__heading">Company</h4>
+            <h3 className="footer__heading">Company</h3>
             <div className="footer__links">
               <Link href="/about" className="footer__link">About Us</Link>
               <Link href="/about#contactForm" className="footer__link">Contact</Link>

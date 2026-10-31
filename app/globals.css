@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
 @import "tailwindcss";
 @import "./variables.css";
 /* ============================================
@@ -4035,7 +4035,7 @@ select {
 }
 
 [data-theme="light"] .category-card__count {
-  color: #64748B;
+  color: var(--text-tertiary);
 }
 
 [data-theme="light"] .news-card {
