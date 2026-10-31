@@ -91,14 +91,16 @@ export default async function Home() {
               <Link href={`/article/${featuredArticle.id}`} className="bento-lead">
                 <div className="bento-lead__image-wrap">
                   <img
-                    src={getOptimizedImageUrl(getArticleImage(featuredArticle), 720, 405)}
+                    src={getOptimizedImageUrl(getArticleImage(featuredArticle), 640, 360)}
+                    srcSet={`${getOptimizedImageUrl(getArticleImage(featuredArticle), 400, 225)} 400w, ${getOptimizedImageUrl(getArticleImage(featuredArticle), 640, 360)} 640w, ${getOptimizedImageUrl(getArticleImage(featuredArticle), 800, 450)} 800w`}
+                    sizes="(max-width: 640px) 100vw, 640px"
                     alt={featuredArticle.title}
                     className="bento-lead__image"
                     loading="eager"
                     decoding="async"
                     fetchPriority="high"
-                    width={720}
-                    height={405}
+                    width={640}
+                    height={360}
                   />
                   <div className="bento-lead__overlay"></div>
                 </div>
