@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ArticleItem } from '@/lib/admin-store';
+import { ArticleItem, AdminStore } from '@/lib/admin-store';
 import { CATEGORIES } from '@/lib/data';
 
 interface ArticlesTabProps {
@@ -27,10 +27,17 @@ export default function ArticlesTab({
     setSharingId(art.id);
     setShareMsg(null);
     try {
+      const settings = AdminStore.getSettings();
+      const token = settings.bufferAccessToken || '';
+      if (!token) {
+        setShareMsg({ id: art.id, text: '❌ يرجى إدخال مفتاح Buffer في صفحة الإعدادات والضغط على Save Settings أولاً', ok: false });
+        return;
+      }
       const res = await fetch('/api/buffer', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          token,
           id: art.id,
           title: art.title,
           excerpt: art.excerpt,
@@ -40,7 +47,7 @@ export default function ArticlesTab({
       });
       const data = await res.json();
       if (res.ok && data.success) {
-        setShareMsg({ id: art.id, text: '🚀 تم النشر فورياً عبر Buffer!', ok: true });
+        setShareMsg({ id: art.id, text: data.message || '🚀 تم النشر فورياً عبر Buffer!', ok: true });
       } else {
         setShareMsg({ id: art.id, text: `❌ ${data.error || 'فشل النشر'}`, ok: false });
       }
@@ -48,7 +55,7 @@ export default function ArticlesTab({
       setShareMsg({ id: art.id, text: `❌ خطأ بالشبكة: ${e.message}`, ok: false });
     } finally {
       setSharingId(null);
-      setTimeout(() => setShareMsg(null), 5000);
+      setTimeout(() => setShareMsg(null), 6000);
     }
   };
 

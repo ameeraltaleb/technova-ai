@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ArticleItem } from '@/lib/admin-store';
+import { ArticleItem, AdminStore } from '@/lib/admin-store';
 import { CATEGORIES } from '@/lib/data';
 import { callAdminAiApi } from '@/lib/admin-api';
 import { removeUndefined } from '@/lib/utils';
@@ -345,22 +345,27 @@ export default function ArticleModal({
       // Trigger Buffer Immediate Auto-Publish
       if (shareToBuffer) {
         try {
-          const bRes = await fetch('/api/buffer', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              id: articleItem.id,
-              title: articleItem.title,
-              excerpt: articleItem.excerpt,
-              image: articleItem.image,
-              now: true,
-            }),
-          });
-          const bData = await bRes.json();
-          if (bRes.ok && bData.success) {
-            setBufferPublishStatus('🚀 تم النشر فورياً عبر Buffer على حسابات السوشيال ميديا المتصلة!');
-          } else if (bData.error && !bData.error.includes('غير متوفر')) {
-            console.warn('Buffer auto-publish note:', bData.error);
+          const settings = AdminStore.getSettings();
+          const token = settings.bufferAccessToken || '';
+          if (token) {
+            const bRes = await fetch('/api/buffer', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                token,
+                id: articleItem.id,
+                title: articleItem.title,
+                excerpt: articleItem.excerpt,
+                image: articleItem.image,
+                now: true,
+              }),
+            });
+            const bData = await bRes.json();
+            if (bRes.ok && bData.success) {
+              setBufferPublishStatus('🚀 تم النشر فورياً عبر Buffer على حسابات السوشيال ميديا المتصلة!');
+            } else if (bData.error && !bData.error.includes('غير متوفر')) {
+              console.warn('Buffer auto-publish note:', bData.error);
+            }
           }
         } catch (bErr) {
           console.warn('Buffer publish call error:', bErr);
