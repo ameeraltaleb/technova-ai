@@ -26,6 +26,45 @@ export default function SettingsTab({
   const [aiTestLoading, setAiTestLoading] = useState(false);
   const [aiTestResult, setAiTestResult] = useState<{ success?: boolean; msg?: string } | null>(null);
 
+  
+  // Buffer Social Media Integration
+  const [bufferTestLoading, setBufferTestLoading] = useState(false);
+  const [bufferTestResult, setBufferTestResult] = useState<{
+    success?: boolean;
+    msg?: string;
+    profiles?: Array<{ id: string; service: string; formatted_username: string; avatar: string }>;
+  } | null>(null);
+
+  const handleTestBuffer = async () => {
+    setBufferTestLoading(true);
+    setBufferTestResult(null);
+    try {
+      const token = form.bufferAccessToken || '';
+      const url = token ? `/api/buffer?token=${encodeURIComponent(token)}` : '/api/buffer';
+      const res = await fetch(url);
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setBufferTestResult({
+          success: true,
+          msg: `✅ الاتصال ناجح ومؤكد! تم العثور على ${data.profiles?.length || 0} حساب مرتبط جاهز للنشر الفوري.`,
+          profiles: data.profiles,
+        });
+      } else {
+        setBufferTestResult({
+          success: false,
+          msg: `❌ خطأ في الاتصال: ${data.error || 'تأكد من صحة المفتاح'}`,
+        });
+      }
+    } catch (err: any) {
+      setBufferTestResult({
+        success: false,
+        msg: `❌ خطأ في الشبكة: ${err.message || 'فشل الاتصال'}`,
+      });
+    } finally {
+      setBufferTestLoading(false);
+    }
+  };
+
   const handleTestGemini = async () => {
     setAiTestLoading(true);
     setAiTestResult(null);
@@ -195,6 +234,157 @@ export default function SettingsTab({
               placeholder="/tools or https://sponsored-tool.com"
             />
           </div>
+        </div>
+
+
+        {/* Buffer Social Media Integration */}
+        <div style={{ margin: '20px 0', borderTop: '1px solid var(--admin-border)', paddingTop: '20px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', flexWrap: 'wrap', gap: '10px' }}>
+            <div>
+              <h3 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0, color: '#6366f1', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span>📡</span> أتمتة السوشيال ميديا عبر Buffer API (نشر فوري)
+              </h3>
+              <p style={{ margin: '4px 0 0', fontSize: '0.82rem', color: 'var(--admin-text-muted)' }}>
+                نشر تلقائي فوري للمقالات الجديدة على حسابات X (Twitter) ولينكد إن وفيسبوك بنقرة واحدة
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={handleTestBuffer}
+              disabled={bufferTestLoading}
+              className="btn-admin btn-admin-outline"
+              style={{ fontSize: '0.82rem', padding: '6px 14px', borderColor: 'rgba(99, 102, 241, 0.4)', color: '#6366f1' }}
+            >
+              {bufferTestLoading ? '⏳ جاري الفحص...' : '🔍 فحص الاتصال بالحسابات'}
+            </button>
+          </div>
+
+          <div className="form-group" style={{ marginBottom: '16px' }}>
+            <label className="form-label" style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span>Buffer Access Token</span>
+              <a
+                href="https://buffer.com/developers/apps"
+                target="_blank"
+                rel="noreferrer"
+                style={{ fontSize: '0.78rem', color: '#6366f1', textDecoration: 'none' }}
+              >
+                احصل على الـ Token من هنا ↗
+              </a>
+            </label>
+            <input
+              type="password"
+              className="form-input"
+              value={form.bufferAccessToken || ''}
+              onChange={(e) => setForm({ ...form, bufferAccessToken: e.target.value })}
+              placeholder="1/abcdef1234567890..."
+            />
+            <span style={{ fontSize: '0.78rem', color: 'var(--admin-text-muted)', display: 'block', marginTop: '4px' }}>
+              المفتاح يحفظ مشفراً في السيرفر ولا يظهر للزوار إطلاقاً.
+            </span>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '12px', marginBottom: '16px' }}>
+            <label
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                padding: '12px 14px',
+                background: 'var(--admin-card-bg, #ffffff)',
+                border: '1px solid var(--admin-border, #e2e8f0)',
+                borderRadius: '8px',
+                cursor: 'pointer',
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={form.bufferAutoPublish !== false}
+                onChange={(e) => setForm({ ...form, bufferAutoPublish: e.target.checked })}
+                style={{ width: '18px', height: '18px', accentColor: '#6366f1' }}
+              />
+              <div>
+                <div style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--admin-text-main)' }}>
+                  تفعيل النشر التلقائي
+                </div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--admin-text-muted)' }}>
+                  مشاركة أي مقال جديد فور حفظه
+                </div>
+              </div>
+            </label>
+
+            <label
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                padding: '12px 14px',
+                background: 'var(--admin-card-bg, #ffffff)',
+                border: '1px solid var(--admin-border, #e2e8f0)',
+                borderRadius: '8px',
+                cursor: 'pointer',
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={form.bufferPostNow !== false}
+                onChange={(e) => setForm({ ...form, bufferPostNow: e.target.checked })}
+                style={{ width: '18px', height: '18px', accentColor: '#10b981' }}
+              />
+              <div>
+                <div style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--admin-text-main)' }}>
+                  نشر فوري (Post Now) ⚡
+                </div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--admin-text-muted)' }}>
+                  بدون انتظار طابور الجدولة
+                </div>
+              </div>
+            </label>
+          </div>
+
+          {bufferTestResult && (
+            <div
+              style={{
+                marginTop: '12px',
+                padding: '12px 16px',
+                borderRadius: '8px',
+                fontSize: '0.85rem',
+                fontWeight: 600,
+                background: bufferTestResult.success ? '#ecfdf5' : '#fef2f2',
+                color: bufferTestResult.success ? '#065f46' : '#991b1b',
+                border: `1px solid ${bufferTestResult.success ? '#a7f3d0' : '#fecaca'}`,
+              }}
+            >
+              <div>{bufferTestResult.msg}</div>
+              {bufferTestResult.profiles && bufferTestResult.profiles.length > 0 && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '10px' }}>
+                  {bufferTestResult.profiles.map((p) => (
+                    <div
+                      key={p.id}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        padding: '4px 10px',
+                        borderRadius: '999px',
+                        background: '#ffffff',
+                        border: '1px solid #d1fae5',
+                        fontSize: '0.78rem',
+                        color: '#065f46',
+                      }}
+                    >
+                      {p.avatar ? (
+                        <img src={p.avatar} alt={p.service} style={{ width: '16px', height: '16px', borderRadius: '50%' }} />
+                      ) : (
+                        <span>📱</span>
+                      )}
+                      <span style={{ fontWeight: 700, textTransform: 'capitalize' }}>{p.service}:</span>
+                      <span>{p.formatted_username}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         <div style={{ margin: '20px 0', borderTop: '1px solid var(--admin-border)', paddingTop: '20px' }}>

@@ -20,6 +20,37 @@ export default function ArticlesTab({
 }: ArticlesTabProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [sharingId, setSharingId] = useState<string | null>(null);
+  const [shareMsg, setShareMsg] = useState<{ id: string; text: string; ok: boolean } | null>(null);
+
+  const handleShareBuffer = async (art: ArticleItem) => {
+    setSharingId(art.id);
+    setShareMsg(null);
+    try {
+      const res = await fetch('/api/buffer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: art.id,
+          title: art.title,
+          excerpt: art.excerpt,
+          image: art.image,
+          now: true,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setShareMsg({ id: art.id, text: '🚀 تم النشر فورياً عبر Buffer!', ok: true });
+      } else {
+        setShareMsg({ id: art.id, text: `❌ ${data.error || 'فشل النشر'}`, ok: false });
+      }
+    } catch (e: any) {
+      setShareMsg({ id: art.id, text: `❌ خطأ بالشبكة: ${e.message}`, ok: false });
+    } finally {
+      setSharingId(null);
+      setTimeout(() => setShareMsg(null), 5000);
+    }
+  };
 
   const filtered = articles.filter((art) => {
     const matchesSearch =
@@ -103,6 +134,19 @@ export default function ArticlesTab({
                     >
                       {art.excerpt}
                     </div>
+
+                    {shareMsg && shareMsg.id === art.id && (
+                      <div
+                        style={{
+                          fontSize: '0.75rem',
+                          fontWeight: 600,
+                          marginTop: '4px',
+                          color: shareMsg.ok ? '#10b981' : '#ef4444',
+                        }}
+                      >
+                        {shareMsg.text}
+                      </div>
+                    )}
                     {art.featured && (
                       <span className="badge-pill badge-pill-warning" style={{ marginTop: '4px' }}>
                         ⭐ Featured
@@ -139,6 +183,25 @@ export default function ArticlesTab({
                       >
                         👁️ عرض
                       </Link>
+
+                      <button
+                        onClick={() => handleShareBuffer(art)}
+                        disabled={sharingId === art.id}
+                        className="btn-admin btn-admin-outline"
+                        style={{
+                          padding: '4px 8px',
+                          fontSize: '0.75rem',
+                          background: 'rgba(99, 102, 241, 0.08)',
+                          borderColor: 'rgba(99, 102, 241, 0.3)',
+                          color: '#6366f1',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '3px',
+                        }}
+                        title="نشر فوري عبر Buffer على تويتر ولينكد إن وفيسبوك"
+                      >
+                        {sharingId === art.id ? '⏳' : '📡'} نشر
+                      </button>
                       <button
                         onClick={() => onEdit(art)}
                         className="btn-admin btn-admin-outline"

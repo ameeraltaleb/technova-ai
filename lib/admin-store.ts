@@ -86,6 +86,10 @@ export interface SiteSettings {
   youtubeUrl: string;
   githubUrl: string;
   linkedinUrl: string;
+  bufferAccessToken?: string;
+  bufferAutoPublish?: boolean;
+  bufferPostNow?: boolean;
+  bufferSelectedProfiles?: string[];
 }
 
 export interface FirebaseConfig {
@@ -125,6 +129,10 @@ const DEFAULT_SETTINGS: SiteSettings = {
   youtubeUrl: 'https://youtube.com',
   githubUrl: 'https://github.com/ameeraltaleb/technova-ai',
   linkedinUrl: 'https://linkedin.com',
+  bufferAccessToken: '',
+  bufferAutoPublish: true,
+  bufferPostNow: true,
+  bufferSelectedProfiles: [],
 };
 
 const DEFAULT_FIREBASE_CONFIG: FirebaseConfig = {

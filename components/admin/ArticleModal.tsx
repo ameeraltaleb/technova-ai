@@ -42,6 +42,10 @@ export default function ArticleModal({
   const [isSaving, setIsSaving] = useState(false);
   const [savedReadyId, setSavedReadyId] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
+  // Buffer Auto-Publish
+  const [shareToBuffer, setShareToBuffer] = useState(true);
+  const [bufferPublishStatus, setBufferPublishStatus] = useState<string | null>(null);
+
 
   // AI Assistant States
   const [aiPrompt, setAiPrompt] = useState('');
@@ -337,6 +341,32 @@ export default function ArticleModal({
       await onSave(articleItem);
       // Confirmed saved and available on Firestore & storage!
       setSavedReadyId(articleItem.id);
+
+      // Trigger Buffer Immediate Auto-Publish
+      if (shareToBuffer) {
+        try {
+          const bRes = await fetch('/api/buffer', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              id: articleItem.id,
+              title: articleItem.title,
+              excerpt: articleItem.excerpt,
+              image: articleItem.image,
+              now: true,
+            }),
+          });
+          const bData = await bRes.json();
+          if (bRes.ok && bData.success) {
+            setBufferPublishStatus('🚀 تم النشر فورياً عبر Buffer على حسابات السوشيال ميديا المتصلة!');
+          } else if (bData.error && !bData.error.includes('غير متوفر')) {
+            console.warn('Buffer auto-publish note:', bData.error);
+          }
+        } catch (bErr) {
+          console.warn('Buffer publish call error:', bErr);
+        }
+      }
+
     } catch (err: any) {
       console.error('Error saving article:', err);
       setSaveError(err?.message || 'حدث خطأ أثناء حفظ المقال، يرجى المحاولة مرة أخرى.');
@@ -838,6 +868,12 @@ export default function ArticleModal({
                     <div style={{ fontSize: '0.8rem', color: '#047857' }}>
                       المقال الآن جاهز ومتاح بالكامل على الموقع دون أي انتظار.
                     </div>
+                    {bufferPublishStatus && (
+                      <div style={{ fontSize: '0.82rem', color: '#6366f1', fontWeight: 600, marginTop: '4px' }}>
+                        {bufferPublishStatus}
+                      </div>
+                    )}
+
                   </div>
                 </div>
                 <a
@@ -922,6 +958,32 @@ export default function ArticleModal({
               </>
             ) : (
               <>
+                <label
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    cursor: 'pointer',
+                    marginInlineEnd: 'auto',
+                    fontSize: '0.84rem',
+                    fontWeight: 600,
+                    color: '#6366f1',
+                    background: 'rgba(99, 102, 241, 0.08)',
+                    padding: '6px 12px',
+                    borderRadius: '8px',
+                    border: '1px solid rgba(99, 102, 241, 0.25)',
+                  }}
+                  title="نشر فوري عبر Buffer إلى X ولينكد إن وفيسبوك فور حفظ المقال"
+                >
+                  <input
+                    type="checkbox"
+                    checked={shareToBuffer}
+                    onChange={(e) => setShareToBuffer(e.target.checked)}
+                    style={{ width: '15px', height: '15px', accentColor: '#6366f1' }}
+                  />
+                  <span>📡 نشر فوري عبر Buffer</span>
+                </label>
+
                 <button
                   type="button"
                   onClick={onClose}
