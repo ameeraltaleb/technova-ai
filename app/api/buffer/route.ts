@@ -9,6 +9,95 @@ interface BufferProfile {
   default?: boolean;
 }
 
+function cleanToken(token: string): string {
+  return token.replace(/^Bearer\s+/i, '').replace(/["']/g, '').trim();
+}
+
+/**
+ * Fetch profiles via REST v1 or GraphQL
+ */
+async function fetchProfiles(token: string): Promise<{ success: boolean; profiles?: BufferProfile[]; error?: string; status?: number }> {
+  const tokenClean = cleanToken(token);
+
+  // 1. Try REST v1 with both Header and Query Param
+  try {
+    const res = await fetch(`https://api.bufferapp.com/1/profiles.json?access_token=${encodeURIComponent(tokenClean)}`, {
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${tokenClean}`,
+      },
+      cache: 'no-store',
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        const profiles: BufferProfile[] = data.map((p: any) => ({
+          id: p.id,
+          service: p.service,
+          service_username: p.service_username || p.formatted_username || p.service,
+          formatted_username: p.formatted_username || p.service_username || p.service,
+          avatar: p.avatar || p.avatar_https || '',
+          default: p.default,
+        }));
+        return { success: true, profiles };
+      }
+    }
+  } catch (e) {
+    // Continue to GraphQL fallback
+  }
+
+  // 2. Fallback: Try Buffer GraphQL API (api.buffer.com)
+  try {
+    const gqlRes = await fetch('https://api.buffer.com/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${tokenClean}`,
+      },
+      body: JSON.stringify({
+        query: `
+          query GetAccount {
+            account {
+              id
+              channels {
+                id
+                name
+                service
+                avatarUrl
+              }
+            }
+          }
+        `,
+      }),
+      cache: 'no-store',
+    });
+
+    if (gqlRes.ok) {
+      const gqlData = await gqlRes.json();
+      const channels = gqlData?.data?.account?.channels;
+      if (Array.isArray(channels)) {
+        const profiles: BufferProfile[] = channels.map((c: any) => ({
+          id: c.id,
+          service: c.service,
+          service_username: c.name || c.service,
+          formatted_username: c.name || c.service,
+          avatar: c.avatarUrl || '',
+        }));
+        return { success: true, profiles };
+      }
+    }
+  } catch (e) {
+    // Both failed
+  }
+
+  return {
+    success: false,
+    status: 401,
+    error: 'رمز الـ Access Token غير صالح أو انتهت صلاحيته (401 Unauthorized).\n\nتنبيه مهم: تأكد من نسخ (Access Token) وليس (Client ID) من صفحة https://buffer.com/developers/apps تحت تطبيقك.',
+  };
+}
+
 /**
  * GET /api/buffer
  * Test connection & list connected social profiles (X, LinkedIn, Facebook, etc.)
@@ -25,40 +114,12 @@ export async function GET(req: Request) {
       );
     }
 
-    const res = await fetch(`https://api.bufferapp.com/1/profiles.json?access_token=${encodeURIComponent(token.trim())}`, {
-      headers: {
-        Accept: 'application/json',
-      },
-      cache: 'no-store',
-    });
-
-    if (!res.ok) {
-      const errText = await res.text();
-      let errorMsg = `خطأ من Buffer API (${res.status})`;
-      try {
-        const parsed = JSON.parse(errText);
-        if (parsed.message) errorMsg = parsed.message;
-      } catch {
-        errorMsg = errText || errorMsg;
-      }
-      return NextResponse.json({ success: false, error: errorMsg }, { status: res.status });
+    const result = await fetchProfiles(token);
+    if (!result.success) {
+      return NextResponse.json({ success: false, error: result.error }, { status: result.status || 401 });
     }
 
-    const data = await res.json();
-    if (!Array.isArray(data)) {
-      return NextResponse.json({ success: false, error: 'استجابة غير متوقعة من Buffer' }, { status: 500 });
-    }
-
-    const profiles: BufferProfile[] = data.map((p: any) => ({
-      id: p.id,
-      service: p.service,
-      service_username: p.service_username || p.formatted_username || p.service,
-      formatted_username: p.formatted_username || p.service_username || p.service,
-      avatar: p.avatar || p.avatar_https || '',
-      default: p.default,
-    }));
-
-    return NextResponse.json({ success: true, profiles });
+    return NextResponse.json({ success: true, profiles: result.profiles });
   } catch (err: any) {
     return NextResponse.json(
       { success: false, error: err.message || 'فشل الاتصال بسيرفر Buffer' },
@@ -83,19 +144,15 @@ export async function POST(req: Request) {
       );
     }
 
-    // 1. Determine profile IDs
+    const tokenClean = cleanToken(token);
+
+    // 1. Fetch available profiles if not specified
     let profileIds: string[] = Array.isArray(body.profileIds) && body.profileIds.length > 0 ? body.profileIds : [];
 
-    // If none provided, fetch all active profiles for this account
     if (profileIds.length === 0) {
-      const pRes = await fetch(`https://api.bufferapp.com/1/profiles.json?access_token=${encodeURIComponent(token.trim())}`, {
-        cache: 'no-store',
-      });
-      if (pRes.ok) {
-        const pData = await pRes.json();
-        if (Array.isArray(pData)) {
-          profileIds = pData.map((p: any) => p.id);
-        }
+      const pRes = await fetchProfiles(tokenClean);
+      if (pRes.success && pRes.profiles) {
+        profileIds = pRes.profiles.map((p) => p.id);
       }
     }
 
@@ -121,12 +178,12 @@ export async function POST(req: Request) {
     let text = body.customText;
     if (!text) {
       const cleanExcerpt = excerpt.replace(/\s+/g, ' ').slice(0, 180);
-      text = `🔥 New on TechNova AI:\n\n${title}\n\n${cleanExcerpt}${cleanExcerpt.length >= 180 ? '...' : ''}\n\n👉 Read the full article: ${link}\n\n#TechNova #AI #ArtificialIntelligence #TechNews`;
+      text = `🔥 New on TechNova AI:\n\n${title}\n\n${cleanExcerpt}${cleanExcerpt.length >= 180 ? '...' : ''}\n\n👉 Read full guide: ${link}\n\n#TechNova #AI #TechNews #ArtificialIntelligence`;
     }
 
-    // 3. Build Form Data for Buffer API
+    // 3. Build Form Data for REST v1
     const params = new URLSearchParams();
-    params.append('access_token', token.trim());
+    params.append('access_token', tokenClean);
     params.append('text', text);
     if (isNow) {
       params.append('now', 'true');
@@ -148,6 +205,7 @@ export async function POST(req: Request) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `Bearer ${tokenClean}`,
       },
       body: params.toString(),
     });
@@ -158,7 +216,7 @@ export async function POST(req: Request) {
       return NextResponse.json(
         {
           success: false,
-          error: result.message || 'فشل النشر عبر Buffer',
+          error: result.message || 'فشل النشر عبر Buffer API',
           details: result,
         },
         { status: postRes.status || 400 }
@@ -177,4 +235,3 @@ export async function POST(req: Request) {
     );
   }
 }
-
