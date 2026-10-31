@@ -111,7 +111,13 @@ async function getBufferChannels(token: string): Promise<{ success: boolean; cha
 /**
  * Publish a post to a single Buffer channel
  */
-async function publishToChannel(token: string, channelId: string, text: string, isNow: boolean) {
+async function publishToChannel(
+  token: string,
+  channelId: string,
+  service: string,
+  text: string,
+  isNow: boolean
+) {
   const tokenClean = cleanToken(token);
 
   const mutation = `
@@ -122,6 +128,10 @@ async function publishToChannel(token: string, channelId: string, text: string, 
           post {
             id
             status
+            sentAt
+            error {
+              message
+            }
           }
         }
         ... on InvalidInputError {
@@ -137,6 +147,25 @@ async function publishToChannel(token: string, channelId: string, text: string, 
     }
   `;
 
+  // Build input payload tailored for each service requirements
+  const input: Record<string, any> = {
+    channelId,
+    text,
+    mode: isNow ? 'shareNow' : 'addToQueue',
+    schedulingType: 'automatic',
+    needsApproval: false,
+    assets: [],
+  };
+
+  // Facebook requires explicit type: "post" | "reel" | "story"
+  if (service === 'facebook') {
+    input.metadata = {
+      facebook: {
+        type: 'post',
+      },
+    };
+  }
+
   const res = await fetch('https://api.buffer.com/', {
     method: 'POST',
     headers: {
@@ -145,20 +174,38 @@ async function publishToChannel(token: string, channelId: string, text: string, 
     },
     body: JSON.stringify({
       query: mutation,
-      variables: {
-        input: {
-          channelId,
-          text,
-          mode: isNow ? 'shareNow' : 'addToQueue',
-          schedulingType: 'automatic',
-          needsApproval: false,
-          assets: [],
-        },
-      },
+      variables: { input },
     }),
   });
 
-  return await res.json();
+  const data = await res.json();
+  const payload = data?.data?.createPost;
+
+  if (payload?.__typename === 'PostActionSuccess') {
+    if (payload.post?.status === 'error') {
+      const errMsg = payload.post?.error?.message || 'خطأ أثناء النشر عبر المنصة';
+      return {
+        success: false,
+        status: 'error',
+        error: errMsg.includes('reauthorize')
+          ? 'يحتاج الحساب لإعادة التوثيق (Reconnect) في Buffer'
+          : errMsg,
+        postId: payload.post.id,
+      };
+    }
+    return {
+      success: true,
+      status: payload.post?.status || 'sent',
+      postId: payload.post?.id,
+    };
+  }
+
+  const errorMsg =
+    payload?.message ||
+    data?.errors?.[0]?.message ||
+    'فشل إرسال المنشور إلى Buffer';
+
+  return { success: false, error: errorMsg };
 }
 
 /**
@@ -246,22 +293,47 @@ export async function POST(req: Request) {
       }
 
       try {
-        const res = await publishToChannel(token, c.id, channelText, isNow);
-        return { channel: c.name, service: c.service, result: res };
+        const res = await publishToChannel(token, c.id, c.service, channelText, isNow);
+        return { channel: c.name, service: c.service, ...res };
       } catch (err: any) {
-        return { channel: c.name, service: c.service, error: err.message };
+        return { channel: c.name, service: c.service, success: false, error: err.message };
       }
     });
 
     const results = await Promise.all(publishPromises);
 
-    const channelNames = targetChannels.map((c) => `${c.service}: ${c.name}`).join(' و ');
+    const succeeded = results.filter((r) => r.success);
+    const failed = results.filter((r) => !r.success);
+
+    if (succeeded.length === 0) {
+      const errorDetails = failed
+        .map((f) => `${f.service}: ${f.error || 'فشل'}`)
+        .join(' | ');
+      return NextResponse.json(
+        {
+          success: false,
+          error: `تعذر النشر: ${errorDetails}`,
+          results,
+        },
+        { status: 400 }
+      );
+    }
+
+    const successNames = succeeded.map((s) => `${s.service} (${s.channel})`).join('، ');
+    let summaryMessage = isNow
+      ? `تم النشر فورياً بنجاح على ${successNames}! 🚀`
+      : `تمت جدولة المنشور بنجاح على ${successNames}!`;
+
+    if (failed.length > 0) {
+      const failedNotes = failed
+        .map((f) => `${f.service}: ${f.error}`)
+        .join(' - ');
+      summaryMessage += ` (تنبيه: ${failedNotes})`;
+    }
 
     return NextResponse.json({
       success: true,
-      message: isNow
-        ? `تم النشر فورياً بنجاح على (${channelNames})! 🚀`
-        : `تمت جدولة المنشور بنجاح على (${channelNames})!`,
+      message: summaryMessage,
       results,
     });
   } catch (err: any) {
