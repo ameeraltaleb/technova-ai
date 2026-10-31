@@ -91,11 +91,14 @@ export default async function Home() {
               <Link href={`/article/${featuredArticle.id}`} className="bento-lead">
                 <div className="bento-lead__image-wrap">
                   <img
-                    src={getOptimizedImageUrl(getArticleImage(featuredArticle), 960, 540)}
+                    src={getOptimizedImageUrl(getArticleImage(featuredArticle), 720, 405)}
                     alt={featuredArticle.title}
                     className="bento-lead__image"
                     loading="eager"
                     decoding="async"
+                    fetchPriority="high"
+                    width={720}
+                    height={405}
                   />
                   <div className="bento-lead__overlay"></div>
                 </div>
@@ -154,7 +157,7 @@ export default async function Home() {
                   <Link key={a.id} href={`/article/${a.id}`} className="bento-side-card">
                     <div className="bento-side-card__thumb-wrap">
                       <img
-                        src={getOptimizedImageUrl(getArticleImage(a), 240, 160)}
+                        src={getOptimizedImageUrl(getArticleImage(a), 180, 120)}
                         alt={a.title}
                         className="bento-side-card__thumb"
                         loading="lazy"
