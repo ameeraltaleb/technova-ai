@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
 
-interface BufferProfile {
+interface BufferChannel {
   id: string;
+  name: string;
   service: string;
   service_username: string;
   formatted_username: string;
   avatar: string;
-  default?: boolean;
 }
 
 function cleanToken(token: string): string {
@@ -14,42 +14,14 @@ function cleanToken(token: string): string {
 }
 
 /**
- * Fetch profiles via REST v1 or GraphQL
+ * Fetch connected channels from Buffer's official GraphQL API
  */
-async function fetchProfiles(token: string): Promise<{ success: boolean; profiles?: BufferProfile[]; error?: string; status?: number }> {
+async function getBufferChannels(token: string): Promise<{ success: boolean; channels?: BufferChannel[]; error?: string }> {
   const tokenClean = cleanToken(token);
 
-  // 1. Try REST v1 with both Header and Query Param
   try {
-    const res = await fetch(`https://api.bufferapp.com/1/profiles.json?access_token=${encodeURIComponent(tokenClean)}`, {
-      headers: {
-        Accept: 'application/json',
-        Authorization: `Bearer ${tokenClean}`,
-      },
-      cache: 'no-store',
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      if (Array.isArray(data)) {
-        const profiles: BufferProfile[] = data.map((p: any) => ({
-          id: p.id,
-          service: p.service,
-          service_username: p.service_username || p.formatted_username || p.service,
-          formatted_username: p.formatted_username || p.service_username || p.service,
-          avatar: p.avatar || p.avatar_https || '',
-          default: p.default,
-        }));
-        return { success: true, profiles };
-      }
-    }
-  } catch (e) {
-    // Continue to GraphQL fallback
-  }
-
-  // 2. Fallback: Try Buffer GraphQL API (api.buffer.com)
-  try {
-    const gqlRes = await fetch('https://api.buffer.com/', {
+    // 1. Get Organization ID from Account
+    const accRes = await fetch('https://api.buffer.com/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -57,14 +29,13 @@ async function fetchProfiles(token: string): Promise<{ success: boolean; profile
       },
       body: JSON.stringify({
         query: `
-          query GetAccount {
+          query GetAccountOrg {
             account {
               id
-              channels {
+              email
+              organizations {
                 id
                 name
-                service
-                avatarUrl
               }
             }
           }
@@ -73,34 +44,126 @@ async function fetchProfiles(token: string): Promise<{ success: boolean; profile
       cache: 'no-store',
     });
 
-    if (gqlRes.ok) {
-      const gqlData = await gqlRes.json();
-      const channels = gqlData?.data?.account?.channels;
-      if (Array.isArray(channels)) {
-        const profiles: BufferProfile[] = channels.map((c: any) => ({
-          id: c.id,
-          service: c.service,
-          service_username: c.name || c.service,
-          formatted_username: c.name || c.service,
-          avatar: c.avatarUrl || '',
-        }));
-        return { success: true, profiles };
+    if (!accRes.ok) {
+      return { success: false, error: `Buffer API rejected token (${accRes.status})` };
+    }
+
+    const accData = await accRes.json();
+    if (accData.errors && accData.errors.length > 0) {
+      return { success: false, error: accData.errors[0]?.message || 'GraphQL Error' };
+    }
+
+    const orgId = accData?.data?.account?.organizations?.[0]?.id;
+    if (!orgId) {
+      return { success: false, error: 'لم يتم العثور على أي منظمة تابعة لحسابك في Buffer' };
+    }
+
+    // 2. Query channels for this organization
+    const chanRes = await fetch('https://api.buffer.com/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${tokenClean}`,
+      },
+      body: JSON.stringify({
+        query: `
+          query GetChannels($input: ChannelsInput!) {
+            channels(input: $input) {
+              id
+              name
+              service
+              avatar
+            }
+          }
+        `,
+        variables: {
+          input: { organizationId: orgId },
+        },
+      }),
+      cache: 'no-store',
+    });
+
+    const chanData = await chanRes.json();
+    const rawChannels = chanData?.data?.channels;
+
+    if (!Array.isArray(rawChannels) || rawChannels.length === 0) {
+      return {
+        success: false,
+        error: 'لم يتم العثور على أي حسابات تواصل مرتبطة بحساب Buffer الخاص بك. يرجى ربط حساب X أو Facebook أولاً.',
+      };
+    }
+
+    const channels: BufferChannel[] = rawChannels.map((c: any) => ({
+      id: c.id,
+      name: c.name || c.service,
+      service: c.service,
+      service_username: c.name || c.service,
+      formatted_username: c.name || c.service,
+      avatar: c.avatar || '',
+    }));
+
+    return { success: true, channels };
+  } catch (err: any) {
+    return { success: false, error: err.message || 'فشل الاتصال بسيرفر Buffer' };
+  }
+}
+
+/**
+ * Publish a post to a single Buffer channel
+ */
+async function publishToChannel(token: string, channelId: string, text: string, isNow: boolean) {
+  const tokenClean = cleanToken(token);
+
+  const mutation = `
+    mutation CreatePost($input: CreatePostInput!) {
+      createPost(input: $input) {
+        __typename
+        ... on PostActionSuccess {
+          post {
+            id
+            status
+          }
+        }
+        ... on InvalidInputError {
+          message
+        }
+        ... on LimitReachedError {
+          message
+        }
+        ... on UnexpectedError {
+          message
+        }
       }
     }
-  } catch (e) {
-    // Both failed
-  }
+  `;
 
-  return {
-    success: false,
-    status: 401,
-    error: 'رمز الـ Access Token غير صالح أو انتهت صلاحيته (401 Unauthorized).\n\nتنبيه مهم: تأكد من نسخ (Access Token) وليس (Client ID) من صفحة https://buffer.com/developers/apps تحت تطبيقك.',
-  };
+  const res = await fetch('https://api.buffer.com/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${tokenClean}`,
+    },
+    body: JSON.stringify({
+      query: mutation,
+      variables: {
+        input: {
+          channelId,
+          text,
+          mode: isNow ? 'shareNow' : 'addToQueue',
+          schedulingType: 'automatic',
+          needsApproval: false,
+          assets: [],
+        },
+      },
+    }),
+  });
+
+  return await res.json();
 }
 
 /**
  * GET /api/buffer
- * Test connection & list connected social profiles (X, LinkedIn, Facebook, etc.)
+ * Test connection & list connected social profiles
  */
 export async function GET(req: Request) {
   try {
@@ -114,12 +177,15 @@ export async function GET(req: Request) {
       );
     }
 
-    const result = await fetchProfiles(token);
+    const result = await getBufferChannels(token);
     if (!result.success) {
-      return NextResponse.json({ success: false, error: result.error }, { status: result.status || 401 });
+      return NextResponse.json({ success: false, error: result.error }, { status: 400 });
     }
 
-    return NextResponse.json({ success: true, profiles: result.profiles });
+    return NextResponse.json({
+      success: true,
+      profiles: result.channels,
+    });
   } catch (err: any) {
     return NextResponse.json(
       { success: false, error: err.message || 'فشل الاتصال بسيرفر Buffer' },
@@ -144,26 +210,17 @@ export async function POST(req: Request) {
       );
     }
 
-    const tokenClean = cleanToken(token);
-
-    // 1. Fetch available profiles if not specified
-    let profileIds: string[] = Array.isArray(body.profileIds) && body.profileIds.length > 0 ? body.profileIds : [];
-
-    if (profileIds.length === 0) {
-      const pRes = await fetchProfiles(tokenClean);
-      if (pRes.success && pRes.profiles) {
-        profileIds = pRes.profiles.map((p) => p.id);
-      }
+    // 1. Get connected channels
+    const chanRes = await getBufferChannels(token);
+    if (!chanRes.success || !chanRes.channels || chanRes.channels.length === 0) {
+      return NextResponse.json({ success: false, error: chanRes.error || 'لا توجد قنوات مرتبطة' }, { status: 400 });
     }
 
-    if (profileIds.length === 0) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'لم يتم العثور على أي حسابات تواصل مرتبطة بحسابك على Buffer. يرجى ربط حساب X أو LinkedIn أو Facebook في buffer.com أولاً.',
-        },
-        { status: 400 }
-      );
+    // Target profiles: either specific requested ones, or all active channels
+    let targetChannels = chanRes.channels;
+    if (Array.isArray(body.profileIds) && body.profileIds.length > 0) {
+      targetChannels = chanRes.channels.filter((c) => body.profileIds.includes(c.id));
+      if (targetChannels.length === 0) targetChannels = chanRes.channels;
     }
 
     // 2. Prepare post content
@@ -171,62 +228,41 @@ export async function POST(req: Request) {
     const excerpt = (body.excerpt || '').trim();
     const articleId = body.id || '';
     const link = (body.url || (articleId ? `https://www.technova-ai.online/article/${articleId}` : 'https://www.technova-ai.online')).trim();
-    const image = (body.image || '').trim();
     const isNow = body.now !== false; // Default: true (Immediate publishing)
 
     // Craft formatted viral text
     let text = body.customText;
     if (!text) {
-      const cleanExcerpt = excerpt.replace(/\s+/g, ' ').slice(0, 180);
-      text = `🔥 New on TechNova AI:\n\n${title}\n\n${cleanExcerpt}${cleanExcerpt.length >= 180 ? '...' : ''}\n\n👉 Read full guide: ${link}\n\n#TechNova #AI #TechNews #ArtificialIntelligence`;
+      const cleanExcerpt = excerpt.replace(/\s+/g, ' ').slice(0, 160);
+      text = `🔥 New on TechNova AI:\n\n${title}\n\n${cleanExcerpt}${cleanExcerpt.length >= 160 ? '...' : ''}\n\n👉 Read full article: ${link}\n\n#TechNova #AI #TechNews #ArtificialIntelligence`;
     }
 
-    // 3. Build Form Data for REST v1
-    const params = new URLSearchParams();
-    params.append('access_token', tokenClean);
-    params.append('text', text);
-    if (isNow) {
-      params.append('now', 'true');
-    }
-    params.append('shorten', 'false');
+    // 3. Publish to each channel
+    const publishPromises = targetChannels.map(async (c) => {
+      // For Twitter/X (character limit 280), optimize length if needed
+      let channelText = text;
+      if (c.service === 'twitter' && channelText.length > 275) {
+        channelText = `🔥 New on TechNova AI: ${title}\n\n👉 Read: ${link}\n\n#AI #TechNews`;
+      }
 
-    if (link) {
-      params.append('media[link]', link);
-    }
-    if (image && !image.includes('placeholder')) {
-      params.append('media[photo]', image);
-    }
-
-    profileIds.forEach((pid: string) => {
-      params.append('profile_ids[]', pid);
+      try {
+        const res = await publishToChannel(token, c.id, channelText, isNow);
+        return { channel: c.name, service: c.service, result: res };
+      } catch (err: any) {
+        return { channel: c.name, service: c.service, error: err.message };
+      }
     });
 
-    const postRes = await fetch('https://api.bufferapp.com/1/updates/create.json', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        Authorization: `Bearer ${tokenClean}`,
-      },
-      body: params.toString(),
-    });
+    const results = await Promise.all(publishPromises);
 
-    const result = await postRes.json();
-
-    if (!postRes.ok || result.success === false) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: result.message || 'فشل النشر عبر Buffer API',
-          details: result,
-        },
-        { status: postRes.status || 400 }
-      );
-    }
+    const channelNames = targetChannels.map((c) => `${c.service}: ${c.name}`).join(' و ');
 
     return NextResponse.json({
       success: true,
-      message: isNow ? 'تم النشر فورياً على حسابات التواصل المتصلة بنجاح! 🚀' : 'تمت جدولة المنشور في طابور Buffer بنجاح!',
-      updates: result.updates || [],
+      message: isNow
+        ? `تم النشر فورياً بنجاح على (${channelNames})! 🚀`
+        : `تمت جدولة المنشور بنجاح على (${channelNames})!`,
+      results,
     });
   } catch (err: any) {
     return NextResponse.json(
