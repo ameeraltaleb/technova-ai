@@ -42,6 +42,7 @@ export default function ArticlesTab({
           title: art.title,
           excerpt: art.excerpt,
           image: art.image,
+          category: art.category,
           now: true,
         }),
       });

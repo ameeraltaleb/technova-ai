@@ -357,6 +357,7 @@ export default function ArticleModal({
                 title: articleItem.title,
                 excerpt: articleItem.excerpt,
                 image: articleItem.image,
+                category: articleItem.category,
                 now: true,
               }),
             });

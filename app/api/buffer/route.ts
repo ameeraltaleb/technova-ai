@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { getArticleImage } from '@/lib/utils';
 
 interface BufferChannel {
   id: string;
@@ -116,7 +117,13 @@ async function publishToChannel(
   channelId: string,
   service: string,
   text: string,
-  isNow: boolean
+  isNow: boolean,
+  meta?: {
+    link?: string;
+    title?: string;
+    excerpt?: string;
+    imageUrl?: string;
+  }
 ) {
   const tokenClean = cleanToken(token);
 
@@ -147,6 +154,11 @@ async function publishToChannel(
     }
   `;
 
+  const link = meta?.link;
+  const title = meta?.title;
+  const excerpt = meta?.excerpt;
+  const imageUrl = meta?.imageUrl;
+
   // Build input payload tailored for each service requirements
   const input: Record<string, any> = {
     channelId,
@@ -159,11 +171,37 @@ async function publishToChannel(
 
   // Facebook requires explicit type: "post" | "reel" | "story"
   if (service === 'facebook') {
-    input.metadata = {
-      facebook: {
-        type: 'post',
-      },
+    const facebookMeta: Record<string, any> = {
+      type: 'post',
     };
+
+    // Link Attachment Card provides the rich clickable preview (image + title + domain + excerpt)
+    if (link) {
+      facebookMeta.linkAttachment = {
+        url: link,
+        title: title || 'TechNova AI',
+        description: excerpt ? excerpt.slice(0, 200) : '',
+        ...(imageUrl && imageUrl.startsWith('http') ? { thumbnail: { url: imageUrl } } : {}),
+      };
+      // Buffer API rule: A link attachment cannot be combined with assets
+      input.assets = [];
+    } else if (imageUrl && imageUrl.startsWith('http')) {
+      input.assets = [{ image: { url: imageUrl } }];
+    }
+
+    input.metadata = {
+      facebook: facebookMeta,
+    };
+  } else if (service === 'twitter') {
+    // Twitter renders image attachments directly in feed
+    if (imageUrl && imageUrl.startsWith('http')) {
+      input.assets = [{ image: { url: imageUrl } }];
+    }
+  } else {
+    // Other channels (LinkedIn, etc.)
+    if (imageUrl && imageUrl.startsWith('http')) {
+      input.assets = [{ image: { url: imageUrl } }];
+    }
   }
 
   const res = await fetch('https://api.buffer.com/', {
@@ -270,12 +308,25 @@ export async function POST(req: Request) {
       if (targetChannels.length === 0) targetChannels = chanRes.channels;
     }
 
-    // 2. Prepare post content
+    // 2. Prepare post content & media
     const title = (body.title || '').trim();
     const excerpt = (body.excerpt || '').trim();
     const articleId = body.id || '';
     const link = (body.url || (articleId ? `https://www.technova-ai.online/article/${articleId}` : 'https://www.technova-ai.online')).trim();
     const isNow = body.now !== false; // Default: true (Immediate publishing)
+
+    // Resolve high-resolution article preview image
+    let imageUrl = (body.image || '').trim();
+    if (!imageUrl) {
+      imageUrl = getArticleImage({
+        image: body.image,
+        id: articleId,
+        category: body.category,
+      });
+    }
+    if (imageUrl && imageUrl.startsWith('/')) {
+      imageUrl = `https://www.technova-ai.online${imageUrl}`;
+    }
 
     // Craft formatted viral text
     let text = body.customText;
@@ -284,7 +335,7 @@ export async function POST(req: Request) {
       text = `🔥 New on TechNova AI:\n\n${title}\n\n${cleanExcerpt}${cleanExcerpt.length >= 160 ? '...' : ''}\n\n👉 Read full article: ${link}\n\n#TechNova #AI #TechNews #ArtificialIntelligence`;
     }
 
-    // 3. Publish to each channel
+    // 3. Publish to each channel with media & metadata
     const publishPromises = targetChannels.map(async (c) => {
       // For Twitter/X (character limit 280), optimize length if needed
       let channelText = text;
@@ -293,7 +344,12 @@ export async function POST(req: Request) {
       }
 
       try {
-        const res = await publishToChannel(token, c.id, c.service, channelText, isNow);
+        const res = await publishToChannel(token, c.id, c.service, channelText, isNow, {
+          link,
+          title,
+          excerpt,
+          imageUrl,
+        });
         return { channel: c.name, service: c.service, ...res };
       } catch (err: any) {
         return { channel: c.name, service: c.service, success: false, error: err.message };
