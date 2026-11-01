@@ -1,6 +1,7 @@
 'use client';
 
 import { AdminTab } from './AdminSidebar';
+import USClockWidget from './USClockWidget';
 
 interface AdminHeaderProps {
   activeTab: AdminTab;
@@ -38,6 +39,8 @@ export default function AdminHeader({
       </div>
 
       <div className="admin-header__actions">
+        <USClockWidget />
+
         <div className={`firebase-badge ${isFirebaseConnected ? 'connected' : ''}`}>
           <span className="firebase-badge__dot"></span>
           <span>{isFirebaseConnected ? 'Firebase Live' : 'Local Storage Mode'}</span>
