@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter, Space_Grotesk, JetBrains_Mono } from 'next/font/google';
-import Script from 'next/script';
 import './globals.css';
 import LayoutShell from '@/components/LayoutShell';
+import AnalyticsScripts from '@/components/AnalyticsScripts';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -135,27 +135,8 @@ export default function RootLayout({
         />
       </head>
       <body>
-        {/* Google Analytics 4 */}
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-0RXE2K2K6P"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-0RXE2K2K6P');
-          `}
-        </Script>
-
-        {/* Google AdSense */}
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8381284855782594"
-          crossOrigin="anonymous"
-          strategy="lazyOnload"
-        />
+        {/* Dynamic Analytics & AdSense (excluded from /admin paths) */}
+        <AnalyticsScripts />
 
         <LayoutShell>{children}</LayoutShell>
       </body>
