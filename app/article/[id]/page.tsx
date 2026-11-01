@@ -361,7 +361,12 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
               </div>
 
               {/* Share Buttons */}
-              <ShareButtons title={article.title} url={articleUrl} />
+              <ShareButtons
+                title={article.title}
+                url={articleUrl}
+                description={article.excerpt}
+                excerpt={article.excerpt}
+              />
             </article>
 
             {/* Sidebar */}

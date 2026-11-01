@@ -5,12 +5,16 @@ import { useState } from 'react';
 interface ShareButtonsProps {
   title: string;
   url?: string;
+  description?: string;
+  excerpt?: string;
 }
 
-export default function ShareButtons({ title, url }: ShareButtonsProps) {
+export default function ShareButtons({ title, url, description, excerpt }: ShareButtonsProps) {
   const [copied, setCopied] = useState(false);
 
   const shareUrl = typeof window !== 'undefined' ? (url || window.location.href) : (url || 'https://www.technova-ai.online');
+  const cleanDesc = (description || excerpt || '').trim();
+  const quoteText = cleanDesc ? `${title}\n\n${cleanDesc}` : title;
 
   const handleCopy = async () => {
     try {
@@ -23,10 +27,25 @@ export default function ShareButtons({ title, url }: ShareButtonsProps) {
     }
   };
 
-  const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+  const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${encodeURIComponent(quoteText)}`;
   const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(shareUrl)}`;
   const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
-  const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(title + ' ' + shareUrl)}`;
+  const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(title + (cleanDesc ? ' - ' + cleanDesc : '') + '\n' + shareUrl)}`;
+
+  const openSharePopup = (e: React.MouseEvent<HTMLAnchorElement>, shareLink: string) => {
+    e.preventDefault();
+    if (typeof window !== 'undefined') {
+      const width = 640;
+      const height = 580;
+      const left = window.screen.width / 2 - width / 2;
+      const top = window.screen.height / 2 - height / 2;
+      window.open(
+        shareLink,
+        'social-share',
+        `toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${width}, height=${height}, top=${top}, left=${left}`
+      );
+    }
+  };
 
   return (
     <div style={{ margin: 'var(--space-6) 0', padding: 'var(--space-4) 0', borderTop: '1px solid var(--border-secondary)', borderBottom: '1px solid var(--border-secondary)' }}>
@@ -37,6 +56,7 @@ export default function ShareButtons({ title, url }: ShareButtonsProps) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
           <a
             href={facebookUrl}
+            onClick={(e) => openSharePopup(e, facebookUrl)}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Share on Facebook"
