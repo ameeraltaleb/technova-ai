@@ -331,11 +331,12 @@ export async function POST(req: Request) {
       imageUrl = `https://www.technova-ai.online${imageUrl}`;
     }
 
-    // Craft formatted viral text
+    // Craft professional journalistic social post
     let text = body.customText;
     if (!text) {
-      const cleanExcerpt = excerpt.replace(/\s+/g, ' ').slice(0, 160);
-      text = `🔥 New on TechNova AI:\n\n${title}\n\n${cleanExcerpt}${cleanExcerpt.length >= 160 ? '...' : ''}\n\n👉 Read full article: ${link}\n\n#TechNova #AI #TechNews #ArtificialIntelligence`;
+      const cleanExcerpt = excerpt ? excerpt.replace(/\s+/g, ' ').slice(0, 180) : '';
+      const excerptLine = cleanExcerpt ? `\n\n${cleanExcerpt}${cleanExcerpt.length >= 180 ? '...' : ''}` : '';
+      text = `${title}${excerptLine}\n\n👉 Full story: ${link}\n\n#TechNova #TechNews #AI`;
     }
 
     // 3. Publish to each channel with media & metadata
@@ -343,7 +344,7 @@ export async function POST(req: Request) {
       // For Twitter/X (character limit 280), optimize length if needed
       let channelText = text;
       if (c.service === 'twitter' && channelText.length > 275) {
-        channelText = `🔥 New on TechNova AI: ${title}\n\n👉 Read: ${link}\n\n#AI #TechNews`;
+        channelText = `${title}\n\n👉 Read: ${link}\n\n#TechNova #AI`;
       }
 
       try {
