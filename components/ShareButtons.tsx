@@ -16,14 +16,25 @@ export default function ShareButtons({ title, url, description, excerpt }: Share
   const cleanDesc = (description || excerpt || '').trim();
   const quoteText = cleanDesc ? `${title}\n\n${cleanDesc}` : title;
 
+  // Complete formatted post ready for pasting directly into Facebook or Twitter
+  const fullPostSnippet = cleanDesc
+    ? `${title}\n\n${cleanDesc}\n\n👉 Full story: ${shareUrl}`
+    : `${title}\n\n👉 Full story: ${shareUrl}`;
+
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(shareUrl);
+      await navigator.clipboard.writeText(fullPostSnippet);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
+      setTimeout(() => setCopied(false), 3000);
     } catch {
-      // Fallback
-      setCopied(false);
+      // Fallback: try copying just URL if clipboard text payload fails
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 3000);
+      } catch {
+        setCopied(false);
+      }
     }
   };
 
@@ -163,7 +174,8 @@ export default function ShareButtons({ title, url, description, excerpt }: Share
 
           <button
             onClick={handleCopy}
-            aria-label="Copy link"
+            aria-label="Copy post text and link"
+            title="نسخ العنوان والوصف والرابط بالكامل جاهزة للصق في فيسبوك وتويتر"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -179,8 +191,8 @@ export default function ShareButtons({ title, url, description, excerpt }: Share
               transition: 'all 0.2s ease',
             }}
           >
-            <span>{copied ? '✓' : '🔗'}</span>
-            <span>{copied ? 'Copied!' : 'Copy'}</span>
+            <span>{copied ? '✓' : '📋'}</span>
+            <span>{copied ? 'تم نسخ المنشور كامل!' : 'نسخ المنشور'}</span>
           </button>
         </div>
       </div>
