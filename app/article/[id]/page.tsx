@@ -94,6 +94,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
     notFound();
   }
 
+  const articleUrl = `https://www.technova-ai.online/article/${article.id}`;
   const allArticles = await getLiveArticles();
   const articleImage = getArticleImage(article as any);
   const toc = parseTOC(article.content);
@@ -360,7 +361,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
               </div>
 
               {/* Share Buttons */}
-              <ShareButtons title={article.title} />
+              <ShareButtons title={article.title} url={articleUrl} />
             </article>
 
             {/* Sidebar */}
