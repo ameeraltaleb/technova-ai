@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { ArticleItem, AdminStore } from '@/lib/admin-store';
 import { CATEGORIES } from '@/lib/data';
 import { callAdminAiApi } from '@/lib/admin-api';
-import { removeUndefined } from '@/lib/utils';
+import { removeUndefined, suggestTopicImage } from '@/lib/utils';
 
 interface ArticleModalProps {
   isOpen: boolean;
@@ -137,7 +137,13 @@ export default function ArticleModal({
       if (Array.isArray(generated.cons)) setConsText(generated.cons.join('\n'));
       if (generated.content) setContent(generated.content);
 
-      setAiStatusMsg('✨ تم توليد المقال وتعبئة جميع الحقول بنجاح!');
+      // Automatically assign a topic-matched, high-resolution Unsplash image
+      if (!image.trim()) {
+        const autoImg = suggestTopicImage(generated.title || aiPrompt, generated.category);
+        setImage(autoImg);
+      }
+
+      setAiStatusMsg('✨ تم توليد المقال وتعبئة جميع الحقول مع صورة الغلاف بنجاح!');
       setTimeout(() => setAiStatusMsg(''), 4000);
     } catch (err: any) {
       alert('خطأ أثناء التوليد: ' + err.message);
@@ -145,6 +151,11 @@ export default function ArticleModal({
     } finally {
       setIsAiLoading(false);
     }
+  };
+
+  const handleAutoSuggestImage = () => {
+    const autoImg = suggestTopicImage(title || aiPrompt || 'tech', category);
+    setImage(autoImg);
   };
 
   const handleGenerateExcerpt = async () => {
@@ -690,7 +701,18 @@ export default function ArticleModal({
 
                 <div className="form-row">
                   <div className="form-group">
-                    <label className="form-label">Featured Image URL</label>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                      <label className="form-label" style={{ margin: 0 }}>Featured Image URL</label>
+                      <button
+                        type="button"
+                        onClick={handleAutoSuggestImage}
+                        className="btn-admin btn-admin-outline"
+                        style={{ padding: '2px 8px', fontSize: '0.75rem', borderColor: '#38bdf8', color: '#0284c7' }}
+                        title="جلب صورة احترافية مطابقة لموضوع المقال تلقائياً"
+                      >
+                        ✨ اختيار صورة ذكية
+                      </button>
+                    </div>
                     <input
                       type="url"
                       className="form-input"
@@ -698,6 +720,26 @@ export default function ArticleModal({
                       onChange={(e) => setImage(e.target.value)}
                       placeholder="https://images.unsplash.com/..."
                     />
+                    {image && (
+                      <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <img
+                          src={image}
+                          alt="Preview"
+                          style={{ width: '70px', height: '42px', objectFit: 'cover', borderRadius: '6px', border: '1px solid #cbd5e1' }}
+                          onError={(e) => { (e.target as any).style.display = 'none'; }}
+                        />
+                        <span style={{ fontSize: '0.75rem', color: '#059669', fontWeight: 600 }}>
+                          ✓ صورة مخصصة جاهزة للمقال والفيسبوك
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setImage('')}
+                          style={{ fontSize: '0.75rem', color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
+                        >
+                          مسح
+                        </button>
+                      </div>
+                    )}
                   </div>
                   <div className="form-group">
                     <label className="form-label">Affiliate URL (Monetization)</label>

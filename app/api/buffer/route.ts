@@ -177,8 +177,10 @@ async function publishToChannel(
 
     // Link Attachment Card provides the rich clickable preview (image + title + domain + excerpt)
     if (link) {
+      // Add cache-buster timestamp query param to force Facebook to scrape this specific article's fresh image
+      const fbUrl = link.includes('?') ? `${link}&fb_v=${Date.now()}` : `${link}?fb_v=${Date.now()}`;
       facebookMeta.linkAttachment = {
-        url: link,
+        url: fbUrl,
         title: title || 'TechNova AI',
         description: excerpt ? excerpt.slice(0, 200) : '',
         ...(imageUrl && imageUrl.startsWith('http') ? { thumbnail: { url: imageUrl } } : {}),
@@ -321,6 +323,7 @@ export async function POST(req: Request) {
       imageUrl = getArticleImage({
         image: body.image,
         id: articleId,
+        title: title,
         category: body.category,
       });
     }

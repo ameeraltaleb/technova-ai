@@ -21,7 +21,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     notFound();
   }
 
-  const image = getArticleImage(article as any);
+  const rawImage = getArticleImage(article as any);
+  const image = rawImage && rawImage.startsWith('/') ? `https://www.technova-ai.online${rawImage}` : rawImage;
   const articleUrl = `https://www.technova-ai.online/article/${article.id}`;
   const metaTitle = formatMetaTitle(article.title, 65, 'TechNova AI');
   const metaDescription = formatMetaDescription(article.excerpt, `${metaTitle} — In-depth guide and tech analysis on TechNova AI.`);

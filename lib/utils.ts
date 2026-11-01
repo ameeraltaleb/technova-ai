@@ -95,6 +95,22 @@ const CRYPTO_IMAGES = [
   'https://images.unsplash.com/photo-1605792657660-596af9009e82?w=800&h=450&fit=crop&q=80', // Crypto digital art
 ];
 
+const FINTECH_IMAGES = [
+  'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=1200&h=630&fit=crop&q=80', // Mobile banking payment
+  'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=1200&h=630&fit=crop&q=80', // Digital security banking
+  'https://images.unsplash.com/photo-1556742049-0a67c5574f73?w=1200&h=630&fit=crop&q=80', // Contactless credit card
+  'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=1200&h=630&fit=crop&q=80', // Online banking & phone
+  'https://images.unsplash.com/photo-1616077168079-7e09a677fb2c?w=1200&h=630&fit=crop&q=80', // Digital bank app
+  'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=1200&h=630&fit=crop&q=80', // Global finance money
+];
+
+const MOBILE_IMAGES = [
+  'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=1200&h=630&fit=crop&q=80', // Smartphone app UI
+  'https://images.unsplash.com/photo-1551650975-87deedd944c3?w=1200&h=630&fit=crop&q=80', // Mobile app developer
+  'https://images.unsplash.com/photo-1526406915894-7bcd65f60845?w=1200&h=630&fit=crop&q=80', // Phone screen user
+  'https://images.unsplash.com/photo-1533022139390-e31c488d69e2?w=1200&h=630&fit=crop&q=80', // Modern smartphone tech
+];
+
 const CATEGORY_IMAGE_POOLS: Record<string, string[]> = {
   'ai-tools': AI_IMAGES,
   'machine-learning': AI_IMAGES,
@@ -110,7 +126,101 @@ const CATEGORY_IMAGE_POOLS: Record<string, string[]> = {
   'tutorials': PRODUCTIVITY_IMAGES,
   'reviews': PRODUCTIVITY_IMAGES,
   'crypto': CRYPTO_IMAGES,
+  'fintech': FINTECH_IMAGES,
+  'finance': FINTECH_IMAGES,
+  'mobile': MOBILE_IMAGES,
 };
+
+/**
+ * Intelligent topic-to-image matcher:
+ * Analyzes article title and category keywords to return a high-resolution,
+ * beautifully relevant, copyright-free Unsplash photo.
+ */
+export function suggestTopicImage(title: string, category = ''): string {
+  const t = (title || '').toLowerCase();
+  const c = (category || '').toLowerCase();
+
+  let pool = AI_IMAGES;
+
+  if (
+    t.includes('bank') ||
+    t.includes('fintech') ||
+    t.includes('halifax') ||
+    t.includes('lloyds') ||
+    t.includes('payment') ||
+    t.includes('money') ||
+    t.includes('card') ||
+    t.includes('finance') ||
+    c === 'fintech' ||
+    c === 'finance'
+  ) {
+    pool = FINTECH_IMAGES;
+  } else if (
+    t.includes('mobile') ||
+    t.includes('app') ||
+    t.includes('ios') ||
+    t.includes('android') ||
+    t.includes('phone') ||
+    t.includes('tablet')
+  ) {
+    pool = MOBILE_IMAGES;
+  } else if (
+    t.includes('crypto') ||
+    t.includes('bitcoin') ||
+    t.includes('token') ||
+    t.includes('blockchain') ||
+    t.includes('ethereum') ||
+    c === 'crypto'
+  ) {
+    pool = CRYPTO_IMAGES;
+  } else if (
+    t.includes('security') ||
+    t.includes('hack') ||
+    t.includes('breach') ||
+    t.includes('cyber') ||
+    t.includes('cve') ||
+    t.includes('vuln') ||
+    t.includes('auth') ||
+    c === 'security'
+  ) {
+    pool = SECURITY_IMAGES;
+  } else if (
+    t.includes('cloud') ||
+    t.includes('server') ||
+    t.includes('aws') ||
+    t.includes('azure') ||
+    t.includes('docker') ||
+    t.includes('kubernetes') ||
+    c === 'cloud'
+  ) {
+    pool = CLOUD_IMAGES;
+  } else if (
+    t.includes('code') ||
+    t.includes('react') ||
+    t.includes('python') ||
+    t.includes('javascript') ||
+    t.includes('dev') ||
+    t.includes('programming') ||
+    c === 'programming' ||
+    c === 'dev-tools'
+  ) {
+    pool = DEV_IMAGES;
+  } else if (
+    t.includes('design') ||
+    t.includes('ui') ||
+    t.includes('ux') ||
+    t.includes('figma') ||
+    c === 'design'
+  ) {
+    pool = DESIGN_IMAGES;
+  } else if (CATEGORY_IMAGE_POOLS[c]) {
+    pool = CATEGORY_IMAGE_POOLS[c];
+  }
+
+  // Derive stable index from title characters to ensure each distinct article title gets a distinct photo
+  const hash = (t + c).split('').reduce((acc, char, index) => acc + char.charCodeAt(0) * (index + 7), 0);
+  return pool[Math.abs(hash) % pool.length];
+}
 
 /**
  * Returns the article's image URL, or a consistent domain-relevant placeholder
@@ -139,16 +249,9 @@ export function getOptimizedImageUrl(url: string, width = 400, height = 225): st
   return url;
 }
 
-export function getArticleImage(article: { image?: string; id?: string; category?: string }): string {
+export function getArticleImage(article: { image?: string; id?: string; category?: string; title?: string }): string {
   if (article.image && article.image.trim() !== '') return article.image;
-
-  const id = article.id || 'article';
-  const category = (article.category || '').toLowerCase().trim();
-  const pool = CATEGORY_IMAGE_POOLS[category] || AI_IMAGES;
-
-  // Generate a weighted, consistent index from the article ID
-  const hash = id.split('').reduce((acc, char, index) => acc + char.charCodeAt(0) * (index + 1), 0);
-  return pool[Math.abs(hash) % pool.length];
+  return suggestTopicImage(article.title || article.id || 'tech', article.category);
 }
 
 /**
