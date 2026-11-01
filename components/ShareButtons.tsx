@@ -175,7 +175,7 @@ export default function ShareButtons({ title, url, description, excerpt }: Share
           <button
             onClick={handleCopy}
             aria-label="Copy post text and link"
-            title="نسخ العنوان والوصف والرابط بالكامل جاهزة للصق في فيسبوك وتويتر"
+            title="Copy title, summary, and link to clipboard"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -192,7 +192,7 @@ export default function ShareButtons({ title, url, description, excerpt }: Share
             }}
           >
             <span>{copied ? '✓' : '📋'}</span>
-            <span>{copied ? 'تم نسخ المنشور كامل!' : 'نسخ المنشور'}</span>
+            <span>{copied ? 'Copied Full Post!' : 'Copy Post'}</span>
           </button>
         </div>
       </div>
