@@ -91,7 +91,7 @@ export default function TermsPage() {
             <p>For questions about these Terms of Service, please contact us:</p>
             <ul>
               <li><strong>Email:</strong> legal@technova-ai.online</li>
-              <li><strong>Contact Form:</strong> <Link href="/about#contactForm" style={{ color: 'var(--text-link)' }}>About Page</Link></li>
+              <li><strong>Contact Desk:</strong> <Link href="/contact" style={{ color: 'var(--text-link)' }}>Contact Us Page</Link></li>
             </ul>
           </div>
         </div>

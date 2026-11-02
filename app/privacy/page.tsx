@@ -67,14 +67,14 @@ export default function PrivacyPage() {
             </ul>
             <p>You can manage your cookie preferences through your browser settings. Disabling cookies may affect certain features of the Site.</p>
 
-            <h2>5. Third-Party Services</h2>
-            <p>We may use third-party services that collect, monitor, and analyze data:</p>
+            <h2>5. Third-Party Services & Google AdSense</h2>
+            <p>We work with trusted third-party partners to maintain and monetize our platform:</p>
             <ul>
-              <li><strong>Google Analytics:</strong> For website traffic analysis.</li>
-              <li><strong>Google AdSense:</strong> For displaying advertisements.</li>
-              <li><strong>Social Media Platforms:</strong> For sharing functionality and embedded content.</li>
+              <li><strong>Google Analytics:</strong> For aggregate traffic metrics, user engagement, and performance diagnostics.</li>
+              <li><strong>Google AdSense & DoubleClick:</strong> Google is a third-party vendor on our Site. Google uses cookies, including the DoubleClick cookie, to serve ads to our users based on their visits to our website and other websites across the Internet. You may opt out of personalized advertising by visiting <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-link)' }}>Google Ads Settings</a> or through <a href="https://www.aboutads.info/choices" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-link)' }}>aboutads.info</a>.</li>
+              <li><strong>Social Media Platforms:</strong> For content sharing and social engagement links.</li>
             </ul>
-            <p>Each third-party service has its own privacy policy. We encourage you to review their policies.</p>
+            <p>Each third-party service operates under its respective privacy terms. We encourage you to review their policies for further information.</p>
 
             <h2>6. Data Sharing and Disclosure</h2>
             <p>We do <strong>not</strong> sell your personal information. We may share your data only in the following circumstances:</p>
@@ -112,7 +112,7 @@ export default function PrivacyPage() {
             <p>If you have any questions about this Privacy Policy, please contact us:</p>
             <ul>
               <li><strong>Email:</strong> privacy@technova-ai.online</li>
-              <li><strong>Contact Form:</strong> <Link href="/about#contactForm" style={{ color: 'var(--text-link)' }}>About Page</Link></li>
+              <li><strong>Contact Desk:</strong> <Link href="/contact" style={{ color: 'var(--text-link)' }}>Contact Us Page</Link></li>
             </ul>
           </div>
         </div>
