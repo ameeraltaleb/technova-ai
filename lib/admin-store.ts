@@ -364,8 +364,8 @@ export const AdminStore = {
     return updated;
   },
 
-  updateMessageStatus(id: string, status: 'unread' | 'read' | 'replied'): ContactMessage[] {
-    const messages = this.getMessages();
+  updateMessageStatus(id: string, status: 'unread' | 'read' | 'replied', currentMessages?: ContactMessage[]): ContactMessage[] {
+    const messages = currentMessages || this.getMessages();
     const target = messages.find((m) => m.id === id);
     if (target) {
       target.status = status;
@@ -377,8 +377,8 @@ export const AdminStore = {
     return [...messages];
   },
 
-  deleteMessage(id: string): ContactMessage[] {
-    const messages = this.getMessages();
+  deleteMessage(id: string, currentMessages?: ContactMessage[]): ContactMessage[] {
+    const messages = currentMessages || this.getMessages();
     const updated = messages.filter((m) => m.id !== id);
     if (typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEYS.MESSAGES, JSON.stringify(updated));
