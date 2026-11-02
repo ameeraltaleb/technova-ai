@@ -8,6 +8,7 @@ import {
   ToolItem,
   NewsItem,
   ToolSubmission,
+  ContactMessage,
   SiteSettings,
   FirebaseConfig,
   STORAGE_KEYS,
@@ -24,6 +25,7 @@ import ArticleModal from '@/components/admin/ArticleModal';
 import ToolsTab from '@/components/admin/ToolsTab';
 import ToolModal from '@/components/admin/ToolModal';
 import SubmissionsTab from '@/components/admin/SubmissionsTab';
+import MessagesTab from '@/components/admin/MessagesTab';
 import NewsTab from '@/components/admin/NewsTab';
 import NewsModal from '@/components/admin/NewsModal';
 import SubscribersTab from '@/components/admin/SubscribersTab';
@@ -36,6 +38,7 @@ export default function AdminPage() {
   const [tools, setTools] = useState<ToolItem[]>([]);
   const [news, setNews] = useState<NewsItem[]>([]);
   const [submissions, setSubmissions] = useState<ToolSubmission[]>([]);
+  const [messages, setMessages] = useState<ContactMessage[]>([]);
   const [subscribers, setSubscribers] = useState<{ email: string; date: string }[]>([]);
   const [settings, setSettings] = useState<SiteSettings>(AdminStore.getSettings());
   const [firebaseConfig, setFirebaseConfig] = useState<FirebaseConfig>(AdminStore.getFirebaseConfig());
@@ -57,12 +60,13 @@ export default function AdminPage() {
   const syncLiveData = async () => {
     setIsSyncing(true);
     try {
-      const [liveArticles, liveTools, liveNews, liveSubs, liveSubscribers] = await Promise.all([
+      const [liveArticles, liveTools, liveNews, liveSubs, liveSubscribers, liveMessages] = await Promise.all([
         getLiveArticles(),
         getLiveTools(),
         getLiveNews(),
         FirebaseService.getSubmissions(),
         FirebaseService.getSubscribers(),
+        FirebaseService.getContactMessages(),
       ]);
 
       if (liveArticles && liveArticles.length > 0) {
@@ -90,6 +94,13 @@ export default function AdminPage() {
         setSubmissions(liveSubs);
         if (typeof window !== 'undefined') {
           localStorage.setItem(STORAGE_KEYS.SUBMISSIONS, JSON.stringify(liveSubs));
+        }
+      }
+
+      if (liveMessages && liveMessages.length > 0) {
+        setMessages(liveMessages);
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(STORAGE_KEYS.MESSAGES, JSON.stringify(liveMessages));
         }
       }
 
@@ -135,6 +146,7 @@ export default function AdminPage() {
     setTools(AdminStore.getTools());
     setNews(AdminStore.getNews());
     setSubmissions(AdminStore.getSubmissions());
+    setMessages(AdminStore.getMessages());
     setSubscribers(AdminStore.getSubscribers());
     setSettings(AdminStore.getSettings());
     setFirebaseConfig(AdminStore.getFirebaseConfig());
@@ -256,6 +268,17 @@ export default function AdminPage() {
     setNews(updated);
   };
 
+  // Message Actions
+  const handleUpdateMessageStatus = (id: string, status: 'unread' | 'read' | 'replied') => {
+    const updated = AdminStore.updateMessageStatus(id, status);
+    setMessages(updated);
+  };
+
+  const handleDeleteMessage = (id: string) => {
+    const updated = AdminStore.deleteMessage(id);
+    setMessages(updated);
+  };
+
   // Subscriber Actions
   const handleDeleteSubscriber = (email: string) => {
     const updated = AdminStore.deleteSubscriber(email);
@@ -302,6 +325,7 @@ export default function AdminPage() {
     articles: articles.length,
     tools: tools.length,
     submissions: submissions.filter((s) => !s.status || s.status === 'pending').length,
+    messages: messages.filter((m) => m.status === 'unread').length,
     news: news.length,
     subscribers: subscribers.length,
   };
@@ -364,6 +388,14 @@ export default function AdminPage() {
               submissions={submissions}
               onApprove={handleApproveSubmission}
               onReject={handleRejectSubmission}
+            />
+          )}
+
+          {activeTab === 'messages' && (
+            <MessagesTab
+              messages={messages}
+              onUpdateStatus={handleUpdateMessageStatus}
+              onDeleteMessage={handleDeleteMessage}
             />
           )}
 

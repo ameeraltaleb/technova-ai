@@ -53,7 +53,7 @@ export default function Footer() {
               <Link href="/article/claude-vs-chatgpt-2026" className="footer__link">Claude vs ChatGPT</Link>
               <Link href="/article/best-ai-code-editors-2026" className="footer__link">Best AI Code Editors</Link>
               <Link href="/article/notion-vs-obsidian-2026" className="footer__link">Notion vs Obsidian</Link>
-              <Link href="/article/midjourney-v7-review" className="footer__link">Midjourney V7 Review</Link>
+              <Link href="/article/local-llms-guide-2026" className="footer__link">Local LLMs Guide</Link>
             </div>
           </div>
 
@@ -61,9 +61,9 @@ export default function Footer() {
             <h3 className="footer__heading">Company</h3>
             <div className="footer__links">
               <Link href="/about" className="footer__link">About Us</Link>
-              <Link href="/about#contactForm" className="footer__link">Contact</Link>
-              <Link href="/about#contactForm" className="footer__link">Write for Us</Link>
-              <Link href="/about#contactForm" className="footer__link">Advertise</Link>
+              <Link href="/contact" className="footer__link">Contact Us</Link>
+              <Link href="/contact?topic=write-for-us" className="footer__link">Write for Us</Link>
+              <Link href="/contact?topic=advertising" className="footer__link">Advertise</Link>
             </div>
           </div>
         </div>

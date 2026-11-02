@@ -175,6 +175,10 @@ export default function Navbar() {
             <Link href="/about" className="navbar__link">
               About
             </Link>
+
+            <Link href="/contact" className="navbar__link">
+              Contact
+            </Link>
           </div>
 
           {/* Action Buttons */}
@@ -285,6 +289,10 @@ export default function Navbar() {
               <Link href="/about" className="mobile-drawer__link" onClick={() => setIsMobileOpen(false)}>
                 <span className="mobile-drawer__link-icon">ℹ️</span>
                 <span>About Us</span>
+              </Link>
+              <Link href="/contact" className="mobile-drawer__link" onClick={() => setIsMobileOpen(false)}>
+                <span className="mobile-drawer__link-icon">✉️</span>
+                <span>Contact</span>
               </Link>
             </nav>
 

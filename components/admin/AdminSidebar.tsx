@@ -7,6 +7,7 @@ export type AdminTab =
   | 'articles'
   | 'tools'
   | 'submissions'
+  | 'messages'
   | 'news'
   | 'subscribers'
   | 'settings';
@@ -18,6 +19,7 @@ interface AdminSidebarProps {
     articles: number;
     tools: number;
     submissions: number;
+    messages?: number;
     news: number;
     subscribers: number;
   };
@@ -35,6 +37,7 @@ export default function AdminSidebar({
     { id: 'articles', label: 'Articles & Reviews', icon: '✍️', count: counts.articles },
     { id: 'tools', label: 'AI Tools Directory', icon: '🛠️', count: counts.tools },
     { id: 'submissions', label: 'Tool Submissions', icon: '📥', count: counts.submissions },
+    { id: 'messages', label: 'Inquiries & Messages', icon: '📬', count: counts.messages },
     { id: 'news', label: 'Tech News', icon: '📰', count: counts.news },
     { id: 'subscribers', label: 'Newsletter', icon: '👥', count: counts.subscribers },
     { id: 'settings', label: 'Settings & Monetization', icon: '⚙️' },

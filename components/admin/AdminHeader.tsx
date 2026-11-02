@@ -27,6 +27,7 @@ export default function AdminHeader({
     articles: 'Articles & Tool Reviews',
     tools: 'AI Tools Directory Management',
     submissions: 'Pending Tool Submissions',
+    messages: 'Reader Inquiries & Messages',
     news: 'Tech News & Breaking Updates',
     subscribers: 'Newsletter Subscribers',
     settings: 'Site Settings & Monetization',

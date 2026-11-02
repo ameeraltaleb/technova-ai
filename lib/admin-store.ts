@@ -70,6 +70,18 @@ export interface ToolSubmission {
   status?: 'pending' | 'approved' | 'rejected';
 }
 
+export interface ContactMessage {
+  id: string;
+  name: string;
+  email: string;
+  subject: string;
+  topic?: string;
+  message: string;
+  date: string;
+  status: 'unread' | 'read' | 'replied';
+  replyNotes?: string;
+}
+
 export interface SiteSettings {
   siteName: string;
   tagline: string;
@@ -107,6 +119,7 @@ export const STORAGE_KEYS = {
   TOOLS: 'technova_admin_tools',
   NEWS: 'technova_admin_news',
   SUBMISSIONS: 'technova_tool_submissions',
+  MESSAGES: 'technova_contact_messages',
   SUBSCRIBERS: 'technova_subscribers',
   SETTINGS: 'technova_admin_settings',
   FIREBASE: 'technova_firebase_config',
@@ -320,6 +333,58 @@ export const AdminStore = {
       }
     }
     return [...submissions];
+  },
+
+  // Contact Messages
+  getMessages(): ContactMessage[] {
+    if (typeof window === 'undefined') return [];
+    try {
+      const stored = localStorage.getItem(STORAGE_KEYS.MESSAGES);
+      if (stored) return JSON.parse(stored);
+    } catch (e) {
+      console.error(e);
+    }
+    return [];
+  },
+
+  saveMessage(msg: ContactMessage): ContactMessage[] {
+    const messages = this.getMessages();
+    const existingIndex = messages.findIndex((m) => m.id === msg.id);
+    let updated: ContactMessage[];
+    if (existingIndex >= 0) {
+      messages[existingIndex] = msg;
+      updated = [...messages];
+    } else {
+      updated = [msg, ...messages];
+    }
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(STORAGE_KEYS.MESSAGES, JSON.stringify(updated));
+    }
+    FirebaseService.saveContactMessage(msg).catch((e) => console.warn(e));
+    return updated;
+  },
+
+  updateMessageStatus(id: string, status: 'unread' | 'read' | 'replied'): ContactMessage[] {
+    const messages = this.getMessages();
+    const target = messages.find((m) => m.id === id);
+    if (target) {
+      target.status = status;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(STORAGE_KEYS.MESSAGES, JSON.stringify(messages));
+      }
+      FirebaseService.updateContactMessageStatus(id, status).catch((e) => console.warn(e));
+    }
+    return [...messages];
+  },
+
+  deleteMessage(id: string): ContactMessage[] {
+    const messages = this.getMessages();
+    const updated = messages.filter((m) => m.id !== id);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(STORAGE_KEYS.MESSAGES, JSON.stringify(updated));
+    }
+    FirebaseService.deleteContactMessage(id).catch((e) => console.warn(e));
+    return updated;
   },
 
   // Subscribers

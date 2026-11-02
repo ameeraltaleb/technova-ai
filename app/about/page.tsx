@@ -108,76 +108,56 @@ export default function AboutPage() {
               </div>
             </div>
 
-            {/* Contact */}
+            {/* Contact CTA */}
             <div id="contactForm">
               <div className="section__label">// Get in Touch</div>
-              <h2 className="section__title" style={{ marginBottom: 'var(--space-6)' }}>Contact Us</h2>
+              <h2 className="section__title" style={{ marginBottom: 'var(--space-6)' }}>Contact & Partnerships</h2>
               <div style={{
                 background: 'var(--bg-secondary)',
                 border: '1px solid var(--border-card)',
                 borderRadius: 'var(--radius-xl)',
                 padding: 'var(--space-8)',
+                display: 'grid',
+                gap: 'var(--space-6)',
               }}>
-                <p style={{ color: 'var(--text-secondary)', marginBottom: 'var(--space-6)', lineHeight: 1.6 }}>
-                  Have a question, want to submit a tool for review, or interested in advertising? Drop us a line.
+                <p style={{ color: 'var(--text-secondary)', lineHeight: 1.7, fontSize: 'var(--fs-md)', margin: 0 }}>
+                  Have an editorial question, partnership inquiry, advertising proposal, or want to submit an AI tool for comprehensive benchmark testing? We welcome your messages.
                 </p>
-                <form style={{ display: 'grid', gap: 'var(--space-4)' }} action="#">
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--space-4)' }}>
-                    <input type="text" placeholder="Your Name" style={{
-                      padding: 'var(--space-3) var(--space-4)',
-                      background: 'var(--bg-input)',
-                      border: '1px solid var(--border-card)',
-                      borderRadius: 'var(--radius-md)',
-                      color: 'var(--text-primary)',
-                      fontSize: 'var(--fs-base)',
-                    }} />
-                    <input type="email" placeholder="Your Email" style={{
-                      padding: 'var(--space-3) var(--space-4)',
-                      background: 'var(--bg-input)',
-                      border: '1px solid var(--border-card)',
-                      borderRadius: 'var(--radius-md)',
-                      color: 'var(--text-primary)',
-                      fontSize: 'var(--fs-base)',
-                    }} />
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 'var(--space-4)' }}>
+                  <div style={{ padding: 'var(--space-4)', background: 'var(--bg-input)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-card)' }}>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>General Inquiries</div>
+                    <a href="mailto:contact@technova-ai.online" style={{ color: 'var(--color-primary-light)', fontWeight: 600, wordBreak: 'break-all' }}>
+                      contact@technova-ai.online
+                    </a>
                   </div>
-                  <select style={{
-                    padding: 'var(--space-3) var(--space-4)',
-                    background: 'var(--bg-input)',
-                    border: '1px solid var(--border-card)',
-                    borderRadius: 'var(--radius-md)',
-                    color: 'var(--text-secondary)',
-                    fontSize: 'var(--fs-base)',
-                  }}>
-                    <option>Select a topic</option>
-                    <option>Submit a Tool for Review</option>
-                    <option>Advertising & Partnerships</option>
-                    <option>Write for Us</option>
-                    <option>Bug Report / Feedback</option>
-                    <option>General Inquiry</option>
-                  </select>
-                  <textarea placeholder="Your Message" rows={5} style={{
-                    padding: 'var(--space-3) var(--space-4)',
-                    background: 'var(--bg-input)',
-                    border: '1px solid var(--border-card)',
-                    borderRadius: 'var(--radius-md)',
-                    color: 'var(--text-primary)',
-                    fontSize: 'var(--fs-base)',
-                    resize: 'vertical',
-                  }} />
-                  <button type="submit" style={{
-                    padding: 'var(--space-3) var(--space-8)',
-                    background: 'var(--gradient-primary)',
-                    color: '#fff',
-                    borderRadius: 'var(--radius-full)',
-                    fontWeight: 600,
-                    fontSize: 'var(--fs-md)',
-                    cursor: 'pointer',
-                    border: 'none',
-                    justifySelf: 'start',
-                  }}>
-                    Send Message →
-                  </button>
-                </form>
+                  <div style={{ padding: 'var(--space-4)', background: 'var(--bg-input)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-card)' }}>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Sponsorships & Ads</div>
+                    <a href="mailto:partners@technova-ai.online" style={{ color: 'var(--color-primary-light)', fontWeight: 600, wordBreak: 'break-all' }}>
+                      partners@technova-ai.online
+                    </a>
+                  </div>
+                </div>
+
+                <div>
+                  <Link
+                    href="/contact"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: 'var(--space-3) var(--space-8)',
+                      background: 'var(--gradient-primary)',
+                      color: '#fff',
+                      borderRadius: 'var(--radius-full)',
+                      fontWeight: 600,
+                      fontSize: 'var(--fs-md)',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    Open Contact & Inquiry Desk →
+                  </Link>
+                </div>
               </div>
             </div>
           </div>

@@ -17,6 +17,7 @@ import {
   ToolItem,
   NewsItem,
   ToolSubmission,
+  ContactMessage,
   SiteSettings,
 } from './admin-store';
 import { ARTICLES, TOOLS, NEWS } from './data';
@@ -208,6 +209,59 @@ export const FirebaseService = {
       await setDoc(docRef, cleanedPayload, { merge: true });
     } catch (error) {
       console.error('Firestore saveSettings error:', error);
+      throw error;
+    }
+  },
+
+  // Contact Messages
+  async getContactMessages(): Promise<ContactMessage[]> {
+    try {
+      const colRef = collection(db, 'contact_messages');
+      const snap = await getDocs(colRef);
+      if (snap.empty) return [];
+      const messages = snap.docs.map((d) => d.data() as ContactMessage);
+      return messages.sort(
+        (a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime()
+      );
+    } catch (error) {
+      console.warn('Firestore getContactMessages warning:', error);
+      return [];
+    }
+  },
+
+  async saveContactMessage(msg: ContactMessage): Promise<void> {
+    try {
+      if (!msg || !msg.id) {
+        throw new Error('Message ID is required');
+      }
+      const docRef = doc(db, 'contact_messages', msg.id);
+      const cleaned = removeUndefined({
+        ...msg,
+        updatedAt: serverTimestamp(),
+        createdAt: serverTimestamp(),
+      });
+      await setDoc(docRef, cleaned, { merge: true });
+    } catch (error) {
+      console.error('Firestore saveContactMessage error:', error);
+      throw error;
+    }
+  },
+
+  async updateContactMessageStatus(id: string, status: string): Promise<void> {
+    try {
+      const docRef = doc(db, 'contact_messages', id);
+      await setDoc(docRef, { status, updatedAt: serverTimestamp() }, { merge: true });
+    } catch (error) {
+      console.error('Firestore updateContactMessageStatus error:', error);
+      throw error;
+    }
+  },
+
+  async deleteContactMessage(id: string): Promise<void> {
+    try {
+      await deleteDoc(doc(db, 'contact_messages', id));
+    } catch (error) {
+      console.error('Firestore deleteContactMessage error:', error);
       throw error;
     }
   },
