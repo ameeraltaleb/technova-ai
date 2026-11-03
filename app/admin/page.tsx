@@ -61,7 +61,7 @@ export default function AdminPage() {
     setIsSyncing(true);
     try {
       const [liveArticles, liveTools, liveNews, liveSubs, liveSubscribers, liveMessages] = await Promise.all([
-        getLiveArticles(),
+        getLiveArticles({ includeUnpublished: true }),
         getLiveTools(),
         getLiveNews(),
         FirebaseService.getSubmissions(),
@@ -192,6 +192,15 @@ export default function AdminPage() {
   const handleSaveArticle = async (art: ArticleItem) => {
     const updated = await AdminStore.saveArticle(art, articles);
     setArticles(updated);
+  };
+
+  const handlePublishNowArticle = async (art: ArticleItem) => {
+    const publishedArt: ArticleItem = {
+      ...art,
+      status: 'published',
+      scheduledFor: undefined,
+    };
+    await handleSaveArticle(publishedArt);
   };
 
   const handleDeleteArticle = async (id: string) => {
@@ -371,6 +380,7 @@ export default function AdminPage() {
               onEdit={handleEditArticle}
               onDelete={handleDeleteArticle}
               onNew={handleOpenNewArticle}
+              onPublishNow={handlePublishNowArticle}
             />
           )}
 

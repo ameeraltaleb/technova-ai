@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ArticleItem, AdminStore } from '@/lib/admin-store';
+import { ArticleItem, ArticleStatus, AdminStore } from '@/lib/admin-store';
 import { CATEGORIES } from '@/lib/data';
 import { callAdminAiApi } from '@/lib/admin-api';
 import { removeUndefined, suggestTopicImage } from '@/lib/utils';
@@ -28,6 +28,8 @@ export default function ArticleModal({
   const [rating, setRating] = useState(4.8);
   const [readTime, setReadTime] = useState('8 min read');
   const [featured, setFeatured] = useState(false);
+  const [status, setStatus] = useState<ArticleStatus>('published');
+  const [scheduledFor, setScheduledFor] = useState('');
   const [tags, setTags] = useState('AI, Tools, Review');
   const [image, setImage] = useState('');
   const [affiliateUrl, setAffiliateUrl] = useState('');
@@ -64,6 +66,8 @@ export default function ArticleModal({
       setRating(initialArticle.rating || 4.8);
       setReadTime(initialArticle.readTime || '8 min read');
       setFeatured(!!initialArticle.featured);
+      setStatus(initialArticle.status || 'published');
+      setScheduledFor(initialArticle.scheduledFor || '');
       setTags((initialArticle.tags || []).join(', '));
       setImage(initialArticle.image || '');
       setAffiliateUrl(initialArticle.affiliateUrl || '');
@@ -83,6 +87,8 @@ export default function ArticleModal({
       setRating(4.8);
       setReadTime('6 min read');
       setFeatured(false);
+      setStatus('published');
+      setScheduledFor('');
       setIsSponsored(false);
       setSponsorName('');
       setSponsorUrl('');
@@ -317,6 +323,8 @@ export default function ArticleModal({
       image: image.trim(),
       content: formattedContent,
       isSponsored: Boolean(isSponsored),
+      status,
+      scheduledFor: status === 'scheduled' && scheduledFor ? scheduledFor : undefined,
       ratingBreakdown: {
         overall: Number(rating) || 4.8,
         label: Number(rating) >= 4.8 ? 'Exceptional' : Number(rating) >= 4.5 ? 'Excellent' : 'Very Good',
@@ -824,6 +832,166 @@ export default function ArticleModal({
                     />
                     <span>Highlight as Featured Article on Homepage</span>
                   </label>
+                </div>
+
+                {/* Publishing & Scheduling Section */}
+                <div
+                  style={{
+                    margin: '16px 0',
+                    padding: '16px',
+                    borderRadius: '10px',
+                    background: 'var(--admin-bg-surface, #f8fafc)',
+                    border: '1px solid var(--admin-border, #e2e8f0)',
+                  }}
+                >
+                  <label className="form-label" style={{ fontWeight: 700, marginBottom: '8px', display: 'block' }}>
+                    🚀 Publishing Status & Scheduling
+                  </label>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', marginBottom: '12px' }}>
+                    <button
+                      type="button"
+                      onClick={() => setStatus('published')}
+                      style={{
+                        padding: '10px',
+                        borderRadius: '8px',
+                        border: status === 'published' ? '2px solid #10b981' : '1px solid #cbd5e1',
+                        background: status === 'published' ? 'rgba(16, 185, 129, 0.1)' : '#fff',
+                        color: status === 'published' ? '#047857' : 'inherit',
+                        fontWeight: status === 'published' ? 700 : 500,
+                        cursor: 'pointer',
+                        fontSize: '0.82rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: '4px',
+                      }}
+                    >
+                      <span style={{ fontSize: '1.2rem' }}>🟢</span>
+                      <span>Publish Now</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setStatus('scheduled');
+                        if (!scheduledFor) {
+                          // Default to tomorrow at 09:00 AM
+                          const tomorrow = new Date(Date.now() + 24 * 3600 * 1000);
+                          tomorrow.setHours(9, 0, 0, 0);
+                          const pad = (n: number) => n.toString().padStart(2, '0');
+                          const iso = `${tomorrow.getFullYear()}-${pad(tomorrow.getMonth() + 1)}-${pad(tomorrow.getDate())}T${pad(tomorrow.getHours())}:${pad(tomorrow.getMinutes())}`;
+                          setScheduledFor(iso);
+                        }
+                      }}
+                      style={{
+                        padding: '10px',
+                        borderRadius: '8px',
+                        border: status === 'scheduled' ? '2px solid #6366f1' : '1px solid #cbd5e1',
+                        background: status === 'scheduled' ? 'rgba(99, 102, 241, 0.1)' : '#fff',
+                        color: status === 'scheduled' ? '#4f46e5' : 'inherit',
+                        fontWeight: status === 'scheduled' ? 700 : 500,
+                        cursor: 'pointer',
+                        fontSize: '0.82rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: '4px',
+                      }}
+                    >
+                      <span style={{ fontSize: '1.2rem' }}>📅</span>
+                      <span>Schedule for Later</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setStatus('draft')}
+                      style={{
+                        padding: '10px',
+                        borderRadius: '8px',
+                        border: status === 'draft' ? '2px solid #f59e0b' : '1px solid #cbd5e1',
+                        background: status === 'draft' ? 'rgba(245, 158, 11, 0.1)' : '#fff',
+                        color: status === 'draft' ? '#b45309' : 'inherit',
+                        fontWeight: status === 'draft' ? 700 : 500,
+                        cursor: 'pointer',
+                        fontSize: '0.82rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: '4px',
+                      }}
+                    >
+                      <span style={{ fontSize: '1.2rem' }}>📝</span>
+                      <span>Save as Draft</span>
+                    </button>
+                  </div>
+
+                  {status === 'scheduled' && (
+                    <div
+                      style={{
+                        marginTop: '12px',
+                        padding: '12px',
+                        borderRadius: '8px',
+                        background: '#ffffff',
+                        border: '1px solid #c7d2fe',
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                        <label className="form-label" style={{ margin: 0, fontSize: '0.8rem', fontWeight: 600 }}>
+                          Select Release Date & Time:
+                        </label>
+                        <span style={{ fontSize: '0.72rem', color: '#6366f1', fontWeight: 600 }}>
+                          Auto-unlocks at this exact minute
+                        </span>
+                      </div>
+
+                      <input
+                        type="datetime-local"
+                        className="form-input"
+                        value={scheduledFor}
+                        onChange={(e) => setScheduledFor(e.target.value)}
+                        style={{ marginBottom: '10px' }}
+                      />
+
+                      <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--admin-text-muted)', alignSelf: 'center' }}>Presets:</span>
+                        {[
+                          { label: 'Tomorrow 9 AM', hours: 24, setH: 9 },
+                          { label: 'In 2 Days (9 AM)', hours: 48, setH: 9 },
+                          { label: 'In 3 Days (9 AM)', hours: 72, setH: 9 },
+                          { label: 'In 1 Week', hours: 168, setH: 9 },
+                        ].map((p) => (
+                          <button
+                            key={p.label}
+                            type="button"
+                            onClick={() => {
+                              const d = new Date(Date.now() + p.hours * 3600 * 1000);
+                              d.setHours(p.setH, 0, 0, 0);
+                              const pad = (n: number) => n.toString().padStart(2, '0');
+                              const iso = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+                              setScheduledFor(iso);
+                            }}
+                            className="btn-admin btn-admin-outline"
+                            style={{ padding: '3px 8px', fontSize: '0.72rem', borderRadius: '4px' }}
+                          >
+                            + {p.label}
+                          </button>
+                        ))}
+                      </div>
+
+                      {scheduledFor && (
+                        <div style={{ marginTop: '8px', fontSize: '0.75rem', color: '#4338ca', background: '#e0e7ff', padding: '6px 10px', borderRadius: '6px' }}>
+                          📅 Will go live on: <strong>{new Date(scheduledFor).toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' })}</strong>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {status === 'draft' && (
+                    <div style={{ marginTop: '8px', fontSize: '0.75rem', color: '#92400e', background: '#fef3c7', padding: '6px 10px', borderRadius: '6px' }}>
+                      ℹ️ This article is saved as a private draft. It will not be visible to website visitors or indexed by Google.
+                    </div>
+                  )}
                 </div>
 
                 {initialArticle?.isSponsored && (

@@ -3,6 +3,8 @@
 import { ARTICLES, TOOLS, NEWS, SITE_CONFIG } from './data';
 import { FirebaseService } from './firebase-service';
 
+export type ArticleStatus = 'published' | 'scheduled' | 'draft';
+
 export interface ArticleItem {
   id: string;
   title: string;
@@ -33,6 +35,8 @@ export interface ArticleItem {
   isSponsored?: boolean;
   sponsorName?: string;
   sponsorUrl?: string;
+  status?: ArticleStatus;
+  scheduledFor?: string;
 }
 
 export interface ToolItem {

@@ -37,7 +37,27 @@ export function sortArticlesByNewest<T extends ArticleItem>(articles: T[]): T[] 
   return [...articles].sort((a, b) => getArticleTimestamp(b) - getArticleTimestamp(a));
 }
 
-export async function getLiveArticles(): Promise<ArticleItem[]> {
+export function isArticlePublished(article: ArticleItem): boolean {
+  if (article.status === 'draft') return false;
+  if (article.status === 'scheduled') {
+    if (article.scheduledFor) {
+      const scheduledTime = new Date(article.scheduledFor).getTime();
+      if (!isNaN(scheduledTime) && Date.now() < scheduledTime) {
+        return false;
+      }
+    }
+  } else if (article.scheduledFor) {
+    const scheduledTime = new Date(article.scheduledFor).getTime();
+    if (!isNaN(scheduledTime) && Date.now() < scheduledTime) {
+      return false;
+    }
+  }
+  return true;
+}
+
+export async function getLiveArticles(options?: { includeUnpublished?: boolean }): Promise<ArticleItem[]> {
+  const includeUnpublished = Boolean(options?.includeUnpublished);
+
   try {
     const colRef = collection(db, 'articles');
     const snap = await getDocs(colRef);
@@ -55,7 +75,8 @@ export async function getLiveArticles(): Promise<ArticleItem[]> {
           uniqueMap.set(art.id, art);
         }
       }
-      return sortArticlesByNewest(Array.from(uniqueMap.values()));
+      const sorted = sortArticlesByNewest(Array.from(uniqueMap.values()));
+      return includeUnpublished ? sorted : sorted.filter(isArticlePublished);
     }
   } catch (error) {
     console.warn('getLiveArticles fallback to static:', error);
@@ -66,21 +87,34 @@ export async function getLiveArticles(): Promise<ArticleItem[]> {
       uniqueMap.set(art.id, art);
     }
   }
-  return sortArticlesByNewest(Array.from(uniqueMap.values()));
+  const sorted = sortArticlesByNewest(Array.from(uniqueMap.values()));
+  return includeUnpublished ? sorted : sorted.filter(isArticlePublished);
 }
 
-export async function getLiveArticleById(id: string): Promise<ArticleItem | null> {
+export async function getLiveArticleById(id: string, options?: { allowUnpublished?: boolean }): Promise<ArticleItem | null> {
+  const allowUnpublished = Boolean(options?.allowUnpublished);
+  let article: ArticleItem | null = null;
+
   try {
     const docRef = doc(db, 'articles', id);
     const snap = await getDoc(docRef);
     if (snap.exists()) {
-      return snap.data() as ArticleItem;
+      article = snap.data() as ArticleItem;
     }
   } catch (error) {
     console.warn(`getLiveArticleById(${id}) fallback:`, error);
   }
-  const found = ARTICLES.find((a) => a.id === id);
-  return (found as unknown as ArticleItem) || null;
+
+  if (!article) {
+    const found = ARTICLES.find((a) => a.id === id);
+    article = (found as unknown as ArticleItem) || null;
+  }
+
+  if (!article) return null;
+  if (!allowUnpublished && !isArticlePublished(article)) {
+    return null;
+  }
+  return article;
 }
 
 export async function getLiveTools(): Promise<ToolItem[]> {
