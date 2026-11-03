@@ -346,9 +346,32 @@ export default function ArticlesTab({
                       )}
 
                       {isLive && (
-                        <span className="badge-pill badge-pill-success">
-                          ✓ Live
-                        </span>
+                        <div>
+                          <span className="badge-pill badge-pill-success">
+                            ✓ Live
+                          </span>
+                          {art.bufferShared && (
+                            <div style={{ marginTop: '3px' }}>
+                              <span
+                                style={{
+                                  fontSize: '0.65rem',
+                                  fontWeight: 600,
+                                  color: '#4f46e5',
+                                  background: 'rgba(79, 70, 229, 0.08)',
+                                  border: '1px solid rgba(79, 70, 229, 0.2)',
+                                  padding: '1px 5px',
+                                  borderRadius: '4px',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '2px',
+                                }}
+                                title="تمت مشاركة هذا المقال تلقائياً عبر Buffer"
+                              >
+                                📡 Shared
+                              </span>
+                            </div>
+                          )}
+                        </div>
                       )}
                     </td>
 

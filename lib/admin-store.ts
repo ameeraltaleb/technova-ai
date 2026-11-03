@@ -37,6 +37,8 @@ export interface ArticleItem {
   sponsorUrl?: string;
   status?: ArticleStatus;
   scheduledFor?: string;
+  bufferShared?: boolean;
+  bufferSharedAt?: string;
 }
 
 export interface ToolItem {

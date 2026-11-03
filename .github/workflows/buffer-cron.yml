@@ -1,0 +1,19 @@
+name: Automated Buffer Social Publisher
+
+on:
+  schedule:
+    # Run every 30 minutes around the clock
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+jobs:
+  auto-publish:
+    name: Check & Publish Scheduled Articles to Buffer
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Auto-Publish Cron Endpoint
+        run: |
+          echo "Pinging https://www.technova-ai.online/api/cron/publish ..."
+          curl -s -X POST -H "Content-Type: application/json" \
+            https://www.technova-ai.online/api/cron/publish || true
+

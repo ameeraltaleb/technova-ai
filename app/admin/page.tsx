@@ -157,7 +157,16 @@ export default function AdminPage() {
     // 4. Fetch live data from Firebase to guarantee cross-device sync (e.g. Mobile <-> Laptop)
     syncLiveData();
 
-    return () => unsubscribe();
+    // 5. Trigger automated check for scheduled articles due for Buffer publishing
+    fetch('/api/cron/publish', { method: 'POST' }).catch(() => {});
+    const cronInterval = setInterval(() => {
+      fetch('/api/cron/publish', { method: 'POST' }).catch(() => {});
+    }, 60000);
+
+    return () => {
+      unsubscribe();
+      clearInterval(cronInterval);
+    };
   }, [router]);
 
   if (!isLoaded) {
@@ -189,9 +198,46 @@ export default function AdminPage() {
     setArticleModalOpen(true);
   };
 
+  const triggerAutoBufferPublish = async (art: ArticleItem) => {
+    try {
+      const currentSettings = AdminStore.getSettings();
+      if (currentSettings.bufferAutoPublish === false) return;
+      const res = await fetch('/api/buffer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          token: currentSettings.bufferAccessToken || undefined,
+          id: art.id,
+          title: art.title,
+          excerpt: art.excerpt,
+          image: art.image,
+          category: art.category,
+          now: true,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        const markedArt: ArticleItem = {
+          ...art,
+          bufferShared: true,
+          bufferSharedAt: new Date().toISOString(),
+        };
+        await AdminStore.saveArticle(markedArt);
+      }
+    } catch (e) {
+      console.warn('Auto-buffer dispatch background error:', e);
+    }
+  };
+
   const handleSaveArticle = async (art: ArticleItem) => {
     const updated = await AdminStore.saveArticle(art, articles);
     setArticles(updated);
+
+    // Auto-publish to Buffer if status is published and not yet shared
+    const isLive = !art.status || art.status === 'published';
+    if (isLive && !art.bufferShared) {
+      triggerAutoBufferPublish(art);
+    }
   };
 
   const handlePublishNowArticle = async (art: ArticleItem) => {
