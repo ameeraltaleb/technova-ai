@@ -545,4 +545,157 @@ export function formatMetaTitle(
   return truncated || clean.slice(0, maxLen);
 }
 
+/**
+ * Robust markdown to semantic HTML converter for article content.
+ * Gracefully parses headings, tables, code blocks, lists, quotes, and typography.
+ * If content is already valid HTML, it safely preserves it.
+ */
+export function renderMarkdownToHtml(raw: string): string {
+  if (!raw || typeof raw !== 'string') return '';
+
+  let text = raw.trim();
+
+  // If already full HTML with paragraphs or headings, return as is
+  const hasHtmlParagraphs = /<p\b[^>]*>/i.test(text);
+  const hasHtmlHeadings = /<h[1-6]\b[^>]*>/i.test(text);
+  const hasRawMarkdown = /^#{1,4}\s+|(\n#{1,4}\s+)|(\n\|[^\n]+\|\n\|[-:\s|]+\|)|(```)/m.test(text);
+
+  if (hasHtmlParagraphs && hasHtmlHeadings && !hasRawMarkdown) {
+    return text;
+  }
+
+  // 1. Stash fenced code blocks to prevent inner transformation
+  const codeBlocks: string[] = [];
+  text = text.replace(/```([a-zA-Z0-9_-]*)\n([\s\S]*?)```/g, (_, lang, code) => {
+    const escaped = code
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+    const langClass = lang ? ` language-${lang}` : '';
+    const placeholder = `__CODE_BLOCK_${codeBlocks.length}__`;
+    codeBlocks.push(
+      `<div class="article-code-block"><pre><code class="${langClass}">${escaped}</code></pre></div>`
+    );
+    return placeholder;
+  });
+
+  // 2. Stash inline code
+  const inlineCodes: string[] = [];
+  text = text.replace(/`([^`\n]+)`/g, (_, code) => {
+    const escaped = code
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+    const placeholder = `__INLINE_CODE_${inlineCodes.length}__`;
+    inlineCodes.push(`<code>${escaped}</code>`);
+    return placeholder;
+  });
+
+  // 3. Parse Markdown Tables
+  const tableRegex = /(?:(?:^|\n)\|[^\n]+\|\r?\n\|[-:\s|]+\|\r?\n(?:\|[^\n]+\|\r?\n?)+)/g;
+  text = text.replace(tableRegex, (tableMatch) => {
+    const lines = tableMatch.trim().split(/\r?\n/).filter(Boolean);
+    if (lines.length < 2) return tableMatch;
+
+    const parseRow = (line: string) => {
+      const trimmed = line.trim();
+      const content = trimmed.replace(/^\|/, '').replace(/\|$/, '');
+      return content.split('|').map((c) => c.trim());
+    };
+
+    const headerCells = parseRow(lines[0]);
+    const bodyLines = lines.slice(2); // Skip separator line
+
+    const ths = headerCells.map((h) => `<th>${h}</th>`).join('');
+    const trs = bodyLines
+      .map((rowLine) => {
+        const cells = parseRow(rowLine);
+        const tds = cells.map((cell) => `<td>${cell}</td>`).join('');
+        return `<tr>${tds}</tr>`;
+      })
+      .join('\n');
+
+    return `\n<div class="article-table-wrap"><table class="article-table"><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table></div>\n`;
+  });
+
+  // 4. Horizontal rules
+  text = text.replace(/^(?:---|\*\*\*|___)\s*$/gm, '<hr class="article-divider" />');
+
+  // 5. Headings
+  text = text.replace(/^#### (.*?)$/gm, '<h4>$1</h4>');
+  text = text.replace(/^### (.*?)$/gm, '<h3>$1</h3>');
+  text = text.replace(/^## (.*?)$/gm, '<h2>$1</h2>');
+  text = text.replace(/^# (.*?)$/gm, '<h2>$1</h2>');
+
+  // 6. Blockquotes
+  text = text.replace(/^(?:> (.*?)(?:\n|$))+/gm, (quoteBlock) => {
+    const cleanLines = quoteBlock
+      .split(/\r?\n/)
+      .map((l) => l.replace(/^>\s?/, '').trim())
+      .filter(Boolean)
+      .join(' ');
+    return `<blockquote class="article-quote"><p>${cleanLines}</p></blockquote>\n`;
+  });
+
+  // 7. Unordered Lists
+  text = text.replace(/(?:^(?:[-*]|\+)\s+[^\n]+(?:\r?\n|$))+/gm, (listBlock) => {
+    const items = listBlock
+      .trim()
+      .split(/\r?\n/)
+      .map((item) => `<li>${item.replace(/^(?:[-*]|\+)\s+/, '').trim()}</li>`)
+      .join('\n');
+    return `<ul>\n${items}\n</ul>\n`;
+  });
+
+  // 8. Ordered Lists
+  text = text.replace(/(?:^\d+\.\s+[^\n]+(?:\r?\n|$))+/gm, (listBlock) => {
+    const items = listBlock
+      .trim()
+      .split(/\r?\n/)
+      .map((item) => `<li>${item.replace(/^\d+\.\s+/, '').trim()}</li>`)
+      .join('\n');
+    return `<ol>\n${items}\n</ol>\n`;
+  });
+
+  // 9. Inline formatting: Bold, Italic, Links
+  text = text.replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>');
+  text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  text = text.replace(/__([^_]+)__/g, '<strong>$1</strong>');
+  text = text.replace(/\*([^*\n]+)\*/g, '<em>$1</em>');
+  text = text.replace(/_([^_]+)_/g, '<em>$1</em>');
+  text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+
+  // 10. Paragraphs wrapping for raw text chunks
+  const blocks = text.split(/\n{2,}/);
+  const formattedBlocks = blocks.map((block) => {
+    const trimmed = block.trim();
+    if (!trimmed) return '';
+    // Skip if block is already an HTML element or code placeholder
+    if (
+      trimmed.startsWith('<h') ||
+      trimmed.startsWith('<div') ||
+      trimmed.startsWith('<table') ||
+      trimmed.startsWith('<ul') ||
+      trimmed.startsWith('<ol') ||
+      trimmed.startsWith('<blockquote') ||
+      trimmed.startsWith('<hr') ||
+      trimmed.startsWith('__CODE_BLOCK_')
+    ) {
+      return trimmed;
+    }
+    // Convert single newlines inside paragraph to space or break
+    const inlineClean = trimmed.replace(/\r?\n/g, ' ');
+    return `<p>${inlineClean}</p>`;
+  });
+
+  let html = formattedBlocks.filter(Boolean).join('\n\n');
+
+  // 11. Restore inline code and code blocks
+  html = html.replace(/__INLINE_CODE_(\d+)__/g, (_, idx) => inlineCodes[Number(idx)] || '');
+  html = html.replace(/__CODE_BLOCK_(\d+)__/g, (_, idx) => codeBlocks[Number(idx)] || '');
+
+  return html;
+}
+
+
 

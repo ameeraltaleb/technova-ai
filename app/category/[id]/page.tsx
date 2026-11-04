@@ -69,7 +69,10 @@ export default async function CategoryPage({ params }: { params: Promise<{ id: s
                 <Link key={a.id} href={`/article/${a.id}`} className="article-card">
                   <div className="article-card__image-container">
                     <img src={getArticleImage(a)} alt={a.title} className="article-card__image" loading="lazy" />
-                    <div className="article-card__category">{a.category}</div>
+                    <div className="article-card__category">
+                      {category.icon && <span>{category.icon} </span>}
+                      {category.name}
+                    </div>
                   </div>
                   <div className="article-card__content">
                     <div className="article-card__meta">

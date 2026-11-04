@@ -3,6 +3,7 @@ import { doc, setDoc } from 'firebase/firestore';
 import { ArticleItem } from './admin-store';
 import { getLiveArticles, isArticlePublished } from './public-data';
 import { getArticleImage } from './utils';
+import { CATEGORIES } from './data';
 
 export interface BufferChannel {
   id: string;
@@ -277,15 +278,19 @@ export async function publishArticleToBuffer(
     imageUrl = `https://www.technova-ai.online${imageUrl}`;
   }
 
+  const categoryObj = CATEGORIES.find((c) => c.id === article.category);
+  const catLabel = categoryObj ? categoryObj.name : (article.category || 'Tech');
+  const catHashtag = catLabel.replace(/[^a-zA-Z0-9]/g, '');
+
   const cleanExcerpt = excerpt ? excerpt.replace(/\s+/g, ' ').slice(0, 180) : '';
   const excerptLine = cleanExcerpt ? `\n\n${cleanExcerpt}${cleanExcerpt.length >= 180 ? '...' : ''}` : '';
-  const baseText = `${title}${excerptLine}\n\n👉 Full story: ${link}\n\n#TechNova #TechNews #AI`;
+  const baseText = `[${catLabel}] ${title}${excerptLine}\n\n👉 Full story: ${link}\n\n#TechNova #${catHashtag} #AI`;
 
   const results = await Promise.all(
     targetChannels.map(async (c) => {
       let channelText = baseText;
       if (c.service === 'twitter' && channelText.length > 275) {
-        channelText = `${title}\n\n👉 Read: ${link}\n\n#TechNova #AI`;
+        channelText = `[${catLabel}] ${title}\n\n👉 Read: ${link}\n\n#TechNova #${catHashtag} #AI`;
       }
       try {
         const res = await publishToChannel(token, c.id, c.service, channelText, true, {

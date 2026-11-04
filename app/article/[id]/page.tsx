@@ -1,6 +1,6 @@
 import { CATEGORIES } from '@/lib/data';
 import { getLiveArticleById, getLiveArticles } from '@/lib/public-data';
-import { getArticleImage, parseTOC, injectHeadingIds, qualifyArticleContentLinks, formatMetaDescription, formatMetaTitle, ensureImageAlts } from '@/lib/utils';
+import { getArticleImage, parseTOC, injectHeadingIds, qualifyArticleContentLinks, formatMetaDescription, formatMetaTitle, ensureImageAlts, renderMarkdownToHtml } from '@/lib/utils';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import ReadingProgress from '@/components/ReadingProgress';
@@ -97,8 +97,9 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
   const articleUrl = `https://www.technova-ai.online/article/${article.id}`;
   const allArticles = await getLiveArticles();
   const articleImage = getArticleImage(article as any);
-  const toc = parseTOC(article.content);
-  const contentWithIds = injectHeadingIds(article.content);
+  const compiledContent = renderMarkdownToHtml(article.content);
+  const toc = parseTOC(compiledContent);
+  const contentWithIds = injectHeadingIds(compiledContent);
   const contentWithAlts = ensureImageAlts(contentWithIds, article.title);
   const qualifiedContent = qualifyArticleContentLinks(contentWithAlts, {
     isSponsored: article.isSponsored,

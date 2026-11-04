@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getLiveArticles, getLiveTools, getLiveNews, getCategoriesWithCounts } from '@/lib/public-data';
+import { CATEGORIES } from '@/lib/data';
 import { getArticleImage, getOptimizedImageUrl } from '@/lib/utils';
 import Newsletter from '@/components/Newsletter';
 
@@ -17,6 +18,7 @@ export default async function Home() {
   const tools = await getLiveTools();
   const news = await getLiveNews();
   const categoriesWithCounts = getCategoriesWithCounts(articles);
+  const categoryMap = new Map(CATEGORIES.map(c => [c.id, c]));
 
   // Articles are already sorted newest-first by getLiveArticles()
   const recentFeatured = articles.slice(0, 5).find(a => a.featured);
@@ -111,7 +113,8 @@ export default async function Home() {
                       <span>⚡</span> EDITOR&apos;S CHOICE
                     </span>
                     <span className="bento-badge bento-badge--cat">
-                      #{featuredArticle.category}
+                      {categoryMap.get(featuredArticle.category)?.icon && <span>{categoryMap.get(featuredArticle.category)!.icon} </span>}
+                      {categoryMap.get(featuredArticle.category)?.name || featuredArticle.category}
                     </span>
                   </div>
 
@@ -169,7 +172,10 @@ export default async function Home() {
                       />
                     </div>
                     <div className="bento-side-card__content">
-                      <span className="bento-side-card__cat">#{a.category}</span>
+                      <span className="bento-side-card__cat">
+                        {categoryMap.get(a.category)?.icon && <span>{categoryMap.get(a.category)!.icon} </span>}
+                        {categoryMap.get(a.category)?.name || a.category}
+                      </span>
                       <h3 className="bento-side-card__title">{a.title}</h3>
                       <div className="bento-side-card__meta">
                         <span>{a.date}</span>
@@ -392,7 +398,10 @@ export default async function Home() {
                     width={380}
                     height={200}
                   />
-                  <div className="article-card__category">{a.category}</div>
+                  <div className="article-card__category">
+                    {categoryMap.get(a.category)?.icon && <span>{categoryMap.get(a.category)!.icon} </span>}
+                    {categoryMap.get(a.category)?.name || a.category}
+                  </div>
                 </div>
                 <div className="article-card__content">
                   <div className="article-card__meta">
