@@ -245,6 +245,7 @@ export default function AdminPage() {
       ...art,
       status: 'published',
       scheduledFor: undefined,
+      date: new Date().toISOString(),
     };
     await handleSaveArticle(publishedArt);
   };

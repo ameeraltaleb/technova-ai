@@ -20,6 +20,16 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
+        source: '/articles/:slug*',
+        destination: '/article/:slug*',
+        permanent: true,
+      },
+      {
+        source: '/article/most-popular-mobile-phones-20',
+        destination: '/article/top-10-ai-trends-us-tech-november-2026',
+        permanent: false,
+      },
+      {
         source: '/index.html',
         destination: '/',
         permanent: true,

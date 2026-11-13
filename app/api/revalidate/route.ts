@@ -29,3 +29,4 @@ export async function POST(req: Request) {
 
   return NextResponse.json({ success: true, revalidated: id || 'listings' });
 }
+

@@ -10,6 +10,7 @@ import {
   query,
   orderBy,
   serverTimestamp,
+  deleteField,
 } from 'firebase/firestore';
 import { db } from './firebase';
 import {
@@ -43,11 +44,15 @@ export const FirebaseService = {
         throw new Error('Article ID is required to save article.');
       }
       const docRef = doc(db, 'articles', article.id);
-      const rawPayload = {
+      const rawPayload: Record<string, any> = {
         ...article,
         updatedAt: serverTimestamp(),
         createdAt: (article as any).createdAt || serverTimestamp(),
       };
+      // If article is explicitly published, ensure any scheduled timestamp is cleanly removed from Firestore
+      if (article.status === 'published' && !article.scheduledFor) {
+        rawPayload.scheduledFor = deleteField();
+      }
       const cleanedPayload = removeUndefined(rawPayload);
       await setDoc(docRef, cleanedPayload, { merge: true });
     } catch (error) {

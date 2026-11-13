@@ -39,17 +39,15 @@ export function sortArticlesByNewest<T extends ArticleItem>(articles: T[]): T[] 
 
 export function isArticlePublished(article: ArticleItem): boolean {
   if (article.status === 'draft') return false;
+  // If explicitly published, it is ALWAYS published immediately
+  if (article.status === 'published') return true;
+  // If scheduled, only suppress from automated listings (homepage, RSS) until scheduled time
   if (article.status === 'scheduled') {
     if (article.scheduledFor) {
       const scheduledTime = new Date(article.scheduledFor).getTime();
       if (!isNaN(scheduledTime) && Date.now() < scheduledTime) {
         return false;
       }
-    }
-  } else if (article.scheduledFor) {
-    const scheduledTime = new Date(article.scheduledFor).getTime();
-    if (!isNaN(scheduledTime) && Date.now() < scheduledTime) {
-      return false;
     }
   }
   return true;
@@ -92,7 +90,7 @@ export async function getLiveArticles(options?: { includeUnpublished?: boolean }
 }
 
 export async function getLiveArticleById(id: string, options?: { allowUnpublished?: boolean }): Promise<ArticleItem | null> {
-  const allowUnpublished = Boolean(options?.allowUnpublished);
+  const allowUnpublished = options?.allowUnpublished ?? true;
   let article: ArticleItem | null = null;
 
   try {
@@ -111,9 +109,12 @@ export async function getLiveArticleById(id: string, options?: { allowUnpublishe
   }
 
   if (!article) return null;
-  if (!allowUnpublished && !isArticlePublished(article)) {
+
+  // Only hide from public viewing if the article is strictly an unfinished draft
+  if (article.status === 'draft' && !options?.allowUnpublished) {
     return null;
   }
+
   return article;
 }
 
