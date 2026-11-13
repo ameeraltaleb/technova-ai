@@ -6,6 +6,7 @@ import { notFound } from 'next/navigation';
 import ReadingProgress from '@/components/ReadingProgress';
 import ShareButtons from '@/components/ShareButtons';
 import Newsletter from '@/components/Newsletter';
+import AdSlot from '@/components/AdSlot';
 
 export const dynamicParams = true;
 export const revalidate = 3600; // ISR: cache article pages for 1 hour (on-demand revalidation on publish/edit)
@@ -147,7 +148,11 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
     image: articleImage,
     datePublished: article.date,
     dateModified: article.date,
-    author: { '@type': 'Person', name: article.author.name },
+    author: {
+      '@type': 'Person',
+      name: article.author.name,
+      url: 'https://www.technova-ai.online/about',
+    },
     publisher: {
       '@type': 'Organization',
       name: 'TechNova AI',
@@ -282,6 +287,9 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
 
               <div className="article-content" dangerouslySetInnerHTML={{ __html: part1 }} />
 
+              {/* ── In-Article Ad Slot #1 (High-Viewability Mid-Content) ── */}
+              <AdSlot format="fluid" layout="in-article" />
+
               {/* ── Sleek Contextual Inline Models Link (Between Paragraphs) ── */}
               <div className="ap-inline-banner" role="complementary" aria-label="Open-Source AI Models">
                 <Link href="/models" className="ap-inline-banner__link">
@@ -333,6 +341,9 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
                   <div className="article-content" dangerouslySetInnerHTML={{ __html: part3 }} />
                 </>
               ) : null)}
+
+              {/* ── In-Article Ad Slot #2 (Post-Conclusion / Pre-Author) ── */}
+              <AdSlot format="fluid" layout="in-article" />
 
               {/* Tags */}
               {article.tags && article.tags.length > 0 && (
@@ -426,6 +437,9 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
                   Launch VRAM Calculator →
                 </Link>
               </div>
+
+              {/* ── Sticky Sidebar Ad Slot (Desktop High-RPM Zone) ── */}
+              <AdSlot format="auto" sticky />
 
               {/* Dedicated Sponsor Partner in Sidebar */}
               {article.isSponsored && (article.sponsorUrl || article.affiliateUrl) && (

@@ -69,6 +69,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
+    site: '@TechNova__AI',
+    creator: '@TechNova__AI',
     title: 'TechNova AI — Discover, Compare & Master the Best AI & Tech Tools',
     description: 'Your go-to source for in-depth reviews, comparisons, and guides on the latest AI tools, software, and digital productivity solutions.',
     images: ['/og-image.png'],
@@ -113,6 +115,10 @@ const jsonLdOrganization = {
   description: 'In-depth reviews, comparisons, and guides on the latest AI tools and software.',
   url: 'https://www.technova-ai.online',
   logo: 'https://www.technova-ai.online/og-image.png',
+  sameAs: [
+    'https://x.com/TechNova__AI',
+    'https://www.facebook.com/profile.php?id=61596020852355',
+  ],
 };
 
 export default function RootLayout({
