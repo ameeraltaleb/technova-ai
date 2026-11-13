@@ -3,6 +3,7 @@ import { Inter, Space_Grotesk, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import LayoutShell from '@/components/LayoutShell';
 import AnalyticsScripts from '@/components/AnalyticsScripts';
+import { Analytics } from '@vercel/analytics/next';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -139,6 +140,7 @@ export default function RootLayout({
         <AnalyticsScripts />
 
         <LayoutShell>{children}</LayoutShell>
+        <Analytics />
       </body>
     </html>
   );
