@@ -1,7 +1,7 @@
 import { getLiveArticles, getCategoriesWithCounts } from '@/lib/public-data';
 import Link from 'next/link';
 
-export const revalidate = 60;
+export const revalidate = 3600;
 
 export const metadata = {
   title: 'All Categories & Topics',

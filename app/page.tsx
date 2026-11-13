@@ -5,7 +5,7 @@ import { CATEGORIES } from '@/lib/data';
 import { getArticleImage, getOptimizedImageUrl } from '@/lib/utils';
 import Newsletter from '@/components/Newsletter';
 
-export const revalidate = 60; // Incremental Static Regeneration (revalidates every 60 seconds)
+export const revalidate = 900; // ISR: regenerate homepage at most every 15 minutes
 
 export const metadata: Metadata = {
   alternates: {

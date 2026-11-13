@@ -4,7 +4,7 @@ import { getArticleImage } from '@/lib/utils';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
-export const revalidate = 60;
+export const revalidate = 900;
 
 export function generateStaticParams() {
   return CATEGORIES.map((cat) => ({

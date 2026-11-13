@@ -8,7 +8,7 @@ import ShareButtons from '@/components/ShareButtons';
 import Newsletter from '@/components/Newsletter';
 
 export const dynamicParams = true;
-export const revalidate = 0;
+export const revalidate = 3600; // ISR: cache article pages for 1 hour (on-demand revalidation on publish/edit)
 
 export function generateStaticParams() {
   return [];

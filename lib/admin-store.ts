@@ -164,6 +164,16 @@ const DEFAULT_FIREBASE_CONFIG: FirebaseConfig = {
   isConnected: !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
 };
 
+/** Ask the server to refresh cached (ISR) pages after an admin change. Fire-and-forget. */
+function triggerSiteRevalidation(id?: string) {
+  if (typeof window === 'undefined') return;
+  fetch('/api/revalidate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id }),
+  }).catch((err) => console.warn('Revalidation request failed:', err));
+}
+
 export const AdminStore = {
   // Articles
   getArticles(): ArticleItem[] {
@@ -191,6 +201,7 @@ export const AdminStore = {
     }
     // Await Firebase Firestore sync to guarantee document is saved on server
     await FirebaseService.saveArticle(article);
+    triggerSiteRevalidation(article.id);
     return updated;
   },
 
@@ -204,6 +215,7 @@ export const AdminStore = {
     await FirebaseService.deleteArticle(id).catch((err) =>
       console.warn('Background Firestore deleteArticle:', err)
     );
+    triggerSiteRevalidation(id);
     return updated;
   },
 

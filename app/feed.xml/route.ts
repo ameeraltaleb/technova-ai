@@ -1,6 +1,6 @@
 import { getLiveArticles, getArticleTimestamp } from '@/lib/public-data';
 
-export const revalidate = 60; // Revalidate every 60 seconds for instant social media & RSS updates
+export const revalidate = 900; // Revalidate RSS feed at most every 15 minutes
 
 function escapeXml(unsafe: string): string {
   return (unsafe || '')
@@ -49,7 +49,7 @@ ${itemsXml}
   return new Response(rssXml, {
     headers: {
       'Content-Type': 'application/xml; charset=utf-8',
-      'Cache-Control': 's-maxage=60, stale-while-revalidate=300',
+      'Cache-Control': 's-maxage=900, stale-while-revalidate=3600',
     },
   });
 }
