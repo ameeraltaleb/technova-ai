@@ -41,14 +41,6 @@ export default function AnalyticsScripts() {
           gtag('config', '${GA_MEASUREMENT_ID}');
         `}
       </Script>
-
-      {/* Google AdSense */}
-      <Script
-        async
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8381284855782594"
-        crossOrigin="anonymous"
-        strategy="lazyOnload"
-      />
     </>
   );
 }

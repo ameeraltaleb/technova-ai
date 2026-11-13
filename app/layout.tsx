@@ -129,6 +129,12 @@ export default function RootLayout({
   return (
     <html lang="en" data-theme="dark" className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`}>
       <head>
+        <meta name="google-adsense-account" content="ca-pub-8381284855782594" />
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8381284855782594"
+          crossOrigin="anonymous"
+        ></script>
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
         <script
