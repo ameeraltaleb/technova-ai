@@ -63,6 +63,21 @@ const SEO_OPTIMIZED_SLUGS = new Set([
   'top-30-ai-news-october-2026',
   'top-15-vpn-in-2026',
   'ai-in-us-universities-detector-bans-reversed',
+  'webassembly-is-it-replacing-javascript',
+  'why-rust-loved-programming-language',
+]);
+
+// Consolidated duplicate slugs permanently 301-redirected in next.config.ts
+const REDIRECTED_DUPLICATE_SLUGS = new Set([
+  'top-10-ai-trends-shaping-us-tech-late-2026',
+  'sam-altman-prompt-engineering-dead-autonomous-agents',
+  'building-production-ai-workflows-with-mcp',
+  'sora-2-vs-runway-gen4-vs-kling-video-generation-showdown',
+  'ai-video-generation-masterclass',
+  'ai-agentic-soc-crowdstrike-microsoft-sentinel-2026',
+  'best-vpn-2026',
+  'webassembly-wasm-explained',
+  'rust-systems-programming-2026',
 ]);
 
 let cachedAllArticles: ArticleItem[] | null = null;
@@ -88,17 +103,25 @@ export async function getLiveArticles(options?: { includeUnpublished?: boolean }
     const colRef = collection(db, 'articles');
     const snap = await getDocs(colRef);
     if (!snap.empty) {
-      const firestoreArticles = snap.docs.map((d) => {
-        const data = d.data() as ArticleItem;
-        if (SEO_OPTIMIZED_SLUGS.has(data.id) && staticMap.has(data.id)) {
-          const st = staticMap.get(data.id)!;
-          return { ...data, title: st.title, excerpt: st.excerpt };
-        }
-        return data;
-      });
+      const firestoreArticles = snap.docs
+        .map((d) => {
+          const data = d.data() as ArticleItem;
+          if (SEO_OPTIMIZED_SLUGS.has(data.id) && staticMap.has(data.id)) {
+            const st = staticMap.get(data.id)!;
+            return {
+              ...data,
+              title: st.title,
+              excerpt: st.excerpt,
+              content: st.content,
+              readTime: st.readTime,
+            };
+          }
+          return data;
+        })
+        .filter((a) => !REDIRECTED_DUPLICATE_SLUGS.has(a.id));
       const firestoreIds = new Set(firestoreArticles.map((a) => a.id));
       const remainingStatic = Array.from(staticMap.values()).filter(
-        (a) => !firestoreIds.has(a.id)
+        (a) => !firestoreIds.has(a.id) && !REDIRECTED_DUPLICATE_SLUGS.has(a.id)
       );
       const combined = [...firestoreArticles, ...remainingStatic];
       const uniqueMap = new Map<string, ArticleItem>();
@@ -145,7 +168,13 @@ export async function getLiveArticleById(id: string, options?: { allowUnpublishe
     if (snap.exists()) {
       article = snap.data() as ArticleItem;
       if (article && SEO_OPTIMIZED_SLUGS.has(id) && staticFound) {
-        article = { ...article, title: staticFound.title, excerpt: staticFound.excerpt };
+        article = {
+          ...article,
+          title: staticFound.title,
+          excerpt: staticFound.excerpt,
+          content: staticFound.content,
+          readTime: staticFound.readTime,
+        };
       }
     }
   } catch (error) {

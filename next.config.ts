@@ -27,7 +27,52 @@ const nextConfig: NextConfig = {
       {
         source: '/article/most-popular-mobile-phones-20',
         destination: '/article/top-10-ai-trends-us-tech-november-2026',
-        permanent: false,
+        permanent: true,
+      },
+      {
+        source: '/article/top-10-ai-trends-shaping-us-tech-late-2026',
+        destination: '/article/top-10-ai-trends-us-tech-november-2026',
+        permanent: true,
+      },
+      {
+        source: '/article/sam-altman-prompt-engineering-dead-autonomous-agents',
+        destination: '/article/sam-altman-you-dont-need-to-write-prompts-anymore',
+        permanent: true,
+      },
+      {
+        source: '/article/building-production-ai-workflows-with-mcp',
+        destination: '/article/building-autonomous-ai-workflows-with-model-context-protocol',
+        permanent: true,
+      },
+      {
+        source: '/article/sora-2-vs-runway-gen4-vs-kling-video-generation-showdown',
+        destination: '/article/10-ai-models-for-video-generation-changing-content-creation',
+        permanent: true,
+      },
+      {
+        source: '/article/ai-video-generation-masterclass',
+        destination: '/article/10-ai-models-for-video-generation-changing-content-creation',
+        permanent: true,
+      },
+      {
+        source: '/article/ai-agentic-soc-crowdstrike-microsoft-sentinel-2026',
+        destination: '/article/ai-cybersecurity-agentic-soc-crowdstrike-microsoft-copilot',
+        permanent: true,
+      },
+      {
+        source: '/article/best-vpn-2026',
+        destination: '/article/top-15-vpn-in-2026',
+        permanent: true,
+      },
+      {
+        source: '/article/webassembly-wasm-explained',
+        destination: '/article/webassembly-is-it-replacing-javascript',
+        permanent: true,
+      },
+      {
+        source: '/article/rust-systems-programming-2026',
+        destination: '/article/why-rust-loved-programming-language',
+        permanent: true,
       },
       {
         source: '/index.html',
