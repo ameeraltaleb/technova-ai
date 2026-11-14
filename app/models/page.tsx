@@ -9,6 +9,7 @@ import EditorModelPicks from '@/components/EditorModelPicks';
 import ModelComparisonTable from '@/components/ModelComparisonTable';
 import ModelGlossary from '@/components/ModelGlossary';
 import ModelsFaq from '@/components/ModelsFaq';
+import AdSlot from '@/components/AdSlot';
 
 export const revalidate = 3600; // Revalidate every hour via Next.js ISR
 
@@ -55,10 +56,10 @@ export default async function ModelsPage() {
   ]);
 
   const relevantArticleIds = [
+    'top-10-ai-trends-us-tech-november-2026',
+    'building-autonomous-ai-workflows-with-model-context-protocol',
     'local-llms-guide-2026',
-    'claude-3-opus-vs-gpt4-coding',
     'github-copilot-vs-cursor',
-    'beginner-guide-machine-learning-python',
   ];
 
   const relatedArticles = allArticles.filter(a => relevantArticleIds.includes(a.id));
@@ -251,6 +252,9 @@ export default async function ModelsPage() {
           {/* 2. Interactive VRAM & Hardware Calculator */}
           <VramCalculator />
 
+          {/* High-Intent Cloud GPU & Hardware Ad Unit (collapses cleanly until filled) */}
+          <AdSlot format="auto" />
+
           {/* 3. Comprehensive Model Comparison Matrix */}
           <ModelComparisonTable />
 
@@ -283,6 +287,9 @@ export default async function ModelsPage() {
 
             <ModelsDirectoryClient initialModels={models} />
           </div>
+
+          {/* Mid-Page In-Article Ad Unit */}
+          <AdSlot format="fluid" layout="in-article" />
 
           {/* 5. Comprehensive Educational & Technical Guides (High SEO & AdSense Value) */}
           <section
