@@ -51,6 +51,9 @@ export const metadata: Metadata = {
   verification: {
     google: 'pz9GEGv-Bv4P9R1DSaF51xHj0bW2cBos1PNYkLTLtYQ',
   },
+  other: {
+    'google-adsense-account': 'ca-pub-8381284855782594',
+  },
   openGraph: {
     type: 'website',
     locale: 'en_US',
