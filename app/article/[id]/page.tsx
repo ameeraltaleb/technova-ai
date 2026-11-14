@@ -1,6 +1,6 @@
 import { CATEGORIES } from '@/lib/data';
 import { getLiveArticleById, getLiveArticles } from '@/lib/public-data';
-import { getArticleImage, parseTOC, injectHeadingIds, qualifyArticleContentLinks, formatMetaDescription, formatMetaTitle, ensureImageAlts, renderMarkdownToHtml } from '@/lib/utils';
+import { getArticleImage, parseTOC, injectHeadingIds, qualifyArticleContentLinks, formatMetaDescription, formatMetaTitle, ensureImageAlts, renderMarkdownToHtml, extractFaqsFromHtml } from '@/lib/utils';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import ReadingProgress from '@/components/ReadingProgress';
@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const rawImage = getArticleImage(article as any);
   const image = rawImage && rawImage.startsWith('/') ? `https://www.technova-ai.online${rawImage}` : rawImage;
   const articleUrl = `https://www.technova-ai.online/article/${article.id}`;
-  const metaTitle = formatMetaTitle(article.title, 65, 'TechNova AI');
+  const metaTitle = formatMetaTitle(article.title, 75, 'TechNova AI');
   const metaDescription = formatMetaDescription(article.excerpt, `${metaTitle} — In-depth guide and tech analysis on TechNova AI.`);
 
   return {
@@ -139,7 +139,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
     ? rankedArticles.slice(1, 4)
     : rankedArticles.slice(0, 3);
 
-  // JSON-LD
+  // JSON-LD: Article + BreadcrumbList + Optional FAQPage
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -161,9 +161,52 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
     mainEntityOfPage: { '@type': 'WebPage', '@id': `https://www.technova-ai.online/article/${article.id}` },
   };
 
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://www.technova-ai.online',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: categoryName,
+        item: `https://www.technova-ai.online/category/${article.category}`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: article.title,
+        item: articleUrl,
+      },
+    ],
+  };
+
+  const extractedFaqs = extractFaqsFromHtml(compiledContent);
+  const faqJsonLd = extractedFaqs.length > 0 ? {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: extractedFaqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.answer,
+      },
+    })),
+  } : null;
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      {faqJsonLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+      )}
       <ReadingProgress />
 
       {/* ── Hero Section ── */}

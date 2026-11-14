@@ -479,7 +479,7 @@ export function formatMetaDescription(text: string | undefined | null, fallback 
  */
 export function formatMetaTitle(
   rawTitle: string | undefined | null,
-  maxLen = 65,
+  maxLen = 75,
   siteBrand = 'TechNova AI'
 ): string {
   if (!rawTitle || !rawTitle.trim()) {
@@ -487,44 +487,24 @@ export function formatMetaTitle(
   }
 
   // Remove existing brand or trailing dashes/pipes
-  let clean = rawTitle
+  const clean = rawTitle
     .replace(/\s*[|—–-]\s*TechNova(\s*AI)?\s*$/i, '')
     .trim();
 
-  // 1. If clean title + full site brand fits within maxLen
+  // 1. If clean title is short enough that adding the brand still keeps every keyword intact
   const fullWithBrand = `${clean} | ${siteBrand}`;
-  if (fullWithBrand.length <= maxLen) {
+  if (fullWithBrand.length <= 65) {
     return fullWithBrand;
   }
 
-  // 2. If clean title + short brand fits within maxLen
-  const shortBrand = siteBrand.replace(/\s*AI$/i, '').trim();
-  const fullWithShortBrand = `${clean} | ${shortBrand}`;
-  if (fullWithShortBrand.length <= maxLen) {
-    return fullWithShortBrand;
-  }
-
-  // 3. If clean title itself fits within maxLen, preserve full title context
+  // 2. Preserve the full compelling title (including subtitles/hooks after ':') up to maxLen
+  // Google displays the site name ("TechNova AI") above the title via WebSite Schema automatically,
+  // so preserving the specific keywords/numbers/comparisons after ':' is critical for SERP CTR.
   if (clean.length <= maxLen) {
     return clean;
   }
 
-  // 4. If title has a colon/sub-title (e.g. "Main Topic: Detailed Subtitle"):
-  if (clean.includes(':')) {
-    const parts = clean.split(':');
-    const prefix = parts[0].trim();
-    if (prefix.length >= 20) {
-      const prefixWithBrand = `${prefix} | ${siteBrand}`;
-      if (prefixWithBrand.length <= maxLen) {
-        return prefixWithBrand;
-      }
-      if (prefix.length <= maxLen) {
-        return prefix;
-      }
-    }
-  }
-
-  // 5. Cleanly bound at word boundary to never cut mid-word
+  // 3. Cleanly bound at word boundary to never cut mid-word
   const words = clean.split(/\s+/);
   let truncated = '';
   for (const word of words) {
@@ -543,6 +523,27 @@ export function formatMetaTitle(
     .trim();
 
   return truncated || clean.slice(0, maxLen);
+}
+
+/**
+ * Extracts Q&A pairs from article HTML (e.g. under FAQ sections or <h3>question?</h3><p>answer</p>)
+ * for automatic Schema.org FAQPage structured data generation.
+ */
+export function extractFaqsFromHtml(html: string): Array<{ question: string; answer: string }> {
+  if (!html) return [];
+  const faqs: Array<{ question: string; answer: string }> = [];
+  const regex = /<h3[^>]*>([\s\S]*?)<\/h3>\s*<p[^>]*>([\s\S]*?)<\/p>/gi;
+  let match: RegExpExecArray | null;
+
+  while ((match = regex.exec(html)) !== null) {
+    const rawQ = match[1].replace(/<[^>]*>/g, '').trim();
+    const rawA = match[2].replace(/<[^>]*>/g, '').trim();
+    if (rawQ.endsWith('?') && rawQ.length >= 12 && rawA.length >= 25) {
+      faqs.push({ question: rawQ, answer: rawA });
+    }
+  }
+
+  return faqs.slice(0, 8);
 }
 
 /**
