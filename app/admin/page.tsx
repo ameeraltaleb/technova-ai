@@ -161,7 +161,7 @@ export default function AdminPage() {
     fetch('/api/cron/publish', { method: 'POST' }).catch(() => {});
     const cronInterval = setInterval(() => {
       fetch('/api/cron/publish', { method: 'POST' }).catch(() => {});
-    }, 60000);
+    }, 600000);
 
     return () => {
       unsubscribe();

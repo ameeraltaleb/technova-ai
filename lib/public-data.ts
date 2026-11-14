@@ -53,17 +53,51 @@ export function isArticlePublished(article: ArticleItem): boolean {
   return true;
 }
 
+const SEO_OPTIMIZED_SLUGS = new Set([
+  'top-10-ai-trends-us-tech-november-2026',
+  'ai-cybersecurity-agentic-soc-crowdstrike-microsoft-copilot',
+  'building-autonomous-ai-workflows-with-model-context-protocol',
+  '10-ai-models-for-video-generation-changing-content-creation',
+  'top-10-ai-services-revolutionizing-the-tech-landscape-in-the-usa',
+  'sam-altman-you-dont-need-to-write-prompts-anymore',
+  'top-30-ai-news-october-2026',
+  'top-15-vpn-in-2026',
+  'ai-in-us-universities-detector-bans-reversed',
+]);
+
+let cachedAllArticles: ArticleItem[] | null = null;
+let cachedAt = 0;
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5-minute memory cache to prevent exhausting Firestore 50k/day free read quota
+
 export async function getLiveArticles(options?: { includeUnpublished?: boolean }): Promise<ArticleItem[]> {
   const includeUnpublished = Boolean(options?.includeUnpublished);
+  const now = Date.now();
+
+  if (typeof window === 'undefined' && cachedAllArticles && now - cachedAt < CACHE_TTL_MS) {
+    return includeUnpublished ? cachedAllArticles : cachedAllArticles.filter(isArticlePublished);
+  }
+
+  const staticMap = new Map<string, ArticleItem>();
+  for (const art of (ARTICLES as unknown as ArticleItem[])) {
+    if (art.id && !staticMap.has(art.id)) {
+      staticMap.set(art.id, art);
+    }
+  }
 
   try {
     const colRef = collection(db, 'articles');
     const snap = await getDocs(colRef);
     if (!snap.empty) {
-      const firestoreArticles = snap.docs.map((d) => d.data() as ArticleItem);
-      // Merge with static articles so existing articles are never lost
+      const firestoreArticles = snap.docs.map((d) => {
+        const data = d.data() as ArticleItem;
+        if (SEO_OPTIMIZED_SLUGS.has(data.id) && staticMap.has(data.id)) {
+          const st = staticMap.get(data.id)!;
+          return { ...data, title: st.title, excerpt: st.excerpt };
+        }
+        return data;
+      });
       const firestoreIds = new Set(firestoreArticles.map((a) => a.id));
-      const remainingStatic = (ARTICLES as unknown as ArticleItem[]).filter(
+      const remainingStatic = Array.from(staticMap.values()).filter(
         (a) => !firestoreIds.has(a.id)
       );
       const combined = [...firestoreArticles, ...remainingStatic];
@@ -74,23 +108,35 @@ export async function getLiveArticles(options?: { includeUnpublished?: boolean }
         }
       }
       const sorted = sortArticlesByNewest(Array.from(uniqueMap.values()));
+      if (typeof window === 'undefined') {
+        cachedAllArticles = sorted;
+        cachedAt = now;
+      }
       return includeUnpublished ? sorted : sorted.filter(isArticlePublished);
     }
   } catch (error) {
     console.warn('getLiveArticles fallback to static:', error);
   }
-  const uniqueMap = new Map<string, ArticleItem>();
-  for (const art of (ARTICLES as unknown as ArticleItem[])) {
-    if (art.id && !uniqueMap.has(art.id)) {
-      uniqueMap.set(art.id, art);
-    }
+  const sorted = sortArticlesByNewest(Array.from(staticMap.values()));
+  if (typeof window === 'undefined') {
+    cachedAllArticles = sorted;
+    cachedAt = now;
   }
-  const sorted = sortArticlesByNewest(Array.from(uniqueMap.values()));
   return includeUnpublished ? sorted : sorted.filter(isArticlePublished);
 }
 
 export async function getLiveArticleById(id: string, options?: { allowUnpublished?: boolean }): Promise<ArticleItem | null> {
-  const allowUnpublished = options?.allowUnpublished ?? true;
+  const staticFound = (ARTICLES.find((a) => a.id === id) as unknown as ArticleItem) || null;
+
+  // Use the in-memory cache first if warm to save Firestore reads
+  if (typeof window === 'undefined' && cachedAllArticles && Date.now() - cachedAt < CACHE_TTL_MS) {
+    const cachedMatch = cachedAllArticles.find((a) => a.id === id);
+    if (cachedMatch) {
+      if (cachedMatch.status === 'draft' && !options?.allowUnpublished) return null;
+      return cachedMatch;
+    }
+  }
+
   let article: ArticleItem | null = null;
 
   try {
@@ -98,14 +144,16 @@ export async function getLiveArticleById(id: string, options?: { allowUnpublishe
     const snap = await getDoc(docRef);
     if (snap.exists()) {
       article = snap.data() as ArticleItem;
+      if (article && SEO_OPTIMIZED_SLUGS.has(id) && staticFound) {
+        article = { ...article, title: staticFound.title, excerpt: staticFound.excerpt };
+      }
     }
   } catch (error) {
     console.warn(`getLiveArticleById(${id}) fallback:`, error);
   }
 
   if (!article) {
-    const found = ARTICLES.find((a) => a.id === id);
-    article = (found as unknown as ArticleItem) || null;
+    article = staticFound;
   }
 
   if (!article) return null;
