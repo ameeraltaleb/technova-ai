@@ -45,12 +45,14 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="footer__heading">Popular</h3>
+            <h3 className="footer__heading">Trending Guides</h3>
             <div className="footer__links">
-              <Link href="/article/claude-vs-chatgpt-2026" className="footer__link">Claude vs ChatGPT</Link>
-              <Link href="/article/best-ai-code-editors-2026" className="footer__link">Best AI Code Editors</Link>
-              <Link href="/article/notion-vs-obsidian-2026" className="footer__link">Notion vs Obsidian</Link>
-              <Link href="/article/local-llms-guide-2026" className="footer__link">Local LLMs Guide</Link>
+              <Link href="/article/top-10-ai-trends-us-tech-november-2026" className="footer__link">Top 10 US AI Trends (Nov 2026)</Link>
+              <Link href="/article/ai-cybersecurity-agentic-soc-crowdstrike-microsoft-copilot" className="footer__link">Agentic AI SOCs: CrowdStrike vs Copilot</Link>
+              <Link href="/article/building-autonomous-ai-workflows-with-model-context-protocol" className="footer__link">Anthropic MCP Workflows Guide</Link>
+              <Link href="/article/10-ai-models-for-video-generation-changing-content-creation" className="footer__link">10 Best AI Video Generators</Link>
+              <Link href="/article/top-15-vpn-in-2026" className="footer__link">15 Best VPNs in 2026</Link>
+              <Link href="/article/sam-altman-you-dont-need-to-write-prompts-anymore" className="footer__link">Sam Altman: End of Prompting</Link>
             </div>
           </div>
 

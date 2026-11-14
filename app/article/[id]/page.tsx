@@ -481,6 +481,40 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
                 </Link>
               </div>
 
+              {/* ── Trending Research Pillar Links (SEO Internal Link Equity Hub) ── */}
+              <div className="ap-sidebar__card">
+                <h4 className="ap-sidebar__heading" style={{ marginBottom: '12px' }}>
+                  🔥 Trending US Reports
+                </h4>
+                <div style={{ display: 'grid', gap: '10px' }}>
+                  {[
+                    { id: 'top-10-ai-trends-us-tech-november-2026', label: 'Top 10 AI Trends in US Tech (Nov 2026)' },
+                    { id: 'ai-cybersecurity-agentic-soc-crowdstrike-microsoft-copilot', label: 'Agentic AI SOCs: CrowdStrike vs Copilot' },
+                    { id: 'building-autonomous-ai-workflows-with-model-context-protocol', label: 'Building AI Workflows with Anthropic MCP' },
+                    { id: 'top-15-vpn-in-2026', label: '15 Best VPNs in 2026 (Speed & Privacy)' },
+                    { id: 'ai-in-us-universities-detector-bans-reversed', label: 'Why US Universities Banned AI Detectors' },
+                  ]
+                    .filter((item) => item.id !== article.id)
+                    .slice(0, 4)
+                    .map((item) => (
+                      <Link
+                        key={item.id}
+                        href={`/article/${item.id}`}
+                        className="toc__link"
+                        style={{
+                          display: 'block',
+                          fontSize: '0.82rem',
+                          lineHeight: 1.4,
+                          padding: '6px 0',
+                          borderBottom: '1px solid var(--border-card)',
+                        }}
+                      >
+                        {item.label} →
+                      </Link>
+                    ))}
+                </div>
+              </div>
+
               {/* ── Sticky Sidebar Ad Slot (Desktop High-RPM Zone) ── */}
               <AdSlot format="auto" sticky />
 
